@@ -117,3 +117,4 @@ fi
 
 ### OH MY POSH
 eval "$(oh-my-posh init bash --config ~/config/posh-themes/multiverse-neon.omp.json)"
+
