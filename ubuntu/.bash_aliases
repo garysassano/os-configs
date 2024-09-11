@@ -22,9 +22,12 @@ alias l='ls -CF'
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
-### WING ALIASES
+### WING
 alias mywing="~/github/wing/apps/wing/bin/wing"
 alias wtest="pnpm vitest run"
 alias wsdk="pnpm turbo compile --filter=winglang"
 alias wcompiler="pnpm turbo compile --filter=@winglang/compiler"
 alias whangar="turbo test -- src/test_corpus/valid/hello.test.w.test.ts"
+
+### PROJEN
+alias pj="npx projen"
