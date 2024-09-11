@@ -1,8 +1,8 @@
 [user]
 	name = Gary Sassano
-	email = gary.sassano.ext@infocert.it
+	email = gary.sassano@educationperfect.com
 [commit]
 	gpgsign = false
-[credential "https://gitlab.mgmt.infocert.it"]
+[credential "https://github.com"]
 	helper = /mnt/c/Program\\ Files\\ \\(x86\\)/Git\\ Credential\\ Manager/git-credential-manager.exe
-	username = yye7073
+	username = epgary
