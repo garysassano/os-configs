@@ -6,14 +6,16 @@
 	gpgsign = true
 [init]
 	defaultBranch = main
+[credential]
+	helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
 [credential "https://github.com"]
-	helper = /mnt/c/Program\\ Files\\ \\(x86\\)/Git\\ Credential\\ Manager/git-credential-manager.exe
 	username = garysassano
-[credential "https://git-codecommit.*.amazonaws.com"]
-	helper = !aws codecommit credential-helper $@ 
-	UseHttpPath = true
+[credential "https://dev.azure.com"]
+	useHttpPath = true
 [includeIf "gitdir:~/work-ep/"]
 	path = ~/work-ep/.gitconfig
+[includeIf "gitdir:~/work-ca/"]
+	path = ~/work-ca/.gitconfig
 [alias]
 	merged = !git branch -r --merged | grep -v HEAD | xargs -L1 git --no-pager log --pretty=tformat:'%Cgreen%d%Creset - %h by %an (%Cblue%ar%Creset)' -1
 	unmerged = !git branch -r --no-merged | grep -v HEAD | xargs -L1 git --no-pager log --pretty=tformat:'%Cgreen%d%Creset - %h by %an (%Cblue%ar%Creset)' -1
