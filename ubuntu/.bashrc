@@ -115,5 +115,20 @@ if ! shopt -oq posix; then
     fi
 fi
 
+### VOLTA
+export VOLTA_FEATURE_PNPM=1
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+# BUN
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+### RUSTUP
+. "$HOME/.cargo/env"
+
 ### OH MY POSH
 eval "$(oh-my-posh init bash --config ~/config/posh-themes/multiverse-neon.omp.json)"
+
+### HOMEBREW
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
