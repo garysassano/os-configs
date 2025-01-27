@@ -132,3 +132,6 @@ eval "$(oh-my-posh init bash --config ~/config/posh-themes/multiverse-neon.omp.j
 
 ### HOMEBREW
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+### GRANTED
+alias assume="source assume"
