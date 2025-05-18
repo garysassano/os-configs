@@ -1,0 +1,31 @@
+[tools]
+# Mise
+usage = "latest"
+# AWS
+aws-cli = "latest"
+cli53 = "latest"
+"npm:aws-cdk" = "latest"
+"pipx:cfn-lint" = "latest"
+# Cloud (Generic)
+pulumi = "3"
+terraform = "latest"
+"npm:cdktf-cli" = "latest"
+# Cloudflare
+"npm:wrangler" = "latest"
+# Go
+go = "1.24"
+# JavaScript
+bun = "1"
+node = "lts"
+pnpm = "10"
+yarn = "1"
+# Python
+python = "3.13"
+uv = "latest"
+# Utilities
+age = "latest"
+fzf = "latest"
+granted = "latest"
+jq = "latest"
+ripgrep = "latest"
+sops = "latest"
