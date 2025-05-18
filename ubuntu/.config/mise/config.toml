@@ -4,6 +4,7 @@ usage = "latest"
 # AWS
 aws-cli = "latest"
 cli53 = "latest"
+granted = "latest"
 "npm:aws-cdk" = "latest"
 "pipx:cfn-lint" = "latest"
 # Cloud (Generic)
@@ -25,7 +26,6 @@ uv = "latest"
 # Utilities
 age = "latest"
 fzf = "latest"
-granted = "latest"
 jq = "latest"
 ripgrep = "latest"
 sops = "latest"
