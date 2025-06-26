@@ -4,7 +4,7 @@ usage = "latest"
 # AWS
 "npm:aws-cdk" = "latest"
 aws-cli = "latest"
-"pipx:cfn-lint" = "latest"
+cfn-lint = "latest"
 cli53 = "latest"
 granted = "latest"
 
