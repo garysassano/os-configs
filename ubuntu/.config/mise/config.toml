@@ -1,31 +1,40 @@
 [tools]
-# Mise
 usage = "latest"
+
 # AWS
+"npm:aws-cdk" = "latest"
 aws-cli = "latest"
+"pipx:cfn-lint" = "latest"
 cli53 = "latest"
 granted = "latest"
-"npm:aws-cdk" = "latest"
-"pipx:cfn-lint" = "latest"
-# Cloud (Generic)
-pulumi = "3"
-terraform = "latest"
-"npm:cdktf-cli" = "latest"
+
 # Cloudflare
 "npm:wrangler" = "latest"
+
 # Go
 go = "1.24"
+
+# IaC Tools
+"npm:cdktf-cli" = "latest"
+pulumi = "3"
+terraform = "latest"
+
 # JavaScript
+biome = "2"
 bun = "1"
 node = "lts"
 pnpm = "10"
 yarn = "1"
+
 # Python
 python = "3.13"
 uv = "latest"
+
 # Utilities
 age = "latest"
+edit = "latest"
 fzf = "latest"
 jq = "latest"
 ripgrep = "latest"
 sops = "latest"
+yq = "latest"
