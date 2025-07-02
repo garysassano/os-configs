@@ -8,6 +8,13 @@ cfn-lint = "latest"
 cli53 = "latest"
 granted = "latest"
 
+# Cargo
+"cargo:cargo-edit" = "latest"
+"cargo:cargo-machete" = "latest"
+"cargo:cargo-outdated" = "latest"
+"cargo:cargo-udeps" = "latest"
+"cargo:oha" = "latest"
+
 # Cloudflare
 "npm:wrangler" = "latest"
 
