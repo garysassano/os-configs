@@ -2,7 +2,6 @@
 usage = "latest"
 
 # AWS
-"npm:aws-cdk" = "2"
 aws-cli = "2"
 cfn-lint = "latest"
 cli53 = "latest"
@@ -21,7 +20,8 @@ granted = "latest"
 # Go
 go = "1.24"
 
-# IaC Tools
+# IaC
+"npm:aws-cdk" = "2"
 "npm:cdktf-cli" = "latest"
 pulumi = "3"
 terraform = "1"
