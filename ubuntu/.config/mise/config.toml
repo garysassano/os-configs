@@ -10,6 +10,7 @@ granted = "latest"
 
 # Cargo
 "cargo:cargo-edit" = "latest"
+"ubi:cargo-lambda/cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
@@ -34,7 +35,7 @@ yarn = "1"
 
 # Observability
 "ubi:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
-"ubi:hatoo/oha" ={ version = "latest" }
+"ubi:hatoo/oha" = "latest"
 
 # Python
 python = "3.13"
