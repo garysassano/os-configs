@@ -13,7 +13,6 @@ granted = "latest"
 "cargo:cargo-machete" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
-"cargo:oha" = "latest"
 
 # Cloudflare
 "npm:wrangler" = "latest"
@@ -32,6 +31,10 @@ bun = "1"
 node = "lts"
 pnpm = "10"
 yarn = "1"
+
+# Observability
+"ubi:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
+"ubi:hatoo/oha" ={ version = "latest" }
 
 # Python
 python = "3.13"
