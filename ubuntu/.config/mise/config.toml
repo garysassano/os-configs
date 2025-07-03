@@ -30,7 +30,7 @@ uv = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
 # Zig
-zig = "0.14.1"
+zig = "latest"
 
 ###################
 ####### IaC #######
