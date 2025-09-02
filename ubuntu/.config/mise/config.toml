@@ -6,6 +6,7 @@ cargo-binstall = "latest"
 ###################
 ####### AWS #######
 ###################
+"ubi:runs-on/cli" = { version = "latest", exe = "roc" }
 aws-cli = "2"
 aws-sam = "latest"
 cfn-lint = "latest"
@@ -53,7 +54,6 @@ terraform = "1"
 ###################
 #### Utilities ####
 ###################
-"ubi:runs-on/cli" = { version = "latest", exe = "roc" }
 age = "latest"
 edit = "latest"
 fzf = "latest"
