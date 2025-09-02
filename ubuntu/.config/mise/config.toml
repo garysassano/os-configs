@@ -1,10 +1,13 @@
 [tools]
 usage = "latest"
+# https://mise.jdx.dev/configuration/settings.html#cargo.binstall
+cargo-binstall = "latest"
 
 ###################
 ####### AWS #######
 ###################
 aws-cli = "2"
+aws-sam = "latest"
 cfn-lint = "latest"
 cli53 = "latest"
 granted = "latest"
@@ -50,6 +53,7 @@ terraform = "1"
 ###################
 #### Utilities ####
 ###################
+"ubi:runs-on/cli" = { version = "latest", exe = "roc" }
 age = "latest"
 edit = "latest"
 fzf = "latest"
