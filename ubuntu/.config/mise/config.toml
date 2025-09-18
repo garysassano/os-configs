@@ -1,40 +1,43 @@
 [tools]
-usage = "latest"
 # https://mise.jdx.dev/configuration/settings.html#cargo.binstall
 cargo-binstall = "latest"
-
-###################
-####### AWS #######
-###################
-"ubi:runs-on/cli" = { version = "latest", exe = "roc" }
-aws-cli = "2"
-aws-sam = "latest"
-cfn-lint = "latest"
-cli53 = "latest"
-granted = "latest"
 
 ###################
 #### Languages ####
 ###################
 # Go
 go = "1.24"
+
 # JavaScript
 biome = "2"
 bun = "1"
 node = "lts"
 pnpm = "10"
 yarn = "1"
+
 # Python
 python = "3.13"
 uv = "latest"
+
 # Rust
 "cargo:cargo-edit" = "latest"
 "ubi:cargo-lambda/cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
+
 # Zig
 zig = "latest"
+
+###################
+####### AWS #######
+###################
+"ubi:runs-on/cli" = "latest"
+aws-cli = "2"
+aws-sam = "latest"
+cfn-lint = "latest"
+cli53 = "latest"
+granted = "latest"
 
 ###################
 ####### IaC #######
@@ -51,13 +54,20 @@ terraform = "1"
 "ubi:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
 "ubi:hatoo/oha" = "latest"
 
+####################
+##### Security #####
+####################
+age = "latest"
+sops = "latest"
+
 ###################
 #### Utilities ####
 ###################
-age = "latest"
+bat = "latest"
 edit = "latest"
+eza = "latest"
+fd = "latest"
 fzf = "latest"
 jq = "latest"
 ripgrep = "latest"
-sops = "latest"
 yq = "latest"
