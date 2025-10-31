@@ -55,6 +55,11 @@ terraform = "1"
 "ubi:hatoo/oha" = "latest"
 
 ####################
+#### Containers ####
+####################
+"ubi:unikraft/kraftkit" = "latest"
+
+####################
 ##### Security #####
 ####################
 age = "latest"
@@ -68,6 +73,10 @@ edit = "latest"
 eza = "latest"
 fd = "latest"
 fzf = "latest"
+github-cli = "latest"
 jq = "latest"
 ripgrep = "latest"
 yq = "latest"
+
+[settings]
+idiomatic_version_file_enable_tools = []
