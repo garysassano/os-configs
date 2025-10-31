@@ -21,7 +21,7 @@ uv = "latest"
 
 # Rust
 "cargo:cargo-edit" = "latest"
-"ubi:cargo-lambda/cargo-lambda" = "latest"
+"cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
