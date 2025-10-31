@@ -45,6 +45,7 @@ granted = "latest"
 "npm:aws-cdk" = "2"
 "npm:cdktf-cli" = "latest"
 "npm:wrangler" = "latest"
+opentofu = "1"
 pulumi = "3"
 terraform = "1"
 
