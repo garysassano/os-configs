@@ -12,8 +12,8 @@
 	username = garysassano
 [credential "https://dev.azure.com"]
 	useHttpPath = true
-[includeIf "gitdir:~/work-ep/"]
-	path = ~/work-ep/.gitconfig
+[includeIf "gitdir:~/work-idv/"]
+	path = ~/work-idv/.gitconfig
 [alias]
 	merged = !git branch -r --merged | grep -v HEAD | xargs -L1 git --no-pager log --pretty=tformat:'%Cgreen%d%Creset - %h by %an (%Cblue%ar%Creset)' -1
 	unmerged = !git branch -r --no-merged | grep -v HEAD | xargs -L1 git --no-pager log --pretty=tformat:'%Cgreen%d%Creset - %h by %an (%Cblue%ar%Creset)' -1
@@ -21,7 +21,7 @@
 	lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
 	lg = !"git lg1"
 	bdate = branch --sort=-committerdate
-	cob = checkout -b 
+	cob = checkout -b
 	co = checkout
 	st = status
 	cm = commit -m

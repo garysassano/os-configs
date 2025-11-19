@@ -1,0 +1,9 @@
+[user]
+	name = Gary Sassano
+	email = gary.sassano@idverse.com
+[commit]
+	gpgsign = false
+[credential "https://github.com"]
+	username = idvgary
+[credential "https://gitlab.idkit.co"]
+	username = gary.sassano

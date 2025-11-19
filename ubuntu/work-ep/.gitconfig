@@ -1,7 +1,0 @@
-[user]
-	name = Gary Sassano
-	email = gary.sassano@educationperfect.com
-[commit]
-	gpgsign = false
-[credential "https://github.com"]
-	username = epgary
