@@ -14,6 +14,8 @@
 	useHttpPath = true
 [includeIf "gitdir:~/work-bl/"]
 	path = ~/work-bl/.gitconfig
+[includeIf "gitdir:~/work-idv/"]
+	path = ~/work-idv/.gitconfig
 [alias]
 	# Branching
 	bdate = branch --sort=-committerdate
