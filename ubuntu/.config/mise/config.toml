@@ -3,14 +3,20 @@
 cargo-binstall = "latest"
 
 ###################
+##### AI CLIs #####
+###################
+"npm:@mariozechner/pi-coding-agent" = "latest"
+"npm:@openai/codex" = "latest"
+
+###################
 #### Languages ####
 ###################
-# Go
 go = "1.24"
+zig = "latest"
 
 # JavaScript
 biome = "2"
-bun = "1"
+bun = "latest"
 node = "lts"
 pnpm = "10"
 yarn = "1"
@@ -26,13 +32,14 @@ uv = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
 
-# Zig
-zig = "latest"
+####################
+####### Cloud ######
+####################
+"github:unikraft/kraftkit" = "latest"
+gcloud = "latest"
 
-###################
-####### AWS #######
-###################
-"ubi:runs-on/cli" = "latest"
+# AWS
+"github:runs-on/cli" = "latest"
 aws-cli = "2"
 aws-sam = "latest"
 cfn-lint = "latest"
@@ -52,13 +59,8 @@ terraform = "1"
 ###################
 ## Observability ##
 ###################
-"ubi:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
-"ubi:hatoo/oha" = "latest"
-
-####################
-#### Containers ####
-####################
-"ubi:unikraft/kraftkit" = "latest"
+"github:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
+"github:hatoo/oha" = "latest"
 
 ####################
 ##### Security #####
