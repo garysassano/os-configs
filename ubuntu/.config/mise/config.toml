@@ -37,6 +37,7 @@ uv = "latest"
 ####################
 "github:unikraft/kraftkit" = "latest"
 gcloud = "latest"
+github-cli = "latest"
 
 # AWS
 "github:runs-on/cli" = "latest"
@@ -76,7 +77,6 @@ edit = "latest"
 eza = "latest"
 fd = "latest"
 fzf = "latest"
-github-cli = "latest"
 jq = "latest"
 ripgrep = "latest"
 yq = "latest"
