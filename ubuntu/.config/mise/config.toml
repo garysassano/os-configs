@@ -6,7 +6,8 @@ cargo-binstall = "latest"
 ##### AI CLIs #####
 ###################
 "npm:@mariozechner/pi-coding-agent" = "latest"
-"npm:@openai/codex" = "latest"
+codex = "latest"
+opencode = "latest"
 
 ###################
 #### Languages ####
@@ -35,7 +36,7 @@ uv = "latest"
 ####################
 ####### Cloud ######
 ####################
-"github:unikraft/kraftkit" = "latest"
+"github:unikraft/kraftkit" = "0.12.5"
 gcloud = "latest"
 github-cli = "latest"
 
