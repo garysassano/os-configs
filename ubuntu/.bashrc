@@ -115,15 +115,18 @@ if ! shopt -oq posix; then
     fi
 fi
 
-# BUN
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+### MISE (MUST LOAD FIRST)
+eval "$(mise activate bash)"
+
+### OH MY POSH
+eval "$(oh-my-posh init bash --config ~/.config/oh-my-posh/themes/multiverse-neon.omp.json)"
 
 ### RUSTUP
 . "$HOME/.cargo/env"
 
-### OH MY POSH
-eval "$(oh-my-posh init bash --config ~/config/posh-themes/multiverse-neon.omp.json)"
+# BUN
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
 ### GRANTED
 alias assume="source assume"
