@@ -1,6 +1,7 @@
 [tools]
 # https://mise.jdx.dev/configuration/settings.html#cargo.binstall
 cargo-binstall = "latest"
+oh-my-posh = "latest"
 
 ###################
 ##### AI CLIs #####
