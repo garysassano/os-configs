@@ -88,7 +88,7 @@
             "pnpm_icon": "<#e5a100>\ue865 pnpm</> ",
             "yarn_icon": "<#37aee5>\ue6a7 yarn</> "
           },
-          "template": "{{ if ne .PackageManagerName \"bun\" }}{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}\ue718 {{ .Full }}{{ end }}"
+          "template": "{{ if ne .PackageManagerName \"bun\" }}{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }}{{ end }}\ue718 {{ .Full }}{{ end }}"
         },
         {
           "type": "python",
