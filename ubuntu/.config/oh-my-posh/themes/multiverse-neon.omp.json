@@ -56,6 +56,26 @@
       "alignment": "right",
       "segments": [
         {
+          "type": "bun",
+          "style": "plain",
+          "foreground": "#e5dbcc",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue76f {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "crystal",
+          "style": "plain",
+          "foreground": "#e5e5e5",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue7ac {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
           "type": "node",
           "style": "plain",
           "foreground": "#88e570",
@@ -68,37 +88,37 @@
             "pnpm_icon": "<#e5a100>\ue865 pnpm</> ",
             "yarn_icon": "<#37aee5>\ue6a7 yarn</> "
           },
-          "template": "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}\ue718 {{ .Full }}"
+          "template": "{{ if ne .PackageManagerName \"bun\" }}{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}\ue718 {{ .Full }}{{ end }}"
         },
         {
           "type": "python",
           "style": "plain",
-          "foreground": "#FED142",
+          "foreground": "#e5c949",
           "options": {
             "display_mode": "context",
             "fetch_virtual_env": false
           },
-          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
-        },
-        {
-          "type": "crystal",
-          "style": "plain",
-          "foreground": "#4063D8",
-          "options": {
-            "display_mode": "files",
-            "fetch_version": true
-          },
-          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+          "template": " \ue73c {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
         },
         {
           "type": "ruby",
           "style": "plain",
-          "foreground": "#DE3F24",
+          "foreground": "#e5252b",
           "options": {
             "display_mode": "files",
             "fetch_version": true
           },
-          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+          "template": " \ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "rust",
+          "style": "plain",
+          "foreground": "#e58a55",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
         }
       ]
     },
