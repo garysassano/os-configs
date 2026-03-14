@@ -1,8 +1,8 @@
-[registries.crates-io]
-protocol = "sparse"
-
 [registry]
 global-credential-providers = ["cargo:token", "cargo:macos-keychain"]
+
+[registries.crates-io]
+protocol = "sparse"
 
 [registries.ocr-labs]
 index = "ssh://git@ssh.shipyard.rs/ocr-labs/crate-index.git"
