@@ -1,0 +1,203 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+    // Set `Ctrl + /` for commenting
+    {
+        "key": "ctrl+numpad_divide",
+        "command": "editor.action.commentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+oem_2",
+        "command": "-editor.action.commentLine",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    // Set `Shift Shift` for commands
+    {
+        "key": "shift shift",
+        "command": "workbench.action.showCommands"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "-workbench.action.showCommands"
+    },
+    // Set `Ctrl Ctrl` for quick open
+    {
+        "key": "ctrl ctrl",
+        "command": "workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "-workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-workbench.action.quickOpen"
+    },
+    // Set `Alt Alt` for sidebar
+    {
+        "key": "alt alt",
+        "command": "workbench.action.toggleSidebarVisibility"
+    },
+    {
+        "key": "ctrl+b",
+        "command": "-workbench.action.toggleSidebarVisibility"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "composerMode.agent"
+    },
+    // Windows to MacOS rebindings
+    // Physical Ctrl sends Cmd after OS remap, so map Cmd+<key> to send
+    // the actual Ctrl+<key> byte to the terminal.
+    // Ctrl+A=\u0001, Ctrl+B=\u0002, ... Ctrl+Z=\u001a
+    {
+        "key": "cmd+a",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0001" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+b",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0002" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+c",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0003" },
+        "when": "terminalFocus && !terminalTextSelected"
+    },
+    {
+        "key": "cmd+d",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0004" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+e",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0005" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+f",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0006" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+g",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0007" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+h",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0008" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+i",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0009" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u000a" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+k",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u000b" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+l",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u000c" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+m",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u000d" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+n",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u000e" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+o",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u000f" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+p",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0010" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+q",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0011" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+r",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0012" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+s",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0013" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+t",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0014" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+u",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0015" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+w",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0017" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+x",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0018" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+y",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0019" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+z",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u001a" },
+        "when": "terminalFocus"
+    },
+]
