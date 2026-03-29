@@ -117,12 +117,10 @@ fi
 
 ### MISE (MUST LOAD FIRST)
 eval "$(mise activate bash)"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 ### OH MY POSH
 eval "$(oh-my-posh init bash --config ~/.config/oh-my-posh/themes/multiverse-neon.omp.json)"
-
-### RUSTUP
-. "$HOME/.cargo/env"
 
 # BUN
 export BUN_INSTALL="$HOME/.bun"
