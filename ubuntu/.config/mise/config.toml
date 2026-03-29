@@ -14,20 +14,23 @@ opencode = "latest"
 #### Languages ####
 ###################
 go = "1.24"
+python = "3.14"
+rust = "latest"
 zig = "latest"
 
-# JavaScript
-biome = "2"
+# JS Runtimes
 bun = "latest"
 node = "lts"
+
+# JS Tools
+biome = "2"
 pnpm = "10"
 yarn = "1"
 
-# Python
-python = "3.14"
+# Python Tools
 uv = "latest"
 
-# Rust
+# Rust Tools
 "cargo:cargo-edit" = "latest"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
