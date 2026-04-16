@@ -3,16 +3,20 @@
 cargo-binstall = "latest"
 oh-my-posh = "latest"
 
-###################
-##### AI CLIs #####
-###################
+# ====================
+# AI CLIs
+# ====================
 "npm:@mariozechner/pi-coding-agent" = "latest"
 codex = "latest"
 opencode = "latest"
 
-###################
-#### Languages ####
-###################
+# ====================
+# Development
+# ====================
+"aqua:moonrepo/moon" = "latest"
+cmake = "latest"
+
+# Languages
 go = "1.24"
 python = "3.14"
 rust = "latest"
@@ -36,10 +40,11 @@ uv = "latest"
 "cargo:cargo-machete" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
+"cargo:trunk" = "latest"
 
-####################
-####### Cloud ######
-####################
+# ====================
+# Cloud
+# ====================
 "github:unikraft/kraftkit" = "0.12.5"
 gcloud = "latest"
 github-cli = "latest"
@@ -52,9 +57,9 @@ cfn-lint = "latest"
 cli53 = "latest"
 granted = "latest"
 
-###################
-####### IaC #######
-###################
+# ====================
+# IaC
+# ====================
 "npm:aws-cdk" = "2"
 "npm:cdktf-cli" = "latest"
 "npm:wrangler" = "latest"
@@ -62,21 +67,21 @@ opentofu = "1"
 pulumi = "3"
 terraform = "1"
 
-###################
-## Observability ##
-###################
+# ====================
+# Observability
+# ====================
 "github:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
 "github:hatoo/oha" = "latest"
 
-####################
-##### Security #####
-####################
+# ====================
+# Security
+# ====================
 age = "latest"
 sops = "latest"
 
-###################
-#### Utilities ####
-###################
+# ====================
+# Utilities
+# ====================
 bat = "latest"
 edit = "latest"
 eza = "latest"
