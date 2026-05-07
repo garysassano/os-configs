@@ -1,0 +1,110 @@
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+approvals_reviewer = "user"
+
+[notice]
+hide_full_access_warning = true
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[mcp_servers.awsdocs]
+command = "uvx"
+args = ["fastmcp", "run", "https://knowledge-mcp.global.api.aws"]
+
+[mcp_servers.awsdocs.tools.aws___search_documentation]
+approval_mode = "approve"
+
+[mcp_servers.awsdocs.tools.aws___read_documentation]
+approval_mode = "approve"
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+enabled = false
+
+[projects."/home/user/work-bl/Nebula"]
+trust_level = "trusted"
+
+[projects."/home/user/github/wsl2-config"]
+trust_level = "trusted"
+
+[projects."/home/user/work-pmt/qd_azure_templates"]
+trust_level = "trusted"
+
+[projects."/home/user/.config/opencode"]
+trust_level = "trusted"
+
+[projects."/home/user/github/opencode-kiro-auth"]
+trust_level = "trusted"
+
+[projects."/home/user/work-pmt/Ermas"]
+trust_level = "trusted"
+
+[projects."/home/user/github/convert"]
+trust_level = "trusted"
+
+[projects."/home/user/github/oh-my-posh"]
+trust_level = "trusted"
+
+[projects."/home/user/config/posh-themes"]
+trust_level = "trusted"
+
+[projects."/home/user/test"]
+trust_level = "trusted"
+
+[projects."/home/user/.config/oh-my-posh"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-lambda-dynamic-provisioned-concurrency"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-serverless-otlp-ch-forwarder-cwl"]
+trust_level = "trusted"
+
+[projects."/home/user/work-bl"]
+trust_level = "trusted"
+
+[projects."/home/user/github/gha-workflows-cdk"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cloudflare-browser-crawl"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-lambda-scraper"]
+trust_level = "trusted"
+
+[projects."/home/user/github/aws-cdk"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cargo-bucket-deployment"]
+trust_level = "trusted"
+
+[projects."/home/user/github/os-configs"]
+trust_level = "trusted"
+
+[projects."/home/user/github/aqua-registry"]
+trust_level = "trusted"
+
+[projects."/home/user/github"]
+trust_level = "trusted"
+
+[projects."/home/user/github/biome"]
+trust_level = "trusted"
+
+[projects."/home/user/github/opentelemetry-js-contrib"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cargo-binstall"]
+trust_level = "trusted"
+
+[projects."/home/user/github/rust-bucket-deployment"]
+trust_level = "trusted"
+
+[projects."/home/user/github/mise"]
+trust_level = "trusted"

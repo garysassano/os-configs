@@ -1,18 +1,16 @@
 [tools]
-# https://mise.jdx.dev/configuration/settings.html#cargo.binstall
-cargo-binstall = "latest"
-oh-my-posh = "latest"
-
 # ====================
 # AI CLIs
 # ====================
-"npm:@mariozechner/pi-coding-agent" = "latest"
+"aqua:kiro.dev/kiro-cli" = "2.2.0"
+# "npm:@mariozechner/pi-coding-agent" = "latest"
 codex = "latest"
 opencode = "latest"
 
 # ====================
 # Development
 # ====================
+# Build Systems
 "aqua:moonrepo/moon" = "latest"
 cmake = "latest"
 
@@ -27,14 +25,16 @@ bun = "latest"
 node = "lts"
 
 # JS Tools
+aube = "latest"
 biome = "2"
-pnpm = "10"
+"npm:pnpm" = "10"
 yarn = "1"
 
 # Python Tools
 uv = "latest"
 
 # Rust Tools
+cargo-binstall = "latest"
 "cargo:cargo-edit" = "latest"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
@@ -45,27 +45,26 @@ uv = "latest"
 # ====================
 # Cloud
 # ====================
-"github:unikraft/kraftkit" = "0.12.5"
-gcloud = "latest"
-github-cli = "latest"
-
 # AWS
 "github:runs-on/cli" = "latest"
+"npm:aws-cdk" = "2"
 aws-cli = "2"
 aws-sam = "latest"
 cfn-lint = "latest"
 cli53 = "latest"
 granted = "latest"
 
-# ====================
-# IaC
-# ====================
-"npm:aws-cdk" = "2"
+# Generic
 "npm:cdktf-cli" = "latest"
-"npm:wrangler" = "latest"
 opentofu = "1"
 pulumi = "3"
 terraform = "1"
+
+# Others
+"github:unikraft/kraftkit" = "0.12.11"
+"npm:wrangler" = "latest"
+gcloud = "latest"
+github-cli = "latest"
 
 # ====================
 # Observability
@@ -87,9 +86,12 @@ edit = "latest"
 eza = "latest"
 fd = "latest"
 fzf = "latest"
+git-filter-repo = "latest"
+git-lfs = "latest"
 jq = "latest"
+oh-my-posh = "latest"
 ripgrep = "latest"
 yq = "latest"
 
-[settings]
-idiomatic_version_file_enable_tools = []
+[settings.cargo]
+binstall_only = true
