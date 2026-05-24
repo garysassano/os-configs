@@ -2,7 +2,7 @@ model = "gpt-5.5"
 model_reasoning_effort = "high"
 plan_mode_reasoning_effort = "xhigh"
 personality = "pragmatic"
-approvals_reviewer = "auto_review"
+approvals_reviewer = "user"
 
 [features]
 fast_mode = false
@@ -16,7 +16,9 @@ hide_rate_limit_model_nudge = true
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
-# PLUGINS
+# ====================
+# Plugins
+# ====================
 [marketplaces.agent-toolkit-for-aws]
 last_updated = "2026-05-19T14:55:48Z"
 last_revision = "ba1cc8ca4f063d88ca40c6acf3f670e6321b7a7f"
@@ -26,7 +28,9 @@ source = "https://github.com/aws/agent-toolkit-for-aws.git"
 [plugins."aws-agents@agent-toolkit-for-aws"]
 enabled = true
 
-# MCP SERVERS
+# ====================
+# MCP Servers
+# ====================
 [mcp_servers.context7]
 command = "npx"
 args = ["-y", "@upstash/context7-mcp@latest"]
@@ -36,93 +40,20 @@ command = "npx"
 args = ["@playwright/mcp@latest"]
 enabled = false
 
-# PROJECTS
-[projects."/home/user/work-bl/Nebula"]
+# ====================
+# Projects
+# ====================
+[projects."/home/user/.agents"]
 trust_level = "trusted"
 
-[projects."/home/user/github/wsl2-config"]
+[projects."/home/user/.codex"]
 trust_level = "trusted"
 
-[projects."/home/user/work-pmt/qd_azure_templates"]
-trust_level = "trusted"
-
-[projects."/home/user/.config/opencode"]
-trust_level = "trusted"
-
-[projects."/home/user/github/opencode-kiro-auth"]
-trust_level = "trusted"
-
-[projects."/home/user/work-pmt/Ermas"]
-trust_level = "trusted"
-
-[projects."/home/user/github/convert"]
-trust_level = "trusted"
-
-[projects."/home/user/github/oh-my-posh"]
-trust_level = "trusted"
-
-[projects."/home/user/config/posh-themes"]
-trust_level = "trusted"
-
-[projects."/home/user/test"]
-trust_level = "trusted"
-
-[projects."/home/user/.config/oh-my-posh"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-lambda-dynamic-provisioned-concurrency"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-serverless-otlp-ch-forwarder-cwl"]
-trust_level = "trusted"
-
-[projects."/home/user/work-bl"]
-trust_level = "trusted"
-
-[projects."/home/user/github/gha-workflows-cdk"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cloudflare-browser-crawl"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-lambda-scraper"]
-trust_level = "trusted"
-
-[projects."/home/user/github/aws-cdk"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cargo-bucket-deployment"]
-trust_level = "trusted"
-
-[projects."/home/user/github/os-configs"]
-trust_level = "trusted"
-
-[projects."/home/user/github/aqua-registry"]
+[projects."/home/user/.config"]
 trust_level = "trusted"
 
 [projects."/home/user/github"]
 trust_level = "trusted"
 
-[projects."/home/user/github/biome"]
-trust_level = "trusted"
-
-[projects."/home/user/github/opentelemetry-js-contrib"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cargo-binstall"]
-trust_level = "trusted"
-
-[projects."/home/user/github/rust-bucket-deployment"]
-trust_level = "trusted"
-
-[projects."/home/user/github/mise"]
-trust_level = "trusted"
-
-[projects."/home/user/github/shin-bucket-deployment"]
-trust_level = "trusted"
-
-[projects."/home/user/github/aws-cdk-cli"]
-trust_level = "trusted"
-
-[projects."/home/user/notes"]
+[projects."/home/user/work-pmt"]
 trust_level = "trusted"
