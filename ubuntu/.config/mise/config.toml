@@ -42,6 +42,16 @@ cargo-binstall = "latest"
 "cargo:cargo-udeps" = "latest"
 "cargo:trunk" = "latest"
 
+# Shell Tools
+shellcheck = "latest"
+shfmt = "latest"
+
+# YAML/JSON Tools
+actionlint = "latest"
+jq = "latest"
+taplo = "latest"
+yq = "latest"
+
 # ====================
 # Cloud
 # ====================
@@ -50,7 +60,6 @@ cargo-binstall = "latest"
 "npm:aws-cdk" = "2"
 aws-cli = "2"
 aws-sam = "latest"
-cfn-lint = "latest"
 cli53 = "latest"
 granted = "latest"
 
@@ -76,6 +85,8 @@ github-cli = "latest"
 # Security
 # ====================
 age = "latest"
+cosign = "latest"
+slsa-verifier = "latest"
 sops = "latest"
 
 # ====================
@@ -88,10 +99,8 @@ fd = "latest"
 fzf = "latest"
 git-filter-repo = "latest"
 git-lfs = "latest"
-jq = "latest"
 oh-my-posh = "latest"
 ripgrep = "latest"
-yq = "latest"
 
 [settings.cargo]
 binstall_only = true
