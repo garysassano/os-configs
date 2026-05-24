@@ -3,9 +3,9 @@
 # AI CLIs
 # ====================
 "aqua:kiro.dev/kiro-cli" = "2.2.0"
-# "npm:@mariozechner/pi-coding-agent" = "latest"
 codex = "latest"
 opencode = "latest"
+pi = "latest"
 
 # ====================
 # Development
@@ -27,7 +27,7 @@ node = "lts"
 # JS Tools
 aube = "latest"
 biome = "2"
-"npm:pnpm" = "10"
+pnpm = "latest"
 yarn = "1"
 
 # Python Tools

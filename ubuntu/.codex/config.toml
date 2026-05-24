@@ -1,24 +1,31 @@
 model = "gpt-5.5"
 model_reasoning_effort = "high"
+plan_mode_reasoning_effort = "xhigh"
 personality = "pragmatic"
-approvals_reviewer = "user"
+approvals_reviewer = "auto_review"
+
+[features]
+fast_mode = false
+goals = true
 
 [notice]
 hide_full_access_warning = true
+hide_rate_limit_model_nudge = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 
-[mcp_servers.awsdocs]
-command = "uvx"
-args = ["fastmcp", "run", "https://knowledge-mcp.global.api.aws"]
+# PLUGINS
+[marketplaces.agent-toolkit-for-aws]
+last_updated = "2026-05-19T14:55:48Z"
+last_revision = "ba1cc8ca4f063d88ca40c6acf3f670e6321b7a7f"
+source_type = "git"
+source = "https://github.com/aws/agent-toolkit-for-aws.git"
 
-[mcp_servers.awsdocs.tools.aws___search_documentation]
-approval_mode = "approve"
+[plugins."aws-agents@agent-toolkit-for-aws"]
+enabled = true
 
-[mcp_servers.awsdocs.tools.aws___read_documentation]
-approval_mode = "approve"
-
+# MCP SERVERS
 [mcp_servers.context7]
 command = "npx"
 args = ["-y", "@upstash/context7-mcp@latest"]
@@ -28,6 +35,7 @@ command = "npx"
 args = ["@playwright/mcp@latest"]
 enabled = false
 
+# PROJECTS
 [projects."/home/user/work-bl/Nebula"]
 trust_level = "trusted"
 
@@ -107,4 +115,13 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/home/user/github/mise"]
+trust_level = "trusted"
+
+[projects."/home/user/github/shin-bucket-deployment"]
+trust_level = "trusted"
+
+[projects."/home/user/github/aws-cdk-cli"]
+trust_level = "trusted"
+
+[projects."/home/user/notes"]
 trust_level = "trusted"
