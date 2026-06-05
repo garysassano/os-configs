@@ -2,7 +2,7 @@
 # ====================
 # AI CLIs
 # ====================
-"aqua:kiro.dev/kiro-cli" = "2.2.0"
+"aqua:kiro.dev/kiro-cli" = "2.5.0"
 codex = "latest"
 opencode = "latest"
 pi = "latest"
@@ -27,7 +27,7 @@ node = "lts"
 # JS Tools
 aube = "latest"
 biome = "2"
-pnpm = "latest"
+pnpm = "11"
 yarn = "1"
 
 # Python Tools
@@ -35,6 +35,8 @@ uv = "latest"
 
 # Rust Tools
 cargo-binstall = "latest"
+"cargo:cargo-audit" = "latest"
+"cargo:cargo-deny" = "latest"
 "cargo:cargo-edit" = "latest"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
@@ -103,4 +105,10 @@ oh-my-posh = "latest"
 ripgrep = "latest"
 
 [settings.cargo]
+# Only use cargo-binstall for installation, fail if not available.
 binstall_only = true
+
+[settings.github]
+# Reuse the existing git credential helper (GCM) so mise's GitHub API calls
+# are authenticated (5,000 req/hr) instead of throttled (60 req/hr).
+use_git_credentials = true
