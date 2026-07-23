@@ -1,0 +1,4 @@
+interface:
+  display_name: "Projen CDK TS Refactor"
+  short_description: "Convert Projen CDK TypeScript apps to the local pnpm scaffold."
+  default_prompt: "Convert this Projen-managed AWS CDK TypeScript app to the local pnpm-based CDK scaffold."

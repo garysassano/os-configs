@@ -1,0 +1,4 @@
+interface:
+  display_name: "OS Config Sync"
+  short_description: "Sync global Ubuntu agent configuration"
+  default_prompt: "Use $os-config-sync to refresh the Ubuntu configuration snapshot from this machine."

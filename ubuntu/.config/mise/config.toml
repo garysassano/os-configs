@@ -2,7 +2,7 @@
 # ====================
 # AI CLIs
 # ====================
-"aqua:kiro.dev/kiro-cli" = "2.5.0"
+"aqua:kiro.dev/kiro-cli" = "2.12.2"
 codex = "latest"
 opencode = "latest"
 pi = "latest"
@@ -13,6 +13,7 @@ pi = "latest"
 # Build Systems
 "aqua:moonrepo/moon" = "latest"
 cmake = "latest"
+just = "1.56.0"
 
 # Languages
 dotnet = "10"
@@ -38,9 +39,10 @@ uv = "latest"
 cargo-binstall = "latest"
 "cargo:cargo-audit" = "latest"
 "cargo:cargo-deny" = "latest"
-"cargo:cargo-edit" = "latest"
+"cargo:cargo-edit" = "0.13.11"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
+"cargo:cargo-nextest" = "0.9.140"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
 "cargo:trunk" = "latest"
@@ -59,7 +61,7 @@ yq = "latest"
 # Cloud
 # ====================
 # AWS
-"github:runs-on/cli" = "latest"
+#"github:runs-on/cli" = "latest"
 "npm:aws-cdk" = "2"
 aws-cli = "2"
 aws-sam = "latest"
@@ -74,15 +76,9 @@ terraform = "1"
 
 # Others
 "github:unikraft/kraftkit" = "0.12.11"
-"npm:wrangler" = "latest"
 gcloud = "latest"
 github-cli = "latest"
-
-# ====================
-# Observability
-# ====================
-"github:dev7a/serverless-otlp-forwarder" = { version = "cli/livetrace-v0.2.1" }
-"github:hatoo/oha" = "latest"
+"npm:wrangler" = "latest"
 
 # ====================
 # Security
@@ -103,8 +99,18 @@ fzf = "latest"
 git-filter-repo = "latest"
 git-lfs = "latest"
 oh-my-posh = "latest"
+oha = "latest"
 powershell = "latest"
 ripgrep = "latest"
+sqlite = "3.53.3"
+bazel = "latest"
+dotslash = "0.5.9"
+
+# ====================
+# Settings
+# ====================
+[settings]
+minimum_release_age_excludes = ["aqua:openai/codex", "opencode"]
 
 [settings.cargo]
 # Only use cargo-binstall for installation, fail if not available.

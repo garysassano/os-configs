@@ -1,12 +1,16 @@
-model = "gpt-5.5"
-model_reasoning_effort = "high"
-plan_mode_reasoning_effort = "xhigh"
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "ultra"
 personality = "pragmatic"
 approvals_reviewer = "user"
-sandbox_mode = "danger-full-access"
+#sandbox_mode = "danger-full-access"
+#model_auto_compact_token_limit = 272000
+model = "gpt-5.6-sol"
+model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
+# Auto-injected by opencodex
+openai_base_url = "http://127.0.0.1:46221/v1"
 
 [features]
-fast_mode = false
+fast_mode = true
 goals = true
 memories = true
 
@@ -19,14 +23,12 @@ status_line = ["model-with-reasoning", "current-dir", "permissions", "context-us
 status_line_use_colors = true
 
 [tui.model_availability_nux]
-"gpt-5.5" = 1
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 4
 
-# ====================
-# Plugins
-# ====================
 [marketplaces.agent-toolkit-for-aws]
-last_updated = "2026-05-19T14:55:48Z"
-last_revision = "ba1cc8ca4f063d88ca40c6acf3f670e6321b7a7f"
+last_updated = "2026-07-22T00:43:17Z"
+last_revision = "fae975d565b6c1752e3f4795c499fb3951039777"
 source_type = "git"
 source = "https://github.com/aws/agent-toolkit-for-aws.git"
 
@@ -64,4 +66,76 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/home/user/github/opencode-kiro-auth"]
+trust_level = "trusted"
+
+[projects."/home/user/work-pmt/Ermas"]
+trust_level = "trusted"
+
+[projects."/home/user/github/lambda-cmr"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-dns-validated-certificate"]
+trust_level = "trusted"
+
+[projects."/home/user/github/shin-bucket-deployment"]
+trust_level = "trusted"
+
+[projects."/home/user/github/aws-cdk"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cargo-ci-cache-archive"]
+trust_level = "trusted"
+
+[projects."/home/user/github/rust-cache"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-ecs-managed-instance"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-ecs-managed-instances"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-lmi-function"]
+trust_level = "trusted"
+
+[projects."/home/user/github/knowledge-gha-workflows"]
+trust_level = "trusted"
+
+[projects."/home/user/github/knowledge-iac-gha-workflows"]
+trust_level = "trusted"
+
+[projects."/home/user/temp"]
+trust_level = "trusted"
+
+[projects."/home/user/github/temp"]
+trust_level = "trusted"
+
+[projects."/home/user/github/career-cv"]
+trust_level = "trusted"
+
+[projects."/home/user/github/cdk-aws-eci-services"]
+trust_level = "trusted"
+
+[projects."/home/user/github/opentelemetry-js-contrib"]
+trust_level = "trusted"
+
+[projects."/home/user/git/shin-bucket-deployment"]
+trust_level = "trusted"
+
+[projects."/home/user/git/shin-bucket-deployment-review-plan"]
+trust_level = "trusted"
+
+[projects."/home/user/git/cdk-aws-iam-gha-oidc"]
+trust_level = "trusted"
+
+[projects."/home/user/git/archive-undiscord"]
+trust_level = "trusted"
+
+[projects."/home/user/git-mushi/opencodex"]
+trust_level = "trusted"
+
+[projects."/home/user/git"]
+trust_level = "trusted"
+
+[projects."/home/user/git/opencode"]
 trust_level = "trusted"

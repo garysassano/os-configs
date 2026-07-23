@@ -12,10 +12,8 @@
 	username = garysassano
 [credential "https://dev.azure.com"]
 	useHttpPath = true
-[includeIf "gitdir:~/work-bl/"]
-	path = ~/work-bl/.gitconfig
-[includeIf "gitdir:~/work-idv/"]
-	path = ~/work-idv/.gitconfig
+[includeIf "gitdir:~/git-mushi/"]
+	path = ~/git-mushi/.gitconfig
 [alias]
 	# Branching
 	bdate = branch --sort=-committerdate
@@ -47,6 +45,3 @@
 	wta = "!f() { git worktree add -b \"$1\" \"../$1\"; }; f"
 	wtl = "!f() { git worktree list; }; f"
 	wtr = "!f() { git worktree remove \"../$1\"; }; f"
-
-	# Push
-	pf = push -f
