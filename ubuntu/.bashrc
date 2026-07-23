@@ -119,8 +119,40 @@ fi
 eval "$(mise activate bash)"
 export PATH="$HOME/.cargo/bin:$PATH"
 
+# Prefer local wrappers, including the Kiro-enabled OpenCode build, over mise releases.
+export PATH="$HOME/.local/bin:$PATH"
+
 ### OH MY POSH
-eval "$(oh-my-posh init bash --config ~/.config/oh-my-posh/themes/multiverse-neon.omp.json)"
+eval "$(oh-my-posh init bash --strict --config ~/.config/oh-my-posh/themes/multiverse-neon.omp.json)"
+
+_mise_passthrough() {
+    local subcommand="${1:-}"
+    if [ "$#" = 0 ]; then
+        command "$__MISE_EXE"
+        return
+    fi
+    shift
+
+    case "$subcommand" in
+    deactivate | shell | sh)
+        if [[ ! " $* " =~ " --help " ]] && [[ ! " $* " =~ " -h " ]]; then
+            eval "$(command "$__MISE_EXE" "$subcommand" "$@")"
+            return $?
+        fi
+        ;;
+    esac
+    command "$__MISE_EXE" "$subcommand" "$@"
+}
+
+mise() {
+    if [[ "$#" = 1 && "$1" = upgrade ]]; then
+        command "$__MISE_EXE" upgrade \
+            --exclude "aqua:kiro.dev/kiro-cli"
+        return $?
+    fi
+
+    _mise_passthrough "$@"
+}
 
 # BUN
 export BUN_INSTALL="$HOME/.bun"

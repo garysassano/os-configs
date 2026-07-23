@@ -1,6 +1,6 @@
 ---
 name: os-config-sync
-description: Refresh the Ubuntu snapshot in the os-configs repository from the current machine's global agent instructions, user-authored agent and Codex skills, Codex configuration, mise configuration, and durable command wrappers. Use when asked to update, synchronize, capture, or publish local Ubuntu configuration changes in os-configs.
+description: Refresh the Ubuntu snapshot in the os-configs repository from the current machine's shell startup files, global agent instructions, user-authored agent and Codex skills, Codex configuration, mise configuration, and durable command wrappers. Use when asked to update, synchronize, capture, or publish local Ubuntu configuration changes in os-configs.
 ---
 
 # OS Config Sync
@@ -14,6 +14,7 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
 3. Run `scripts/sync-from-home.sh`. The script copies:
    - `~/.agents/AGENTS.md`
    - the `~/.codex/AGENTS.md` compatibility symlink to the canonical global instructions
+   - `~/.bashrc`, `~/.bash_aliases`, and `~/.profile`
    - all visible directories under `~/.agents/skills/`
    - all visible user-authored directories under `~/.codex/skills/`; the hidden `.system/` directory and plugin caches are excluded
    - `~/.codex/config.toml`
@@ -33,6 +34,7 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.
 - Preserve mise as the owner of tool versions. Wrappers should resolve mise-managed executables dynamically rather than pinning mise installation paths or versions.
+- Keep shell initialization consistent with the captured tool configuration: activate mise before invoking mise-managed tools and put `~/.local/bin` before mise when local wrappers must take precedence.
 - Stop before staging if the privacy scan reports a possible secret; inspect and sanitize the source instead of weakening the scan.
 
 ## Script

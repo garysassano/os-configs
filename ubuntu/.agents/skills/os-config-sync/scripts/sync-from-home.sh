@@ -9,10 +9,13 @@ ubuntu_dir="${repo_root}/ubuntu"
 required_sources=(
 	"${HOME}/.agents/AGENTS.md"
 	"${HOME}/.agents/skills"
+	"${HOME}/.bash_aliases"
+	"${HOME}/.bashrc"
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.gitconfig"
+	"${HOME}/.profile"
 	"${HOME}/git-mushi/.gitconfig"
 )
 
@@ -26,10 +29,13 @@ done
 scan_sources=(
 	"${HOME}/.agents/AGENTS.md"
 	"${HOME}/.agents/skills"
+	"${HOME}/.bash_aliases"
+	"${HOME}/.bashrc"
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.gitconfig"
+	"${HOME}/.profile"
 	"${HOME}/git-mushi/.gitconfig"
 )
 
@@ -49,9 +55,12 @@ mkdir -p \
 
 cp -a "${HOME}/.agents/AGENTS.md" "${ubuntu_dir}/.agents/AGENTS.md"
 ln -sfn ../.agents/AGENTS.md "${ubuntu_dir}/.codex/AGENTS.md"
+cp -a "${HOME}/.bash_aliases" "${ubuntu_dir}/.bash_aliases"
+cp -a "${HOME}/.bashrc" "${ubuntu_dir}/.bashrc"
 cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
 cp -a "${HOME}/.config/mise/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
+cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
 cp -a "${HOME}/git-mushi/.gitconfig" "${ubuntu_dir}/git-mushi/.gitconfig"
 
 for source in "${HOME}/.agents/skills/"*; do
