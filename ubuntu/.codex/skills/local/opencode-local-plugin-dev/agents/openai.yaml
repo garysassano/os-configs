@@ -1,7 +1,0 @@
-interface:
-  display_name: "OpenCode Local Plugin Dev"
-  short_description: "Hot-swap OpenCode plugin builds locally"
-  default_prompt: "Use $opencode-local-plugin-dev to run the local-build hot-swap workflow for an OpenCode plugin."
-
-policy:
-  allow_implicit_invocation: true
