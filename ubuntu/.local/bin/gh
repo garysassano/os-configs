@@ -1,32 +1,193 @@
 #!/usr/bin/env bash
 
+# gh wrapper: the GitHub account is a function of the working directory, never of
+# ambient environment state or of whoever is driving the terminal.
+#
+# ~/.gitconfig maps directories to accounts through its includeIf rules, and Git
+# Credential Manager holds one token per account. This resolves the account for the
+# current repository, fetches that account's token, and hands gh only that token.
+#
+# Deliberate behaviours:
+#   - Outside a Git worktree there is no repository to resolve an account from, so
+#     this refuses to run rather than falling back to the primary account.
+#   - Ambient GH_TOKEN/GITHUB_TOKEN are discarded, not honoured. A contaminated
+#     environment must not be able to act as a different account.
+#   - Repository-local configuration is excluded from every decision. The account
+#     is read with `--global --includes`, the credential lookup runs outside any
+#     repository with only globally configured helpers, and the gh binary is
+#     resolved with `mise -C "$HOME"`.
+#   - `gh auth` is allowlisted, not blacklisted: only `status` and help forms pass.
+#     gh holds no account of its own here; credentials belong to Git Credential
+#     Manager.
+#
+# Two invariants live outside this script, and it cannot enforce either:
+#   - ~/.config/gh/hosts.yml stays empty ({}). An account stored there becomes a
+#     global default that any gh reaching past this wrapper uses in every tree.
+#   - Agent environments carry no ambient GH_TOKEN/GITHUB_TOKEN. This script
+#     discards them; a gh invoked directly would not.
+#
+# This is a guardrail against accidental identity leakage, not a security boundary.
+# `$(mise which gh)` bypasses it entirely; closing that would need separate OS users
+# or isolated credential stores.
+
 set -euo pipefail
 
-real_gh="$(mise which gh)"
+readonly gh_host="github.com"
 
-# An explicitly supplied token always wins.
-if [[ -n "${GH_TOKEN:-}" || -n "${GITHUB_TOKEN:-}" ]]; then
-	exec "$real_gh" "$@"
-fi
+die() {
+	printf 'gh wrapper: %s\n' "$1" >&2
+	exit 1
+}
 
-username="$(git config --get credential.https://github.com.username 2>/dev/null || true)"
+# Ambient Git environment can redirect either half of the decision. GIT_DIR and its
+# relatives make any directory resolve as some other repository, including one in
+# the other account's tree, and they make a non-repository such as /tmp look like a
+# worktree. GIT_CONFIG_GLOBAL replaces ~/.gitconfig outright, and the
+# GIT_CONFIG_COUNT/KEY/VALUE family injects settings. Clear all of it before the
+# first git call. Because these are unset rather than merely overridden for this
+# script's own lookups, the real gh cannot inherit them either, so it acts on the
+# same repository the account was selected from.
+unset GIT_DIR GIT_WORK_TREE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_INDEX_FILE \
+	GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_NAMESPACE GIT_CEILING_DIRECTORIES \
+	GIT_DISCOVERY_ACROSS_FILESYSTEM GIT_CONFIG
+for git_config_variable in ${!GIT_CONFIG_@}; do
+	unset "$git_config_variable"
+done
+unset git_config_variable
 
-if [[ -n "$username" ]]; then
-	token=""
-	while IFS='=' read -r key value; do
-		if [[ "$key" == "password" ]]; then
-			token="$value"
-			break
+# The credential must come from a configured helper, never from a prompt: GIT_ASKPASS
+# supplies a password for whatever username is asked about, which would satisfy the
+# username check below with an attacker-chosen token. With prompting off, a missing
+# credential fails loudly instead of hanging on a prompt.
+unset GIT_ASKPASS SSH_ASKPASS
+export GIT_TERMINAL_PROMPT=0
+
+# gh's own global flags (--help, --version) take no value, so the first non-flag
+# argument is reliably the top-level command.
+gh_command=""
+for argument in "$@"; do
+	case "$argument" in
+	-*) continue ;;
+	esac
+	gh_command="$argument"
+	break
+done
+
+# Subcommand flags DO take values, so the auth subcommand cannot be found by
+# skipping flags: in `gh auth --hostname github.com login`, `github.com` would look
+# like the subcommand and `login` would slip past a blacklist. Allowlist the shape
+# instead — the token straight after `auth` must be one that is safe to run.
+if [[ "$gh_command" == "auth" ]]; then
+	auth_args=()
+	seen_auth="no"
+	for argument in "$@"; do
+		if [[ "$seen_auth" == "no" ]]; then
+			if [[ "$argument" == "auth" ]]; then
+				seen_auth="yes"
+			fi
+			continue
 		fi
-	done < <(
-		printf 'protocol=https\nhost=github.com\nusername=%s\n\n' "$username" |
-			git credential fill 2>/dev/null
-	)
+		auth_args+=("$argument")
+	done
 
-	if [[ -n "$token" ]]; then
-		export GH_TOKEN="$token"
-		unset token
+	auth_first=""
+	if [[ ${#auth_args[@]} -gt 0 ]]; then
+		auth_first="${auth_args[0]}"
 	fi
+
+	case "$auth_first" in
+	status | help | --help) ;;
+	*)
+		die "only \`gh auth status\`, \`gh auth help\`, and \`gh auth --help\` are permitted; \`gh auth ${auth_first:-<no subcommand>}\` is not. Authentication is not gh's to change here: the account comes from the current directory and the credential from Git Credential Manager."
+		;;
+	esac
+
+	# --show-token prints a live credential, and terminal transcripts are persisted.
+	# It has more spellings than the two obvious ones: an attached value
+	# (--show-token=true, -t=true) and a combined short cluster (-at) all reach the
+	# same flag. Compare the flag part only, so a value that happens to contain "t"
+	# (-h=test.example.com) is not mistaken for one, and reject any short cluster
+	# carrying -t. The auth status shorthands are -a, -h, and -t, so no legitimate
+	# cluster contains a t.
+	for argument in ${auth_args[@]+"${auth_args[@]}"}; do
+		case "${argument%%=*}" in
+		--show-token)
+			die "\`gh auth status ${argument}\` is blocked: it prints a live credential into a transcript that is kept. Omit the flag to see the account without its token."
+			;;
+		--*) ;;
+		-*t*)
+			die "\`gh auth status ${argument}\` is blocked: it carries -t/--show-token, which prints a live credential into a transcript that is kept. Omit the flag to see the account without its token."
+			;;
+		esac
+	done
 fi
+
+if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null || true)" != "true" ]]; then
+	die "refusing to run outside a Git worktree. The account is selected from the current repository, and here there is nothing to select from. Run gh from inside the repository it should act on."
+fi
+
+# --global --includes evaluates ~/.gitconfig's includeIf rules while excluding
+# repository-local config, which must not be able to choose the account.
+expected_username="$(git config --global --includes --get "credential.https://${gh_host}.username" 2>/dev/null || true)"
+if [[ -z "$expected_username" ]]; then
+	die "no account is configured for this repository: \`credential.https://${gh_host}.username\` is unset in global Git configuration and in its includeIf rules."
+fi
+
+# A repository-local credential.helper, plain or URL-scoped, must not be able to
+# answer for this account. Run the lookup from / so no repository configuration is
+# in scope, and rebuild the helper list from global configuration alone — the empty
+# value resets any list inherited from elsewhere before the global helpers are
+# re-added.
+credential_git=(git -C / -c "credential.helper=")
+credential_helper=""
+while IFS= read -r helper; do
+	if [[ -z "$helper" ]]; then
+		continue
+	fi
+	credential_git+=(-c "credential.helper=${helper}")
+	if [[ -z "$credential_helper" ]]; then
+		credential_helper="$helper"
+	fi
+done < <(git config --global --includes --get-all credential.helper 2>/dev/null || true)
+
+if [[ -n "$credential_helper" ]]; then
+	credential_maintenance="${credential_helper} github login"
+else
+	credential_maintenance="set a global credential.helper first"
+fi
+
+credential_username=""
+credential_token=""
+while IFS='=' read -r field value; do
+	case "$field" in
+	username) credential_username="$value" ;;
+	password) credential_token="$value" ;;
+	esac
+done < <(
+	printf 'protocol=https\nhost=%s\nusername=%s\n\n' "$gh_host" "$expected_username" |
+		"${credential_git[@]}" credential fill 2>/dev/null
+)
+
+if [[ -z "$credential_token" ]]; then
+	die "Git Credential Manager returned no credential for ${expected_username}. Sign that account in with: ${credential_maintenance}"
+fi
+
+if [[ "$credential_username" != "$expected_username" ]]; then
+	die "Git Credential Manager returned a credential for ${credential_username:-an unnamed account} when ${expected_username} was requested. Refusing to act as the wrong account."
+fi
+
+# -C "$HOME" so a repository-local mise configuration cannot redirect gh to a
+# different binary.
+real_gh="$(mise -C "$HOME" which gh 2>/dev/null)" || die "cannot resolve the mise-managed gh binary: \`mise -C \"\$HOME\" which gh\` failed."
+if [[ ! -x "$real_gh" ]]; then
+	die "the mise-managed gh binary is not executable: ${real_gh}"
+fi
+
+if [[ -n "${GH_TOKEN:-}" || -n "${GITHUB_TOKEN:-}" ]]; then
+	printf 'gh wrapper: discarding ambient GH_TOKEN/GITHUB_TOKEN and using the %s credential for this directory.\n' "$expected_username" >&2
+fi
+
+unset GITHUB_TOKEN
+export GH_TOKEN="$credential_token"
 
 exec "$real_gh" "$@"

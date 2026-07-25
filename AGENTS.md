@@ -12,6 +12,17 @@ review the diff.
 Two paths are the exception and are edited here, because they are the source:
 `ubuntu/.agents/skills/os-config-sync/` and `README.md`.
 
+`ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh` lives inside that
+exception. It has no counterpart under `~`, and it survives syncs because the skill
+loop only copies directories that exist in `~/.agents/skills/` and never deletes
+repository-only ones. The sync lints it and does not run it: it needs network
+access, live Git Credential Manager credentials, and it creates throwaway
+repositories. Run it by hand after changing `ubuntu/.local/bin/gh`:
+
+```
+ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh <primary-repo> <secondary-repo>
+```
+
 ## Do not
 
 - Delete `ubuntu/.profile` or strip it to the Ubuntu default. It looks stock, but
@@ -26,6 +37,12 @@ Two paths are the exception and are edited here, because they are the source:
   file instead.
 - Add a tool by installing it imperatively. Declare it in
   `ubuntu/.config/mise/config.toml`.
+- Run `gh auth login`, or let `~/.config/gh/hosts.yml` gain an account. It stays
+  `{}` on purpose: a stored account is a global default that any `gh` reaching past
+  `ubuntu/.local/bin/gh` would use in every tree, which is exactly the per-directory
+  selection that wrapper exists to guarantee. Credentials belong to Git Credential
+  Manager. The wrapper blocks the command, but nothing stops a human from running
+  the real binary.
 - Sync anything from a client's `~/git-<client>/` tree. Client configuration is
   not preserved here at all, and those trees may hold confidential material. The
   one tracked exception, `~/git-mushi/.gitconfig`, is a personal secondary

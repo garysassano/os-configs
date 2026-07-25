@@ -29,7 +29,12 @@ done
 # shellcheck source-path=SCRIPTDIR source=lib/scan-secrets.sh
 . "${script_dir}/lib/scan-secrets.sh"
 
-scan_for_secrets "${required_sources[@]}" || exit 1
+# The gh wrapper and its test handle live credentials, so both are scanned even
+# though neither is a required source: the wrapper is copied by the allowlist below,
+# and the test is repository-owned with no counterpart under ~.
+scan_for_secrets "${required_sources[@]}" \
+	"${HOME}/.local/bin/gh" \
+	"${script_dir}/test-gh-wrapper.sh" || exit 1
 
 mkdir -p \
 	"${ubuntu_dir}/.agents/skills" \
@@ -78,10 +83,14 @@ done
 
 taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 # -x so the sourced lib/scan-secrets.sh is followed rather than reported as SC1091.
+# test-gh-wrapper.sh is linted but never run here: it needs network access, live
+# credentials, and it creates throwaway repositories. Run it by hand.
 shellcheck -x "${ubuntu_dir}/.local/bin/gh" "${ubuntu_dir}/.agents/link.sh" \
-	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" "$0"
+	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" \
+	"${script_dir}/test-gh-wrapper.sh" "$0"
 shfmt -d "${ubuntu_dir}/.local/bin/gh" "${ubuntu_dir}/.agents/link.sh" \
-	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" "$0"
+	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" \
+	"${script_dir}/test-gh-wrapper.sh" "$0"
 git -C "$repo_root" diff --check
 
 printf 'Ubuntu configuration snapshot refreshed. Review the complete git diff before staging.\n'
