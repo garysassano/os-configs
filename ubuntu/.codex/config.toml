@@ -5,9 +5,6 @@ approvals_reviewer = "user"
 #sandbox_mode = "danger-full-access"
 #model_auto_compact_token_limit = 272000
 model = "gpt-5.6-sol"
-model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
-# Auto-injected by opencodex
-openai_base_url = "http://127.0.0.1:46221/v1"
 
 [features]
 fast_mode = true
@@ -27,8 +24,8 @@ status_line_use_colors = true
 "gpt-5.6-sol" = 4
 
 [marketplaces.agent-toolkit-for-aws]
-last_updated = "2026-07-22T00:43:17Z"
-last_revision = "fae975d565b6c1752e3f4795c499fb3951039777"
+last_updated = "2026-07-24T23:37:18Z"
+last_revision = "76180031c0f0b4f6fd2add79e0a8690bac74b8fe"
 source_type = "git"
 source = "https://github.com/aws/agent-toolkit-for-aws.git"
 
@@ -138,4 +135,10 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/home/user/git/opencode"]
+trust_level = "trusted"
+
+[projects."/home/user/git/cdk-aws-lmi-function"]
+trust_level = "trusted"
+
+[projects."/home/user/git/codex-kiro"]
 trust_level = "trusted"

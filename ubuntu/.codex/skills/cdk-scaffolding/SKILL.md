@@ -61,7 +61,7 @@ The scaffold is intentionally small: CDK app code lives in `src/main.ts`, stacks
 - Release-age exceptions: do not commit `minimumReleaseAgeExclude` entries unless the user explicitly requests a temporary exception.
 - Dependency lifecycle scripts: only add packages to `allowBuilds` after reviewing that their install scripts are expected. Do not use broad build-script bypasses.
 - License: MIT, with a generated `LICENSE` file using `Gary Sassano` as the default copyright owner.
-- README: match the neighboring local `cdk-aws-*` app pattern: title, one-sentence purpose, prerequisites including mise, installation, deployment, and cleanup.
+- README: match the neighboring local `cdk-aws-*` app pattern: title, one-sentence purpose, a lowercase `mise` prerequisite linking the words `Install mise` directly to its installation guide and stating that it manages the required toolchain, installation with `mise install` before `pnpm install`, deployment, and cleanup.
 - GitHub Actions: never generate workflow files.
 
 ## Script

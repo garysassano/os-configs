@@ -21,6 +21,6 @@ Keep `tsconfig.json` compact: use `ES2025`, NodeNext module semantics, `strict: 
 
 Keep `minimumReleaseAgeStrict: true` in `pnpm-workspace.yaml` so pnpm fails or prompts instead of adding temporary `minimumReleaseAgeExclude` entries. Do not commit release-age exclusions unless the user explicitly requests one.
 
-Generated `package.json` files should use `"license": "MIT"` without `packageManager`, `engines`, or `devEngines`. Generated `mise.toml` files should declare Node 24 and pnpm 11 under `[tools]`. Generated `LICENSE` files should contain the MIT license text. Generated READMEs should follow the concise local AWS CDK app pattern: title, one-sentence purpose, prerequisites, installation, deployment, and cleanup.
+Generated `package.json` files should use `"license": "MIT"` without `packageManager`, `engines`, or `devEngines`. Generated `mise.toml` files should declare Node 24 and pnpm 11 under `[tools]`. Generated `LICENSE` files should contain the MIT license text. Generated READMEs should follow the concise local AWS CDK app pattern: title, one-sentence purpose, `AWS` and lowercase `mise` prerequisites, an `Install mise` link to the installation guide, installation with `mise install` before `pnpm install`, deployment, and cleanup.
 
 Do not add Projen files, Bun config, GitHub Actions workflows, npm/yarn lockfiles, or package-manager lockfiles other than `pnpm-lock.yaml`.
