@@ -1,0 +1,140 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b4 ",
+          "background": "#29315a",
+          "foreground": "#e64747",
+          "template": " {{ .UserName }} "
+        },
+        {
+          "type": "path",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b4",
+          "background": "#29315a",
+          "foreground": "#43ccea",
+          "options": {
+            "style": "agnoster_short",
+            "max_depth": 3,
+            "home_icon": "\ue617 ",
+            "folder_icon": "\u2026",
+            "folder_separator_icon": " \ue0b1 "
+          },
+          "template": " {{ .Path }} "
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "leading_diamond": " \ue0b6",
+          "trailing_diamond": "\ue0b4",
+          "background": "#29315a",
+          "foreground": "#3ec669",
+          "foreground_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ff9248{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ff4500{{ end }}",
+            "{{ if gt .Ahead 0 }}#b388ff{{ end }}",
+            "{{ if gt .Behind 0 }}#b388ff{{ end }}"
+          ],
+          "options": {
+            "fetch_upstream_icon": true,
+            "fetch_status": true
+          },
+          "template": " {{ .UpstreamIcon }}  {{ .HEAD }}{{ if .Working.Changed }} \ue0b1 \uf044 {{ .Working.String }}</>{{ end }}{{ if .Staging.Changed }} \ue0b1 \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ue0b1 \ueb4b {{ .StashCount }}</>{{ end }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "bun",
+          "style": "plain",
+          "foreground": "#e5dbcc",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue76f {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "crystal",
+          "style": "plain",
+          "foreground": "#e5e5e5",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue7ac {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "node",
+          "style": "plain",
+          "foreground": "#88e570",
+          "options": {
+            "display_mode": "files",
+            "fetch_package_manager": true,
+            "fetch_version": true,
+            "bun_icon": "<#e5dbcc>\ue76f bun</>",
+            "npm_icon": "<#e5272d>\ue616 npm</> ",
+            "pnpm_icon": "<#e5a100>\ue865 pnpm</> ",
+            "yarn_icon": "<#37aee5>\ue6a7 yarn</> "
+          },
+          "template": "{{ if ne .PackageManagerName \"bun\" }}{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }}{{ end }}\ue718 {{ .Full }}{{ end }}"
+        },
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#e5c949",
+          "options": {
+            "display_mode": "context",
+            "fetch_virtual_env": false
+          },
+          "template": " \ue73c {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "ruby",
+          "style": "plain",
+          "foreground": "#e5252b",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        },
+        {
+          "type": "rust",
+          "style": "plain",
+          "foreground": "#e58a55",
+          "options": {
+            "display_mode": "files",
+            "fetch_version": true
+          },
+          "template": " \ue7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "template": "\u276f "
+        }
+      ]
+    }
+  ],
+  "version": 4
+}

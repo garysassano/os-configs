@@ -1,0 +1,43 @@
+{
+  "version": 3,
+  "skills": {
+    "aws-cdk": {
+      "source": "aws/agent-toolkit-for-aws",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/aws/agent-toolkit-for-aws.git",
+      "skillPath": "plugins/aws-core/skills/aws-cdk/SKILL.md",
+      "skillFolderHash": "1c69221e639f1e6efe81befa51d3b5cdb064f737",
+      "installedAt": "2026-05-20T04:54:32.541Z",
+      "updatedAt": "2026-05-20T04:54:32.541Z"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
+      "installedAt": "2026-05-20T04:54:37.454Z",
+      "updatedAt": "2026-05-20T04:54:37.454Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "dexto",
+    "firebender",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
+    "opencode",
+    "warp",
+    "kiro-cli",
+    "pi"
+  ]
+}

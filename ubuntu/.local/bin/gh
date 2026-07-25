@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+real_gh="$(mise which gh)"
+
+# An explicitly supplied token always wins.
+if [[ -n "${GH_TOKEN:-}" || -n "${GITHUB_TOKEN:-}" ]]; then
+	exec "$real_gh" "$@"
+fi
+
+username="$(git config --get credential.https://github.com.username 2>/dev/null || true)"
+
+if [[ -n "$username" ]]; then
+	token=""
+	while IFS='=' read -r key value; do
+		if [[ "$key" == "password" ]]; then
+			token="$value"
+			break
+		fi
+	done < <(
+		printf 'protocol=https\nhost=github.com\nusername=%s\n\n' "$username" |
+			git credential fill 2>/dev/null
+	)
+
+	if [[ -n "$token" ]]; then
+		export GH_TOKEN="$token"
+		unset token
+	fi
+fi
+
+exec "$real_gh" "$@"

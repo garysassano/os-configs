@@ -1,0 +1,11 @@
+[registry]
+global-credential-providers = ["cargo:token", "cargo:libsecret", "cargo:macos-keychain", "cargo:wincred"]
+
+[registries.crates-io]
+protocol = "sparse"
+
+[registries.acme]
+index = "ssh://git@ssh.shipyard.rs/acme/crate-index.git"
+
+[net]
+git-fetch-with-cli = true

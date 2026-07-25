@@ -1,0 +1,4 @@
+interface:
+  display_name: "CDK Scaffolding"
+  short_description: "Scaffold mise-managed AWS CDK projects"
+  default_prompt: "Use $cdk-scaffolding to create a mise-managed AWS CDK TypeScript project."

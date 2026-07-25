@@ -1,0 +1,47 @@
+[user]
+	name = Gary Sassano
+	email = 10464497+garysassano@users.noreply.github.com
+	signingkey = F8FE82821AD22F8F
+[commit]
+	gpgsign = true
+[init]
+	defaultBranch = main
+[credential]
+	helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+[credential "https://github.com"]
+	username = garysassano
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[includeIf "gitdir:~/git-mushi/"]
+	path = ~/git-mushi/.gitconfig
+[alias]
+	# Branching
+	bdate = branch --sort=-committerdate
+
+	# Checkout
+	co = checkout
+	cob = checkout -b
+
+	# Commit / status
+	cm = commit -m
+	st = status
+
+	# Logging
+	lg = !"git lg1"
+	lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+	lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+	logg = log --pretty=fuller
+
+	# Dates / amend
+	adate = log -1 --format=%aD
+	setdate = "!f() { GIT_COMMITTER_DATE=\"$1\" git commit --amend --no-edit --date=\"$1\"; }; f"
+	update = "!f() { GIT_COMMITTER_DATE=\"$(git adate)\" git commit --amend --no-edit --date=\"$(git adate)\"; }; f"
+
+	# History
+	first = "!f() { git reset --soft $(git rev-list --max-parents=0 HEAD); }; f"
+	revto = "!f() { git revert --no-commit $1..HEAD && git commit -m \"Revert to $1\"; }; f"
+
+	# Worktrees
+	wta = "!f() { git worktree add -b \"$1\" \"../$1\"; }; f"
+	wtl = "!f() { git worktree list; }; f"
+	wtr = "!f() { git worktree remove \"../$1\"; }; f"

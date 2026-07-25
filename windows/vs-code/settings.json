@@ -1,0 +1,230 @@
+{
+	// =========================
+	// === LANGUAGE SETTINGS ===
+	// =========================
+
+	// RUST
+	"[rust]": {
+		"editor.defaultFormatter": "rust-lang.rust-analyzer"
+	},
+
+	// GO
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	},
+
+	// PYTHON
+	"[python]": {
+		"editor.defaultFormatter": "charliermarsh.ruff",
+		"editor.codeActionsOnSave": {
+			"source.fixAll": "explicit"
+		}
+	},
+
+	// TYPESCRIPT
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.addMissingImports.ts": "explicit",
+			"source.removeUnusedImports": "explicit",
+			"source.fixAll.biome": "explicit",
+			"source.organizeImports.biome": "explicit"
+		}
+	},
+	"eslint.workingDirectories": [{ "mode": "auto" }],
+	"typescript.updateImportsOnFileMove.enabled": "always",
+
+	// JAVASCRIPT
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"javascript.updateImportsOnFileMove.enabled": "always",
+
+	// SHELLSCRIPT
+	"[shellscript]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	},
+
+	// MARKDOWN
+	"[markdown]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"markdown-preview-enhanced.previewTheme": "github-dark.css",
+
+	// MAKEFILE
+	"[makefile]": {
+		"editor.defaultFormatter": "ms-vscode.makefile-tools"
+	},
+	"makefile.configureOnOpen": false,
+
+	// DOCKERFILE
+	"[dockerfile]": {
+		"editor.defaultFormatter": "ms-azuretools.vscode-containers"
+	},
+
+	// HTML
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// XML
+	"[xml]": {
+		"editor.defaultFormatter": "redhat.vscode-xml"
+	},
+
+	// CSS
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// SQL
+	// "[sql]": {
+	// 	"editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+	// },
+	// "Prettier-SQL.commaPosition": "after",
+	// "Prettier-SQL.denseOperators": false,
+	// "Prettier-SQL.expressionWidth": 150,
+	// "Prettier-SQL.ignoreTabSettings": true,
+	// "Prettier-SQL.indentStyle": "standard",
+	// "Prettier-SQL.insertSpacesOverride": true,
+	// "Prettier-SQL.keywordCase": "upper",
+	// "Prettier-SQL.linesBetweenQueries": 1,
+	// "Prettier-SQL.logicalOperatorNewline": "before",
+	// "Prettier-SQL.newlineBeforeSemicolon": true,
+	// "Prettier-SQL.SQLFlavourOverride": "mysql",
+	// "Prettier-SQL.tabulateAlias": false,
+	// "Prettier-SQL.tabSizeOverride": 2,
+
+	// JSON
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.fixAll.biome": "explicit",
+		}
+	},
+
+	// JSONC
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.fixAll.biome": "explicit",
+		}
+	},
+
+	// YAML
+	"[yaml]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"prettier.singleQuote": false,
+		"prettier.quoteProps": "consistent"
+	},
+
+	// TOML
+	"[toml]": {
+		"editor.defaultFormatter": "tamasfe.even-better-toml",
+		"editor.formatOnSave": false
+	},
+
+	// GITHUB ACTIONS WORKFLOW
+	"[github-actions-workflow]": {
+		"editor.defaultFormatter": "github.vscode-github-actions"
+	},
+
+	// GROOVY (JENKINS)
+	"[groovy]": {
+		"editor.defaultFormatter": "NicolasVuillamy.vscode-groovy-lint"
+	},
+	"groovyLint.basic.loglevel": "error",
+
+	// TERRAFORM
+	"[terraform]": {
+		"editor.defaultFormatter": "hashicorp.terraform",
+		"editor.formatOnSaveMode": "file"
+	},
+	"[terraform-vars]": {
+		"editor.defaultFormatter": "hashicorp.terraform",
+		"editor.formatOnSaveMode": "file"
+	},
+
+	// ASTRO
+	"[astro]": {
+		"editor.defaultFormatter": "astro-build.astro-vscode"
+	},
+
+	// SVELTE
+	"[svelte]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"svelte.enable-ts-plugin": true,
+
+	// ===================
+	// === AI SETTINGS ===
+	// ===================
+
+	// GITHUB COPILOT
+	"github.copilot.nextEditSuggestions.enabled": true,
+
+	// ==========================
+	// === EXTENSION SETTINGS ===
+	// ==========================
+
+	// AWS
+	"aws.cloudformation.telemetry.enabled": false,
+	"aws.telemetry": false,
+
+	// GITLENS
+	"gitlens.codeLens.enabled": false,
+	"gitlens.plusFeatures.enabled": false,
+	"gitlens.statusBar.enabled": false,
+	"gitlens.telemetry.enabled": false,
+
+	// GRAFANA
+	"grafana-vscode.telemetry": false,
+
+	// ========================
+	// === VS CODE SETTINGS ===
+	// ========================
+
+	// GENERAL
+	// "biome.lsp.bin": "/home/user/.local/share/mise/installs/biome/2.2.6/biome",
+	// "biome.configurationPath": "/home/user/work-idv/messaging-gateway/cdk/biome.json",
+	"biome.suggestInstallingGlobally": false,
+	"editor.formatOnSave": true,
+	"editor.tabSize": 2,
+	"editor.unicodeHighlight.ambiguousCharacters": false,
+	"editor.minimap.enabled": false,
+	"explorer.compactFolders": false,
+	"explorer.confirmDragAndDrop": false,
+	"files.autoSave": "onFocusChange",
+	"files.trimTrailingWhitespace": true,
+	"git.mergeEditor": true,
+	"git.openRepositoryInParentFolders": "never",
+	"git.suggestSmartCommit": false,
+	"remote.autoForwardPorts": false,
+	"security.workspace.trust.untrustedFiles": "open",
+	"telemetry.telemetryLevel": "off",
+
+	// CHAT
+	"chat.tools.terminal.autoApprove": {
+		"docker exec": true,
+		"docker cp": true
+	},
+	"chat.viewSessions.orientation": "stacked",
+
+	// APPEARANCE
+	"terminal.integrated.fontFamily": "Consolas Nerd Font",
+	"vsicons.dontShowNewVersionMessage": true,
+	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.iconTheme": "vscode-icons",
+	"json.schemaDownload.trustedDomains": {
+		"https://schemastore.azurewebsites.net/": true,
+		"https://raw.githubusercontent.com/": true,
+		"https://www.schemastore.org/": true,
+		"https://json.schemastore.org/": true,
+		"https://json-schema.org/": true,
+		"https://opencode.ai/": true,
+		"https://models.dev": true,
+		"https://biomejs.dev": true
+	},
+	"terminal.integrated.initialHint": false,
+	"chat.mcp.gallery.enabled": true,
+}

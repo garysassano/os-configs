@@ -1,0 +1,133 @@
+[tools]
+# ====================
+# AI CLIs
+# ====================
+amp = "latest"
+claude-code = "latest"
+codex = "latest"
+kiro-cli = "2.14.1"
+opencode = "latest"
+pi = "latest"
+
+# ====================
+# Development
+# ====================
+# Build Systems
+"aqua:moonrepo/moon" = "latest" # not in the mise registry
+bazel = "latest"
+cmake = "4"
+just = "1.56.0"
+
+# Languages
+dotnet = "10"
+go = "1.25"
+python = "3.14"
+rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
+zig = "0.16" # pre-1.0: every minor breaks
+
+# JS Runtimes
+bun = "latest"
+node = "lts"
+
+# JS Tools
+aube = "latest"
+biome = "2"
+pnpm = "11"
+yarn = "1"
+
+# Python Tools
+uv = "latest"
+
+# Rust Tools
+cargo-binstall = "latest"
+"cargo:cargo-audit" = "latest"
+"cargo:cargo-deny" = "latest"
+"cargo:cargo-edit" = "0.13.11"
+"cargo:cargo-lambda" = "latest"
+"cargo:cargo-machete" = "latest"
+"cargo:cargo-nextest" = "0.9.140"
+"cargo:cargo-outdated" = "latest"
+"cargo:cargo-udeps" = "latest"
+"cargo:trunk" = "latest"
+
+# Shell Tools
+shellcheck = "latest"
+shfmt = "latest"
+
+# YAML/JSON Tools
+actionlint = "latest"
+jq = "latest"
+taplo = "latest"
+yq = "latest"
+
+# Git
+git-filter-repo = "latest"
+git-lfs = "latest"
+github-cli = "latest"
+
+# ====================
+# Cloud
+# ====================
+# AWS
+#"github:runs-on/cli" = "latest"
+aws-cli = "2"
+aws-sam = "latest"
+cli53 = "latest"
+granted = "latest"
+"npm:aws-cdk" = "2"
+
+# Generic
+"npm:cdktf-cli" = "0.21"
+opentofu = "1"
+pulumi = "3"
+terraform = "1"
+
+# Others
+gcloud = "577" # frozen: 550 MB, weekly releases
+"github:unikraft/kraftkit" = "0.12.11"
+"npm:wrangler" = "latest"
+
+# ====================
+# Security
+# ====================
+age = "latest"
+cosign = "3"
+slsa-verifier = "latest"
+sops = "latest"
+
+# ====================
+# Utilities
+# ====================
+bat = "latest"
+dotslash = "0.5.9"
+edit = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+oh-my-posh = "latest"
+oha = "latest"
+powershell = "7"
+ripgrep = "latest"
+sqlite = "3.53.3"
+
+# ====================
+# Settings
+# ====================
+[settings]
+minimum_release_age_excludes = [
+  "amp",
+  "claude-code",
+  "codex",
+  "kiro-cli",
+  "opencode",
+  "pi",
+]
+
+[settings.cargo]
+# Only use cargo-binstall for installation, fail if not available.
+binstall_only = true
+
+[settings.github]
+# Reuse the existing git credential helper (GCM) so mise's GitHub API calls
+# are authenticated (5,000 req/hr) instead of throttled (60 req/hr).
+use_git_credentials = true

@@ -1,0 +1,6 @@
+DefaultBrowser = "FIREFOX"
+CustomBrowserPath = "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"
+CustomSSOBrowserPath = "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"
+Ordering = ""
+ExportCredentialSuffix = ""
+CredentialProcessAutoLogin = true
