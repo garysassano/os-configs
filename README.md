@@ -74,6 +74,58 @@ Both refuse to run when a credential-shaped string appears in a source file; the
 shared scan lives in `scripts/lib/scan-secrets.sh`. Full operating notes are in
 `ubuntu/.agents/skills/os-config-sync/SKILL.md`.
 
+## Restoring onto a new machine
+
+Files sit at the path they occupy in the real home directory, but the tree is not
+a blanket copy target. Two paths are repository-owned and have no live-home
+counterpart, so copying them into `~` is wrong:
+
+| Path | Why it is not a home file |
+| --- | --- |
+| `ubuntu/.agents/skills/os-config-sync/` | The sync skill itself, edited here rather than under `~`. Placing it in `~/.agents/skills/` would make the skill loop copy it back over itself. |
+| `ubuntu/vs-code/` | VS Code remote artifacts, restored by the steps below rather than by path. |
+
+Everything else under `ubuntu/` restores to the matching path in `~`.
+
+1. **Prerequisites.** WSL2 with Ubuntu 24.04, Git for Windows on the host so Git
+   Credential Manager exists at the path `credential.helper` names, and
+   [mise](https://mise.jdx.dev/).
+2. **Restore the live-home files**, excluding the three paths above. `~/.profile`
+   matters more than it looks — see *What is here*.
+3. **`mise install`** to materialise the pinned toolchain from
+   `ubuntu/.config/mise/config.toml`.
+4. **Create the account trees** before anything needs them. `~/git/` is the
+   primary account and `~/git-<name>/` each secondary one; the `includeIf` rules
+   in `ubuntu/.gitconfig` select identity by tree, so a tree that does not exist
+   selects nothing.
+5. **Sign each account into Git Credential Manager**, which is where the tokens
+   live — this repository holds none:
+
+   ```bash
+   helper="$(git config --global --get credential.helper)"
+   "${helper//\\ / }" github login   # once per account; list them with: github list
+   ```
+
+   The expansion undoes the escaping Git applies to a helper path containing
+   spaces; the configured value is not a shell command and running it through
+   `eval` would treat it as one.
+
+   Never run `gh auth login`. It gives `gh` a stored account, and that account
+   becomes a global default overriding the per-directory selection the wrapper
+   exists to guarantee.
+6. **Leave `~/.config/gh/hosts.yml` absent or `{}`.** Either state is correct;
+   anything else means step 5 was done the wrong way.
+7. **`ubuntu/.agents/link.sh`** to fan the canonical agent configuration into each
+   installed harness (see below).
+8. **Verify**, from the cloned repository:
+
+   ```bash
+   ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh ~/git/<repo> ~/git-<name>/<repo>
+   ```
+
+   It needs two repositories mapping to different accounts, and exits non-zero
+   with an explanation if either account or its credential is missing.
+
 ## Applying to a machine
 
 ```bash
