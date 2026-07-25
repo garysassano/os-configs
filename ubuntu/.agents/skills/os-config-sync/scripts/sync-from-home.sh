@@ -8,11 +8,11 @@ ubuntu_dir="${repo_root}/ubuntu"
 
 required_sources=(
 	"${HOME}/.agents/AGENTS.md"
+	"${HOME}/.agents/link.sh"
 	"${HOME}/.agents/skills"
-	"${HOME}/.bash_aliases"
-	"${HOME}/.bashrc"
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
+	"${HOME}/.config/fish/config.fish"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.gitconfig"
 	"${HOME}/.profile"
@@ -26,38 +26,26 @@ for source in "${required_sources[@]}"; do
 	fi
 done
 
-scan_sources=(
-	"${HOME}/.agents/AGENTS.md"
-	"${HOME}/.agents/skills"
-	"${HOME}/.bash_aliases"
-	"${HOME}/.bashrc"
-	"${HOME}/.codex/config.toml"
-	"${HOME}/.codex/skills"
-	"${HOME}/.config/mise/config.toml"
-	"${HOME}/.gitconfig"
-	"${HOME}/.profile"
-	"${HOME}/git-mushi/.gitconfig"
-)
+# shellcheck source-path=SCRIPTDIR source=lib/scan-secrets.sh
+. "${script_dir}/lib/scan-secrets.sh"
 
-secret_pattern='(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,}|^[[:space:]]*(api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|password|private[_-]?key)[[:space:]]*=)'
-
-if rg -n -i "$secret_pattern" "${scan_sources[@]}"; then
-	printf 'Possible secret detected; inspect and sanitize the source before syncing.\n' >&2
-	exit 1
-fi
+scan_for_secrets "${required_sources[@]}" || exit 1
 
 mkdir -p \
 	"${ubuntu_dir}/.agents/skills" \
 	"${ubuntu_dir}/.codex/skills" \
+	"${ubuntu_dir}/.config/fish" \
 	"${ubuntu_dir}/.config/mise" \
 	"${ubuntu_dir}/.local/bin" \
 	"${ubuntu_dir}/git-mushi"
 
 cp -a "${HOME}/.agents/AGENTS.md" "${ubuntu_dir}/.agents/AGENTS.md"
+cp -a "${HOME}/.agents/link.sh" "${ubuntu_dir}/.agents/link.sh"
 ln -sfn ../.agents/AGENTS.md "${ubuntu_dir}/.codex/AGENTS.md"
-cp -a "${HOME}/.bash_aliases" "${ubuntu_dir}/.bash_aliases"
-cp -a "${HOME}/.bashrc" "${ubuntu_dir}/.bashrc"
 cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
+# Only config.fish is durable. conf.d/, functions/, and completions/ are empty,
+# and fish_variables is regenerated stock state (colors, key bindings).
+cp -a "${HOME}/.config/fish/config.fish" "${ubuntu_dir}/.config/fish/config.fish"
 cp -a "${HOME}/.config/mise/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
 cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
@@ -65,11 +53,16 @@ cp -a "${HOME}/git-mushi/.gitconfig" "${ubuntu_dir}/git-mushi/.gitconfig"
 
 for source in "${HOME}/.agents/skills/"*; do
 	[[ -d "$source" ]] || continue
+	[[ -L "$source" ]] && continue
 	cp -a "$source" "${ubuntu_dir}/.agents/skills/"
 done
 
+# Skip symlinks: link.sh fans the canonical ~/.agents/skills into every harness,
+# so a symlink here is a derived copy of a skill already captured above. Copying
+# it would snapshot a dangling absolute path into the repository.
 for source in "${HOME}/.codex/skills/"*; do
 	[[ -d "$source" ]] || continue
+	[[ -L "$source" ]] && continue
 	cp -a "$source" "${ubuntu_dir}/.codex/skills/"
 done
 
@@ -84,8 +77,11 @@ for wrapper in "${wrappers[@]}"; do
 done
 
 taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
-shellcheck "${ubuntu_dir}/.local/bin/gh" "$0"
-shfmt -d "${ubuntu_dir}/.local/bin/gh" "$0"
+# -x so the sourced lib/scan-secrets.sh is followed rather than reported as SC1091.
+shellcheck -x "${ubuntu_dir}/.local/bin/gh" "${ubuntu_dir}/.agents/link.sh" \
+	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" "$0"
+shfmt -d "${ubuntu_dir}/.local/bin/gh" "${ubuntu_dir}/.agents/link.sh" \
+	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" "$0"
 git -C "$repo_root" diff --check
 
 printf 'Ubuntu configuration snapshot refreshed. Review the complete git diff before staging.\n'
