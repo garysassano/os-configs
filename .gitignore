@@ -1,0 +1,16 @@
+# Backups created by link.sh when it replaces a real file with a symlink.
+*.bak
+
+# Derived harness symlinks. link.sh regenerates these from ubuntu/.agents/;
+# committing them would encode one machine's set of installed harnesses.
+ubuntu/.claude/
+ubuntu/.codex-kiro/
+ubuntu/.gemini/
+ubuntu/.kiro/
+
+# Pulled in by tooling that runs inside a synced config directory.
+node_modules/
+
+# OS noise.
+.DS_Store
+Thumbs.db
