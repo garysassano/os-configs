@@ -26,6 +26,17 @@ Two paths are the exception and are edited here, because they are the source:
   file instead.
 - Add a tool by installing it imperatively. Declare it in
   `ubuntu/.config/mise/config.toml`.
+- Widen the sync to glob `~/git-*/`. It reads exactly one file from there,
+  `~/git-mushi/.gitconfig`, and that narrowness is deliberate: `~/git-<name>/`
+  trees are secondary-account or client work and may hold client-confidential
+  material. Adding a client means adding one explicit path, never a glob.
+
+## Before making this repository public
+
+It is private, and two things assume that. `ubuntu/git-mushi/.gitconfig` and the
+`includeIf` in `ubuntu/.gitconfig` link the main account to a secondary one, and
+`windows/vs-code/settings.json` reflects a real working setup. Strip both before
+flipping visibility.
 
 ## Checks
 

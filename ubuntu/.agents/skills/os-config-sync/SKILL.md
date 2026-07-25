@@ -54,7 +54,7 @@ real directories into the harnesses it was told about and silently skips the res
 
 | Canonical | Harness targets |
 | --- | --- |
-| `~/.agents/AGENTS.md` | `~/.claude/CLAUDE.md` (Claude Code reads `CLAUDE.md` only), `~/.codex/AGENTS.md`, `~/.codex-kiro/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.config/opencode/AGENTS.md` |
+| `~/.agents/AGENTS.md` | `~/.claude/CLAUDE.md` (Claude Code reads `CLAUDE.md` only), `~/.codex/AGENTS.md`, `~/.codex-kiro/AGENTS.md`, `~/.config/opencode/AGENTS.md` |
 | `~/.agents/skills/` | `~/.claude/skills/` (also serves opencode), `~/.codex/skills/`, `~/.codex-kiro/skills/`, `~/.kiro/skills/` |
 
 Preview with `link.sh --dry-run`. The script creates only symlinks pointing into

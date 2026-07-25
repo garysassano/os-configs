@@ -41,7 +41,7 @@ symlinks them into each one.
 
 | Canonical | Fanned out to |
 | --- | --- |
-| `AGENTS.md` | `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.codex-kiro/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.config/opencode/AGENTS.md` |
+| `AGENTS.md` | `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.codex-kiro/AGENTS.md`, `~/.config/opencode/AGENTS.md` |
 | `skills/` | `~/.claude/skills/`, `~/.codex/skills/`, `~/.codex-kiro/skills/`, `~/.kiro/skills/` |
 
 Claude Code reads `CLAUDE.md` and never `AGENTS.md`, hence the rename in that

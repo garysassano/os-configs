@@ -31,13 +31,16 @@ dry_run=false
 #   .claude       reads CLAUDE.md only; it does not read AGENTS.md
 #   .codex        $CODEX_HOME/AGENTS.md
 #   .codex-kiro   $CODEX_HOME/AGENTS.md (codex-home/src/instructions/mod.rs)
-#   .gemini       GEMINI.md
 #   opencode      ~/.config/opencode/AGENTS.md
+#
+# Deliberately absent: ~/.gemini/GEMINI.md. Gemini CLI is deprecated and was
+# never used. ~/.gemini exists only because Antigravity nests its state under
+# it, and that state is protobuf and IDE globalStorage with no plain-file
+# instructions path to target.
 instruction_targets=(
 	"${HOME}/.claude/CLAUDE.md"
 	"${HOME}/.codex/AGENTS.md"
 	"${HOME}/.codex-kiro/AGENTS.md"
-	"${HOME}/.gemini/GEMINI.md"
 	"${HOME}/.config/opencode/AGENTS.md"
 )
 
