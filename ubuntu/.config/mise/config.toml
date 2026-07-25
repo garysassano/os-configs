@@ -2,8 +2,10 @@
 # ====================
 # AI CLIs
 # ====================
-"aqua:kiro.dev/kiro-cli" = "2.12.2"
+amp = "latest"
+claude-code = "latest"
 codex = "latest"
+kiro-cli = "2.14.1"
 opencode = "latest"
 pi = "latest"
 
@@ -11,8 +13,9 @@ pi = "latest"
 # Development
 # ====================
 # Build Systems
-"aqua:moonrepo/moon" = "latest"
-cmake = "latest"
+"aqua:moonrepo/moon" = "latest" # not in the mise registry
+bazel = "latest"
+cmake = "4"
 just = "1.56.0"
 
 # Languages
@@ -20,7 +23,7 @@ dotnet = "10"
 go = "1.25"
 python = "3.14"
 rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
-zig = "latest"
+zig = "0.16" # pre-1.0: every minor breaks
 
 # JS Runtimes
 bun = "latest"
@@ -57,34 +60,38 @@ jq = "latest"
 taplo = "latest"
 yq = "latest"
 
+# Git
+git-filter-repo = "latest"
+git-lfs = "latest"
+github-cli = "latest"
+
 # ====================
 # Cloud
 # ====================
 # AWS
 #"github:runs-on/cli" = "latest"
-"npm:aws-cdk" = "2"
 aws-cli = "2"
 aws-sam = "latest"
 cli53 = "latest"
 granted = "latest"
+"npm:aws-cdk" = "2"
 
 # Generic
-"npm:cdktf-cli" = "latest"
+"npm:cdktf-cli" = "0.21"
 opentofu = "1"
 pulumi = "3"
 terraform = "1"
 
 # Others
+gcloud = "577" # frozen: 550 MB, weekly releases
 "github:unikraft/kraftkit" = "0.12.11"
-gcloud = "latest"
-github-cli = "latest"
 "npm:wrangler" = "latest"
 
 # ====================
 # Security
 # ====================
 age = "latest"
-cosign = "latest"
+cosign = "3"
 slsa-verifier = "latest"
 sops = "latest"
 
@@ -92,25 +99,29 @@ sops = "latest"
 # Utilities
 # ====================
 bat = "latest"
+dotslash = "0.5.9"
 edit = "latest"
 eza = "latest"
 fd = "latest"
 fzf = "latest"
-git-filter-repo = "latest"
-git-lfs = "latest"
 oh-my-posh = "latest"
 oha = "latest"
-powershell = "latest"
+powershell = "7"
 ripgrep = "latest"
 sqlite = "3.53.3"
-bazel = "latest"
-dotslash = "0.5.9"
 
 # ====================
 # Settings
 # ====================
 [settings]
-minimum_release_age_excludes = ["aqua:openai/codex", "opencode"]
+minimum_release_age_excludes = [
+  "amp",
+  "claude-code",
+  "codex",
+  "kiro-cli",
+  "opencode",
+  "pi",
+]
 
 [settings.cargo]
 # Only use cargo-binstall for installation, fail if not available.
