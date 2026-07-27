@@ -13,6 +13,7 @@ required_sources=(
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
 	"${HOME}/.config/fish/config.fish"
+	"${HOME}/.config/mise/.taplo.toml"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.gitconfig"
 	"${HOME}/.profile"
@@ -51,6 +52,7 @@ cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
 # Only config.fish is durable. conf.d/, functions/, and completions/ are empty,
 # and fish_variables is regenerated stock state (colors, key bindings).
 cp -a "${HOME}/.config/fish/config.fish" "${ubuntu_dir}/.config/fish/config.fish"
+cp -a "${HOME}/.config/mise/.taplo.toml" "${ubuntu_dir}/.config/mise/.taplo.toml"
 cp -a "${HOME}/.config/mise/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
 cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
@@ -81,7 +83,8 @@ for wrapper in "${wrappers[@]}"; do
 	cp -a "$source" "${ubuntu_dir}/.local/bin/${wrapper}"
 done
 
-taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
+taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/.taplo.toml" \
+	"${ubuntu_dir}/.config/mise/config.toml"
 # -x so the sourced lib/scan-secrets.sh is followed rather than reported as SC1091.
 # test-gh-wrapper.sh is linted but never run here: it needs network access, live
 # credentials, and it creates throwaway repositories. Run it by hand.

@@ -20,25 +20,27 @@
 			"source.fixAll": "explicit"
 		}
 	},
+	// Venv activation is handled by mise via each repo's mise.local.toml.
+	"python-envs.terminal.autoActivationType": "off",
 
 	// TYPESCRIPT
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome",
 		"editor.codeActionsOnSave": {
 			"source.addMissingImports.ts": "explicit",
-			"source.removeUnusedImports": "explicit",
 			"source.fixAll.biome": "explicit",
 			"source.organizeImports.biome": "explicit"
 		}
 	},
+	"biome.requireConfiguration": true,
+	"biome.suggestInstallingGlobally": false,
 	"eslint.workingDirectories": [{ "mode": "auto" }],
-	"typescript.updateImportsOnFileMove.enabled": "always",
+	"js/ts.updateImportsOnFileMove.enabled": "always",
 
 	// JAVASCRIPT
 	"[javascript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
-	"javascript.updateImportsOnFileMove.enabled": "always",
 
 	// SHELLSCRIPT
 	"[shellscript]": {
@@ -77,52 +79,26 @@
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 
-	// SQL
-	// "[sql]": {
-	// 	"editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
-	// },
-	// "Prettier-SQL.commaPosition": "after",
-	// "Prettier-SQL.denseOperators": false,
-	// "Prettier-SQL.expressionWidth": 150,
-	// "Prettier-SQL.ignoreTabSettings": true,
-	// "Prettier-SQL.indentStyle": "standard",
-	// "Prettier-SQL.insertSpacesOverride": true,
-	// "Prettier-SQL.keywordCase": "upper",
-	// "Prettier-SQL.linesBetweenQueries": 1,
-	// "Prettier-SQL.logicalOperatorNewline": "before",
-	// "Prettier-SQL.newlineBeforeSemicolon": true,
-	// "Prettier-SQL.SQLFlavourOverride": "mysql",
-	// "Prettier-SQL.tabulateAlias": false,
-	// "Prettier-SQL.tabSizeOverride": 2,
-
-	// JSON
-	"[json]": {
+	// JSON / JSONC
+	"[json][jsonc]": {
 		"editor.defaultFormatter": "biomejs.biome",
 		"editor.codeActionsOnSave": {
-			"source.fixAll.biome": "explicit",
-		}
-	},
-
-	// JSONC
-	"[jsonc]": {
-		"editor.defaultFormatter": "biomejs.biome",
-		"editor.codeActionsOnSave": {
-			"source.fixAll.biome": "explicit",
+			"source.fixAll.biome": "explicit"
 		}
 	},
 
 	// YAML
 	"[yaml]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"prettier.singleQuote": false,
 		"prettier.quoteProps": "consistent"
 	},
 
 	// TOML
 	"[toml]": {
-		"editor.defaultFormatter": "tamasfe.even-better-toml",
-		"editor.formatOnSave": false
+		"editor.defaultFormatter": "tamasfe.even-better-toml"
 	},
+	// Ensure detached WSL TOML files use the shared Taplo policy.
+	"evenBetterToml.taplo.configFile.path": "/home/user/.config/mise/.taplo.toml",
 
 	// GITHUB ACTIONS WORKFLOW
 	"[github-actions-workflow]": {
@@ -136,11 +112,7 @@
 	"groovyLint.basic.loglevel": "error",
 
 	// TERRAFORM
-	"[terraform]": {
-		"editor.defaultFormatter": "hashicorp.terraform",
-		"editor.formatOnSaveMode": "file"
-	},
-	"[terraform-vars]": {
+	"[terraform][terraform-vars]": {
 		"editor.defaultFormatter": "hashicorp.terraform",
 		"editor.formatOnSaveMode": "file"
 	},
@@ -180,14 +152,10 @@
 	// GRAFANA
 	"grafana-vscode.telemetry": false,
 
-	// ========================
-	// === VS CODE SETTINGS ===
-	// ========================
+	// =======================
+	// === EDITOR SETTINGS ===
+	// =======================
 
-	// GENERAL
-	// "biome.lsp.bin": "/home/user/.local/share/mise/installs/biome/2.2.6/biome",
-	// "biome.configurationPath": "/home/user/work-idv/messaging-gateway/cdk/biome.json",
-	"biome.suggestInstallingGlobally": false,
 	"editor.formatOnSave": true,
 	"editor.tabSize": 2,
 	"editor.unicodeHighlight.ambiguousCharacters": false,
@@ -203,18 +171,43 @@
 	"security.workspace.trust.untrustedFiles": "open",
 	"telemetry.telemetryLevel": "off",
 
-	// CHAT
+	// =========================
+	// === TERMINAL SETTINGS ===
+	// =========================
+
+	// Use fish for integrated terminals on Linux/WSL only.
+	"terminal.integrated.defaultProfile.linux": "fish",
+	"terminal.integrated.profiles.linux": {
+		"fish": {
+			"path": "/usr/bin/fish"
+		}
+	},
+	"terminal.integrated.fontFamily": "Consolas Nerd Font",
+	"terminal.integrated.initialHint": false,
+
+	// =====================
+	// === CHAT SETTINGS ===
+	// =====================
+
+	"chat.mcp.gallery.enabled": true,
 	"chat.tools.terminal.autoApprove": {
 		"docker exec": true,
 		"docker cp": true
 	},
 	"chat.viewSessions.orientation": "stacked",
 
-	// APPEARANCE
-	"terminal.integrated.fontFamily": "Consolas Nerd Font",
+	// ===========================
+	// === APPEARANCE SETTINGS ===
+	// ===========================
+
 	"vsicons.dontShowNewVersionMessage": true,
 	"workbench.colorTheme": "GitHub Dark Default",
 	"workbench.iconTheme": "vscode-icons",
+
+	// ====================
+	// === SCHEMA TRUST ===
+	// ====================
+
 	"json.schemaDownload.trustedDomains": {
 		"https://schemastore.azurewebsites.net/": true,
 		"https://raw.githubusercontent.com/": true,
@@ -224,7 +217,5 @@
 		"https://opencode.ai/": true,
 		"https://models.dev": true,
 		"https://biomejs.dev": true
-	},
-	"terminal.integrated.initialHint": false,
-	"chat.mcp.gallery.enabled": true,
+	}
 }

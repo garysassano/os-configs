@@ -32,7 +32,15 @@ longer tracked.
 tooling. Everything is installed through [mise](https://mise.jdx.dev/) so
 versions are pinned and reproducible; nothing is installed imperatively via
 `cargo install`, `npm i -g`, or `brew`. Tools that churn or break across versions
-are pinned explicitly, the rest track `latest`.
+are pinned explicitly, the rest track `latest`. The adjacent `.taplo.toml` owns
+the formatting policy for this config, including alphabetical key ordering;
+VS Code's Even Better TOML extension keeps its bundled Taplo server and only
+triggers that policy on save. VS Code points to that configuration explicitly
+so Taplo also applies it when a TOML file is opened outside the current
+workspace. The Biome extension is intentionally left to
+auto-discover a project-local binary and configuration first, then fall back to
+the mise-managed Biome on `PATH`; no versioned install path or project-specific
+`biome.json` path belongs in global VS Code settings.
 
 **Agents.** `ubuntu/.agents/` is the canonical source for agent configuration —
 one `AGENTS.md` and one skills directory, shared across every harness. No
