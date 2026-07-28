@@ -184,6 +184,8 @@
 	},
 	"terminal.integrated.fontFamily": "Consolas Nerd Font",
 	"terminal.integrated.initialHint": false,
+	"terminal.external.linuxExec": "/usr/bin/ghostty",
+	"terminal.explorerKind": "external",
 
 	// =====================
 	// === CHAT SETTINGS ===

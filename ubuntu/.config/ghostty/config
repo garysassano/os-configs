@@ -1,0 +1,3 @@
+# Keep the terminal environment consistent with VS Code on WSL.
+command = /usr/bin/fish
+theme = GitHub Dark Default

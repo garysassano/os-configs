@@ -13,6 +13,7 @@ required_sources=(
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
 	"${HOME}/.config/fish/config.fish"
+	"${HOME}/.config/ghostty/config"
 	"${HOME}/.config/mise/.taplo.toml"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.gitconfig"
@@ -41,6 +42,7 @@ mkdir -p \
 	"${ubuntu_dir}/.agents/skills" \
 	"${ubuntu_dir}/.codex/skills" \
 	"${ubuntu_dir}/.config/fish" \
+	"${ubuntu_dir}/.config/ghostty" \
 	"${ubuntu_dir}/.config/mise" \
 	"${ubuntu_dir}/.local/bin" \
 	"${ubuntu_dir}/git-mushi"
@@ -52,6 +54,7 @@ cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
 # Only config.fish is durable. conf.d/, functions/, and completions/ are empty,
 # and fish_variables is regenerated stock state (colors, key bindings).
 cp -a "${HOME}/.config/fish/config.fish" "${ubuntu_dir}/.config/fish/config.fish"
+cp -a "${HOME}/.config/ghostty/config" "${ubuntu_dir}/.config/ghostty/config"
 cp -a "${HOME}/.config/mise/.taplo.toml" "${ubuntu_dir}/.config/mise/.taplo.toml"
 cp -a "${HOME}/.config/mise/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
