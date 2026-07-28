@@ -42,7 +42,6 @@ ms-vscode.powershell
 ms-vscode.remote-explorer
 ms-vscode.remote-server
 nicolasvuillamy.vscode-groovy-lint
-openai.chatgpt
 redhat.vscode-xml
 rust-lang.rust-analyzer
 shd101wyy.markdown-preview-enhanced
