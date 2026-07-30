@@ -2,12 +2,12 @@
 [
     // Set `Ctrl + /` for commenting
     {
-        "key": "ctrl+numpad_divide",
+        "key": "cmd+numpad_divide",
         "command": "editor.action.commentLine",
         "when": "editorTextFocus && !editorReadonly"
     },
     {
-        "key": "ctrl+oem_2",
+        "key": "shift+cmd+7",
         "command": "-editor.action.commentLine",
         "when": "editorTextFocus && !editorReadonly"
     },
@@ -20,20 +20,17 @@
         "key": "ctrl+shift+p",
         "command": "-workbench.action.showCommands"
     },
-    // Set `Ctrl Ctrl` for quick open
+    // Set `Ctrl Ctrl` for quick file open.
+    // Some keyboards swap physical Ctrl and Cmd in macOS, so include both.
     {
-        "key": "ctrl ctrl",
+        "key": "meta meta",
         "command": "workbench.action.quickOpen"
     },
     {
-        "key": "ctrl+p",
+        "key": "cmd+p",
         "command": "-workbench.action.quickOpen"
     },
-    {
-        "key": "ctrl+e",
-        "command": "-workbench.action.quickOpen"
-    },
-    // Set `Alt Alt` for sidebar
+    // Set `Alt Alt` for sidebar.
     {
         "key": "alt alt",
         "command": "workbench.action.toggleSidebarVisibility"
@@ -41,10 +38,6 @@
     {
         "key": "ctrl+b",
         "command": "-workbench.action.toggleSidebarVisibility"
-    },
-    {
-        "key": "ctrl+i",
-        "command": "composerMode.agent"
     },
     // Windows to MacOS rebindings
     // Physical Ctrl sends Cmd after OS remap, so map Cmd+<key> to send
@@ -199,5 +192,5 @@
         "command": "workbench.action.terminal.sendSequence",
         "args": { "text": "\u001a" },
         "when": "terminalFocus"
-    },
+    }
 ]
