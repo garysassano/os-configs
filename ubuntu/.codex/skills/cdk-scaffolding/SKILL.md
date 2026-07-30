@@ -27,7 +27,7 @@ The scaffold is intentionally small: CDK app code lives in `src/main.ts`, stacks
    - Do not add `minimumReleaseAgeExclude` entries to use packages that are still inside pnpm's quarantine window. Select the newest eligible release instead unless the user explicitly requests a temporary exception.
 
 3. Run the scaffold script.
-   - Use `node /home/user/.codex/skills/cdk-scaffolding/scripts/scaffold-cdk-project.mjs --target <repo> --resolve-latest`.
+   - Use `node "$HOME"/.codex/skills/cdk-scaffolding/scripts/scaffold-cdk-project.mjs --target <repo> --resolve-latest`.
    - Pass `--name`, `--stack-class`, `--stack-file`, `--stack-id`, or `--node-version` when the repo needs non-default values.
    - The script preserves an existing stack file and writes only the project shell around it.
    - Do not create `.github/`, GitHub Actions workflows, or other CI files.

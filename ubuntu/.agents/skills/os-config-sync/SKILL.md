@@ -20,7 +20,10 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
    - all visible directories under `~/.agents/skills/`
    - all visible user-authored directories under `~/.codex/skills/`; the hidden `.system/` directory and plugin caches are excluded
    - `~/.codex/config.toml`
-   - `~/.config/mise/config.toml`
+   - `~/.config/mise/config.toml` and the adjacent `.taplo.toml` formatting policy
+   - `~/.cargo/config.toml` and `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
+   - `~/.config/opencode/kiro.json` and `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: the sibling `kiro-oidc-clients.json` holds a live `clientSecret`
+   - `~/.gnupg/gpg-agent.conf` and `~/.granted/config`, both WSL-only — they point at `pinentry.exe` and the Windows Firefox binary, so a macOS machine needs its own copies rather than these
    - `~/.gitconfig` and `~/git-mushi/.gitconfig`, which together preserve directory-scoped Git identity and credential selection. `~/git-mushi/` is a personal secondary account and is the only `~/git-<name>/` tree captured; client trees are never synced
    - explicitly allowlisted wrappers from `~/.local/bin/`
 4. Review the complete diff. Remove machine-generated state, credentials, tokens, caches, compiled binaries, transient test files, and wrappers tied to temporary build paths.

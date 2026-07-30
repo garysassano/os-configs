@@ -20,7 +20,7 @@ The clean scaffold is owned by the `cdk-scaffolding` skill and its script. This 
    - Preserve infrastructure code, construct IDs, stack names, environment defaults, and README details unless the user asks to change them.
 
 2. Apply the clean scaffold shell.
-   - Run `/home/user/.codex/skills/cdk-scaffolding/scripts/scaffold-cdk-project.mjs --target <repo> --resolve-latest`.
+   - Run `"$HOME"/.codex/skills/cdk-scaffolding/scripts/scaffold-cdk-project.mjs --target <repo> --resolve-latest`.
    - Pass `--name`, `--stack-class`, `--stack-file`, `--stack-id`, or `--node-min` when needed to preserve the existing repo shape.
    - Expect the scaffold to write pnpm 11, TypeScript, Biome, `node --import tsx src/main.ts`, MIT license, README skeleton, `pnpm-workspace.yaml`, and no GitHub Actions workflows.
 

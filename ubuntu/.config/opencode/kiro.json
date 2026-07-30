@@ -1,15 +1,16 @@
 {
-  "auto_sync_kiro_cli": false,
+  "auto_sync_kiro_cli": true,
   "account_selection_strategy": "lowest-usage",
-  "default_region": "eu-central-1",
-  "idc_start_url": "https://d-996778cb05.awsapps.com/start/",
+  "default_region": "us-east-1",
+  "idc_start_url": "https://d-996778cb05.awsapps.com/start",
   "idc_region": "eu-central-1",
+  "idc_profile_arn": "arn:aws:codewhisperer:us-east-1:491085427433:profile/NWMEWNCGYAA4",
   "rate_limit_retry_delay_ms": 5000,
   "rate_limit_max_retries": 3,
   "max_request_iterations": 20,
   "request_timeout_ms": 120000,
-  "token_expiry_buffer_ms": 120000,
+  "token_expiry_buffer_ms": 300000,
   "usage_sync_max_retries": 3,
-  "usage_tracking_enabled": false,
+  "usage_tracking_enabled": true,
   "enable_log_api_request": false
 }

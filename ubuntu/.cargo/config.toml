@@ -1,11 +1,14 @@
-[registry]
-global-credential-providers = ["cargo:token", "cargo:libsecret", "cargo:macos-keychain", "cargo:wincred"]
+  [registries.private-test]
+  index = "sparse+https://private-491085427433.d.codeartifact.eu-central-1.amazonaws.com/cargo/test/"
+  credential-provider = "codeartifact"
 
-[registries.crates-io]
-protocol = "sparse"
-
-[registries.acme]
-index = "ssh://git@ssh.shipyard.rs/acme/crate-index.git"
-
-[net]
-git-fetch-with-cli = true
+  [credential-alias]
+  codeartifact = [
+    "cargo:token-from-stdout",
+    "aws", "codeartifact", "get-authorization-token",
+    "--domain", "private",
+    "--domain-owner", "491085427433",
+    "--region", "eu-central-1",
+    "--query", "authorizationToken",
+    "--output", "text",
+  ]
