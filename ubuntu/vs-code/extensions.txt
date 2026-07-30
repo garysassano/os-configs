@@ -1,4 +1,5 @@
 amazonwebservices.aws-toolkit-vscode
+anthropic.claude-code
 astro-build.astro-vscode
 biomejs.biome
 buenon.scratchpads

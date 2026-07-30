@@ -15,22 +15,22 @@
 
 	// PYTHON
 	"[python]": {
-		"editor.defaultFormatter": "charliermarsh.ruff",
 		"editor.codeActionsOnSave": {
 			"source.fixAll": "explicit"
-		}
+		},
+		"editor.defaultFormatter": "charliermarsh.ruff"
 	},
 	// Venv activation is handled by mise via each repo's mise.local.toml.
 	"python-envs.terminal.autoActivationType": "off",
 
 	// TYPESCRIPT
 	"[typescript]": {
-		"editor.defaultFormatter": "biomejs.biome",
 		"editor.codeActionsOnSave": {
 			"source.addMissingImports.ts": "explicit",
 			"source.fixAll.biome": "explicit",
 			"source.organizeImports.biome": "explicit"
-		}
+		},
+		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"biome.requireConfiguration": true,
 	"biome.suggestInstallingGlobally": false,
@@ -81,10 +81,10 @@
 
 	// JSON / JSONC
 	"[json][jsonc]": {
-		"editor.defaultFormatter": "biomejs.biome",
 		"editor.codeActionsOnSave": {
 			"source.fixAll.biome": "explicit"
-		}
+		},
+		"editor.defaultFormatter": "biomejs.biome"
 	},
 
 	// YAML
@@ -143,6 +143,12 @@
 	"aws.cloudformation.telemetry.enabled": false,
 	"aws.telemetry": false,
 
+	// GITHUB
+	// Stops the "extension 'GitHub' wants to sign in" popup. Git Credential Manager
+	// already handles login, so nothing is lost. Reopen terminals after changing.
+	"git.terminalAuthentication": false,
+	"github.gitAuthentication": false,
+
 	// GITLENS
 	"gitlens.codeLens.enabled": false,
 	"gitlens.plusFeatures.enabled": false,
@@ -157,9 +163,9 @@
 	// =======================
 
 	"editor.formatOnSave": true,
+	"editor.minimap.enabled": false,
 	"editor.tabSize": 2,
 	"editor.unicodeHighlight.ambiguousCharacters": false,
-	"editor.minimap.enabled": false,
 	"explorer.compactFolders": false,
 	"explorer.confirmDragAndDrop": false,
 	"files.autoSave": "onFocusChange",
@@ -175,7 +181,9 @@
 	// === TERMINAL SETTINGS ===
 	// =========================
 
-	// Use fish for integrated terminals on Linux/WSL only.
+	"terminal.explorerKind": "integrated",
+	// Use fish for integrated terminals on Linux/WSL only. These two stay adjacent
+	// on purpose (out of alphabetical order): the profile below defines "fish".
 	"terminal.integrated.defaultProfile.linux": "fish",
 	"terminal.integrated.profiles.linux": {
 		"fish": {
@@ -183,19 +191,20 @@
 		}
 	},
 	"terminal.integrated.fontFamily": "Consolas Nerd Font",
+	// Fixes TUI corruption in the integrated terminal on VS Code 1.129 (2026-07-30):
+	// box borders missing, stray filled blocks, text drawn at the wrong origin.
+	// Cause was xterm.js's WebGL glyph-atlas renderer -- NOT the Nerd Font and NOT
+	// terminfo, so don't re-diagnose those. Proof it was paint-only: already-corrupted
+	// scrollback repainted correctly the instant this flipped, without a new terminal.
+	// Safe to retry "auto" after a VS Code update; revert here if corruption returns.
+	"terminal.integrated.gpuAcceleration": "off",
 	"terminal.integrated.initialHint": false,
-	"terminal.external.linuxExec": "/usr/bin/ghostty",
-	"terminal.explorerKind": "external",
 
 	// =====================
 	// === CHAT SETTINGS ===
 	// =====================
 
 	"chat.mcp.gallery.enabled": true,
-	"chat.tools.terminal.autoApprove": {
-		"docker exec": true,
-		"docker cp": true
-	},
 	"chat.viewSessions.orientation": "stacked",
 
 	// ===========================
@@ -211,13 +220,13 @@
 	// ====================
 
 	"json.schemaDownload.trustedDomains": {
-		"https://schemastore.azurewebsites.net/": true,
-		"https://raw.githubusercontent.com/": true,
-		"https://www.schemastore.org/": true,
-		"https://json.schemastore.org/": true,
+		"https://biomejs.dev": true,
 		"https://json-schema.org/": true,
-		"https://opencode.ai/": true,
+		"https://json.schemastore.org/": true,
 		"https://models.dev": true,
-		"https://biomejs.dev": true
+		"https://opencode.ai/": true,
+		"https://raw.githubusercontent.com/": true,
+		"https://schemastore.azurewebsites.net/": true,
+		"https://www.schemastore.org/": true
 	}
 }

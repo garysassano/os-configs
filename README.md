@@ -28,11 +28,11 @@ mise build rather than `/usr/bin/rg`. Do not delete it. `~/.bashrc` and
 `~/.bash_aliases` were reset to the Ubuntu skeleton in July 2026 and are no
 longer tracked.
 
-**Terminal.** Ghostty runs as a Linux GUI application through WSLg and starts
-fish using `ubuntu/.config/ghostty/config`. Its theme matches VS Code. VS Code
-remains responsible for its embedded terminal, while Explorer's *Open in
-Terminal* action launches Ghostty as a separate external window in the selected
-directory. Ghostty is an OS application, not mise-managed CLI tooling.
+**Terminal.** VS Code's integrated terminal is the only terminal; it runs fish
+and Explorer's *Open in Terminal* opens it in place rather than an external
+window. Ghostty filled the external-window role until July 2026 and was dropped
+once the integrated terminal stopped corrupting TUI output — see the
+`gpuAcceleration` note in `windows/vs-code/settings.json`.
 
 **Tools.** `ubuntu/.config/mise/config.toml` is the authoritative list of CLI
 tooling. Everything is installed through [mise](https://mise.jdx.dev/) so
@@ -103,17 +103,7 @@ Everything else under `ubuntu/` restores to the matching path in `~`.
 
 1. **Prerequisites.** WSL2 with Ubuntu 24.04, Git for Windows on the host so Git
    Credential Manager exists at the path `credential.helper` names, and
-   [mise](https://mise.jdx.dev/). WSLg is required to display Ghostty. Ubuntu
-   24.04 does not provide Ghostty in its official repositories, so install the
-   community Noble package linked by Ghostty's documentation:
-
-   ```bash
-   sudo add-apt-repository ppa:mkasberg/ghostty-ubuntu
-   sudo apt update
-   sudo apt install ghostty
-   ```
-
-   This PPA is third-party; Ubuntu 26.04 and later provide an official package.
+   [mise](https://mise.jdx.dev/).
 2. **Restore the live-home files**, excluding the three paths above. `~/.profile`
    matters more than it looks — see *What is here*.
 3. **`mise install`** to materialise the pinned toolchain from
