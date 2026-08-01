@@ -14,6 +14,8 @@
 	useHttpPath = true
 [includeIf "gitdir:~/git-mushi/"]
 	path = ~/git-mushi/.gitconfig
+[includeIf "gitdir:~/git-silver/"]
+	path = ~/git-silver/.gitconfig
 [alias]
 	# Branching
 	bdate = branch --sort=-committerdate

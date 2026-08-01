@@ -70,11 +70,11 @@ github-cli = "latest"
 # ====================
 # AWS
 #"github:runs-on/cli" = "latest"
+aws-cdk = "2"
 aws-cli = "2"
-aws-sam = "latest"
+aws-sam = "1"
 cli53 = "latest"
 granted = "latest"
-"npm:aws-cdk" = "2"
 
 # Generic
 "npm:cdktf-cli" = "0.21"
@@ -103,12 +103,14 @@ dotslash = "0.5.9"
 edit = "latest"
 eza = "latest"
 fd = "latest"
+ffmpeg = "latest"
 fzf = "latest"
 oh-my-posh = "latest"
 oha = "latest"
 powershell = "7"
 ripgrep = "latest"
 sqlite = "3.53.3"
+yt-dlp = "latest"
 
 # ====================
 # Settings
