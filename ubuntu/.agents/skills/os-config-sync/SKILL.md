@@ -77,6 +77,7 @@ infer the filename from another harness.
 - Keep `ubuntu/.agents/skills/os-config-sync/` repository-owned; the sync operation must not delete it merely because it is absent from the live skills directory.
 - Keep `ubuntu/.agents/AGENTS.md` canonical and `ubuntu/.codex/AGENTS.md` as a relative symlink to it.
 - Never commit the derived harness symlinks. `link.sh` regenerates them from `~/.agents/`; snapshotting them would encode one machine's installed harnesses.
+- Treat `ubuntu/.claude.json` as a filtered subset rather than a copy, in both directions: capture only the allowlisted preference keys, and never restore it over an existing `~/.claude.json`, which would drop that machine's account and project history.
 - Do not copy `~/.codex/skills/.system/`, `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries.
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.

@@ -107,10 +107,17 @@ counterpart, so copying them into `~` is wrong:
 
 Everything else under `ubuntu/` restores to the matching path in `~`.
 
+`ubuntu/.claude.json` is the one partial file in the tree — Claude Code's
+preference keys only, since the rest of that file is the signed-in account,
+per-project history, and caches. Restore it to a machine with no `~/.claude.json`
+yet and the first launch fills the remainder in around it, preserving the
+preferences. Copying it over an existing one would replace that machine's account
+and history with nothing.
+
 1. **Prerequisites.** WSL2 with Ubuntu 24.04, Git for Windows on the host so Git
    Credential Manager exists at the path `credential.helper` names, and
    [mise](https://mise.jdx.dev/).
-2. **Restore the live-home files**, excluding the three paths above. `~/.profile`
+2. **Restore the live-home files**, excluding the two paths above. `~/.profile`
    matters more than it looks — see *What is here*.
 3. **`mise install`** to materialise the pinned toolchain from
    `ubuntu/.config/mise/config.toml`.
