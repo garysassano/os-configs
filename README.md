@@ -11,7 +11,7 @@ Windows host and connecting into the WSL remote.
 
 | Path | Contents |
 | --- | --- |
-| `ubuntu/` | WSL environment — shell, agent configuration, mise, git, Codex, VS Code remote extensions |
+| `ubuntu/` | WSL environment — shell, agent configuration, mise, git, Codex, Claude Code, VS Code remote extensions |
 | `windows/` | Windows host — VS Code settings and extensions, fonts, scheduled tasks |
 | `macos/` | VS Code keybindings only; kept as an archive, not synced |
 
@@ -62,6 +62,10 @@ Claude Code reads `CLAUDE.md` and never `AGENTS.md`, hence the rename in that
 one target. `~/.claude/skills/` also serves opencode, which reads Claude Code
 skills. The generated symlinks are gitignored — they describe one machine's
 installed harnesses, and `link.sh` regenerates them.
+
+Harness settings sit beside the instructions: `ubuntu/.codex/config.toml` and
+`ubuntu/.claude/settings.json`. Claude Code's other config file, `~/.claude.json`,
+is machine state and is not captured.
 
 **Git identity.** `ubuntu/.gitconfig` and `ubuntu/git-mushi/.gitconfig` together
 give directory-scoped identity and credential selection. The `gh` wrapper in
