@@ -64,8 +64,10 @@ skills. The generated symlinks are gitignored — they describe one machine's
 installed harnesses, and `link.sh` regenerates them.
 
 Harness settings sit beside the instructions: `ubuntu/.codex/config.toml` and
-`ubuntu/.claude/settings.json`. Claude Code's other config file, `~/.claude.json`,
-is machine state and is not captured.
+`ubuntu/.claude/settings.json`. Claude Code splits its configuration across two
+files, so `ubuntu/.claude.json` carries the preference keys of the second one,
+filtered to an allowlist — the rest of that file is the signed-in account,
+per-project history, and caches, and stays out.
 
 **Git identity.** `ubuntu/.gitconfig` and `ubuntu/git-mushi/.gitconfig` together
 give directory-scoped identity and credential selection. The `gh` wrapper in

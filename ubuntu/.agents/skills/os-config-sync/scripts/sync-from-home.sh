@@ -11,6 +11,7 @@ required_sources=(
 	"${HOME}/.agents/link.sh"
 	"${HOME}/.agents/skills"
 	"${HOME}/.cargo/config.toml"
+	"${HOME}/.claude.json"
 	"${HOME}/.claude/settings.json"
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
@@ -61,9 +62,22 @@ mkdir -p \
 cp -a "${HOME}/.agents/AGENTS.md" "${ubuntu_dir}/.agents/AGENTS.md"
 cp -a "${HOME}/.agents/link.sh" "${ubuntu_dir}/.agents/link.sh"
 cp -a "${HOME}/.cargo/config.toml" "${ubuntu_dir}/.cargo/config.toml"
-# settings.json only: ~/.claude.json holds oauthAccount and machine state, and the
-# rest of ~/.claude/ is the symlinks link.sh owns.
 cp -a "${HOME}/.claude/settings.json" "${ubuntu_dir}/.claude/settings.json"
+# ~/.claude.json mixes preferences with app-managed state — oauthAccount, machineID,
+# per-project history, rotating caches — so only the preference keys are captured.
+# Settings Claude Code keeps here rather than in settings.json, autoInstallIdeExtension
+# among them, would otherwise be lost on a rebuild. Extend the list as new ones appear.
+claude_global_keys='[
+	"autoCompactEnabled", "autoConnectIde", "autoInstallIdeExtension",
+	"autoScrollEnabled", "copyFullResponse", "diffTool", "editorMode",
+	"externalEditorContext", "fileCheckpointingEnabled", "messageIdleNotifThresholdMs",
+	"preferredNotifChannel", "respectGitignore", "showMessageTimestamps",
+	"showTurnDuration", "terminalProgressBarEnabled", "theme", "todoFeatureEnabled",
+	"verbose"
+]'
+jq --argjson keys "$claude_global_keys" \
+	'with_entries(select(.key as $k | $keys | index($k)))' \
+	"${HOME}/.claude.json" >"${ubuntu_dir}/.claude.json"
 ln -sfn ../.agents/AGENTS.md "${ubuntu_dir}/.codex/AGENTS.md"
 cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
 # Only config.fish is durable. conf.d/, functions/, and completions/ are empty,

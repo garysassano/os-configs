@@ -19,7 +19,7 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
    - `~/.profile`, which is stock Ubuntu apart from a mise shims block; see below
    - all visible directories under `~/.agents/skills/`
    - all visible user-authored directories under `~/.codex/skills/`; the hidden `.system/` directory and plugin caches are excluded
-   - `~/.claude/settings.json`; the sibling `~/.claude.json` is machine state and is never captured
+   - `~/.claude/settings.json`, and the preference keys of `~/.claude.json` filtered through an explicit allowlist; the rest of that file is app-managed state and stays out
    - `~/.codex/config.toml`
    - `~/.config/mise/config.toml` and the adjacent `.taplo.toml` formatting policy
    - `~/.cargo/config.toml` and `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`

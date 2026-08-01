@@ -10,9 +10,5 @@
   "enabledPlugins": {
     "aws-core@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true
-  },
-  "// CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "Stops the VS Code extension auto-install on launch. Same switch as autoInstallIdeExtension in ~/.claude.json, which is not synced.",
-  "env": {
-    "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL": "1"
   }
 }
