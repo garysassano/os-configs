@@ -1,14 +1,14 @@
 {
-  "model": "opus",
-  "effortLevel": "high",
-  "theme": "dark",
   "includeCoAuthoredBy": false,
   "permissions": {
     "defaultMode": "bypassPermissions"
   },
-  "skipDangerousModePermissionPrompt": true,
+  "model": "opus",
   "enabledPlugins": {
     "aws-core@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true
-  }
+  },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark"
 }

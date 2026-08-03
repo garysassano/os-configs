@@ -22,6 +22,11 @@
 	},
 	// Venv activation is handled by mise via each repo's mise.local.toml.
 	"python-envs.terminal.autoActivationType": "off",
+	// Lint with the mise-managed ruff, not the binary bundled in the extension,
+	// which updates on the extension's cadence and drifts from what the terminal
+	// and CI run. The shim resolves per-directory, so a repo pinning ruff in its
+	// mise.toml gets that version. Same reasoning as the taplo path below.
+	"ruff.path": ["/home/user/.local/share/mise/shims/ruff"],
 
 	// TYPESCRIPT
 	"[typescript]": {
