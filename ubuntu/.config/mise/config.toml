@@ -6,25 +6,26 @@ amp = "latest"
 claude-code = "latest"
 codex = "latest"
 kiro-cli = "2.16.0"
-"npm:@bitkyc08/opencodex" = "latest"
 opencode = "latest"
+opencodex = "latest"
 pi = "latest"
+reasonix = { version = "latest", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
 
 # ====================
 # Development
 # ====================
 # Build Systems
-"aqua:moonrepo/moon" = "latest" # not in the mise registry
-bazel = "latest"
-cmake = "4"
+bazel = "9.2.0"
+cmake = "4.4.2"
 just = "1.56.0"
+moon = "latest"
 
 # Languages
 dotnet = "10"
 go = "1.25"
 python = "3.14"
 rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
-zig = "0.16" # pre-1.0: every minor breaks
+zig = "0.16"
 
 # JS Runtimes
 bun = "latest"
@@ -85,9 +86,9 @@ pulumi = "3"
 terraform = "1"
 
 # Others
-gcloud = "577" # frozen: 550 MB, weekly releases
-"github:unikraft/kraftkit" = "0.12.11"
-"npm:wrangler" = "latest"
+gcloud = "577"
+kraftkit = "0.12.11"
+wrangler = "latest"
 
 # ====================
 # Security
@@ -115,15 +116,24 @@ sqlite = "3.53.3"
 yt-dlp = "latest"
 
 # ====================
+# Tool Aliases
+# ====================
+[tool_alias]
+kraftkit = "github:unikraft/kraftkit"
+moon = "aqua:moonrepo/moon"
+opencodex = "npm:@bitkyc08/opencodex"
+reasonix = "github:esengine/DeepSeek-Reasonix"
+wrangler = "npm:cloudflare/wrangler"
+
+# ====================
 # Settings
 # ====================
 [settings]
 minimum_release_age_excludes = [
-  "amp",
   "claude-code",
   "codex",
   "kiro-cli",
-  "npm:@bitkyc08/opencodex",
+  "opencodex",
   "opencode",
   "pi",
 ]
