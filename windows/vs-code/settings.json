@@ -57,6 +57,12 @@
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"markdown-preview-enhanced.previewTheme": "github-dark.css",
+	// The inline "markdownlint.config" object is deprecated in favour of a real
+	// config file, so the rules live in ~/.markdownlint.jsonc and this only points
+	// at them. It sets the base configuration: a .markdownlint.* file inside a
+	// workspace still overrides it. WSL-only path, same as the taplo and ruff ones
+	// above; a native Windows window has no config file and falls back to defaults.
+	"markdownlint.configFile": "/home/user/.markdownlint.jsonc",
 
 	// MAKEFILE
 	"[makefile]": {
@@ -162,6 +168,16 @@
 
 	// GRAFANA
 	"grafana-vscode.telemetry": false,
+
+	// PRETTIER
+	// Format with the mise-managed prettier, not the copy bundled in the extension,
+	// so Ctrl-S matches the terminal. Same reasoning as the ruff path above, but the
+	// extension wants a module directory, not a bin, so this can't be a mise shim and
+	// won't resolve per-directory. It also fully replaces workspace-local resolution:
+	// a repo that pins its own prettier must re-point this in .vscode/settings.json
+	// ("./node_modules/prettier"). Bump the version segment via the "latest" symlink,
+	// which mise repoints on upgrade -- currently 3.9.6.
+	"prettier.prettierPath": "/home/user/.local/share/mise/installs/prettier/latest/node_modules/prettier",
 
 	// =======================
 	// === EDITOR SETTINGS ===

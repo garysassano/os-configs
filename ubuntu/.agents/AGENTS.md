@@ -13,3 +13,7 @@ mise owns tools. `~/.config/mise/config.toml` is authoritative; check it before 
 Prefer `rg` over `grep`, `fd` over `find`, `bat` over `cat`, and `eza` over `ls`. Use `jq` for JSON, `yq` for YAML/XML/TOML, `taplo` for TOML, and `shellcheck` plus `shfmt` for shell.
 
 Missing tool: propose adding it to `config.toml`. Never install imperatively.
+
+## Markdown
+
+Never hard-wrap prose. Write one paragraph or one sentence per line and let the editor soft-wrap it; do not reflow a paragraph into 80-column lines, and do not re-wrap existing prose when editing nearby text. Prettier owns markdown formatting and does not reflow paragraphs; markdownlint's MD013 line-length rule is off deliberately. Hard wrapping is still correct inside code blocks and tables, where the source layout is the content.

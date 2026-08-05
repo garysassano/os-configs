@@ -139,7 +139,10 @@ allow_dynamic_bash = true   # advanced: let mode=allow cover command substitutio
 # Windows has no OS-level Bash sandbox and fixes bash = "off".
 # network allows sandboxed bash egress.
 # workspace_root = ""            # default: current working directory
-# allow_write = ["/tmp"]          # extra dirs writers may also modify
+allow_write = [
+  "/tmp",
+  "/mnt/c/Users/Gary/AppData/Roaming/Code/User",
+]
 # forbid_read = []                  # dirs the agent cannot read or list
 bash    = "enforce"
 network = true

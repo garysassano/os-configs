@@ -47,6 +47,8 @@ workspace. The Biome extension is intentionally left to
 auto-discover a project-local binary and configuration first, then fall back to
 the mise-managed Biome on `PATH`; no versioned install path or project-specific
 `biome.json` path belongs in global VS Code settings.
+Prettier and markdownlint are pointed at explicitly for the same reason Taplo is: `prettier.prettierPath` resolves to the mise install so Ctrl-S matches the terminal, and `markdownlint.configFile` resolves to `ubuntu/.markdownlint.jsonc`, which turns MD013 off so prose is never hard-wrapped.
+Both are base configuration only — a repository pinning its own Prettier or shipping its own `.markdownlint.*` still wins.
 
 **Agents.** `ubuntu/.agents/` is the canonical source for agent configuration —
 one `AGENTS.md` and one skills directory, shared across every harness. No

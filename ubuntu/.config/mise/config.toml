@@ -35,6 +35,7 @@ node = "lts"
 aube = "latest"
 biome = "2"
 pnpm = "11"
+prettier = "latest"
 yarn = "1"
 
 # Python Tools
@@ -122,8 +123,9 @@ yt-dlp = "latest"
 kraftkit = "github:unikraft/kraftkit"
 moon = "aqua:moonrepo/moon"
 opencodex = "npm:@bitkyc08/opencodex"
+prettier = "npm:prettier"
 reasonix = "github:esengine/DeepSeek-Reasonix"
-wrangler = "npm:cloudflare/wrangler"
+wrangler = "npm:wrangler"
 
 # ====================
 # Settings

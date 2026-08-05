@@ -1,10 +1,10 @@
-approvals_reviewer = "user"
+approvals_reviewer = "auto_review"
+model = "kiro/gpt-5.6-sol"
+model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
 model_reasoning_effort = "xhigh"
 personality = "pragmatic"
 plan_mode_reasoning_effort = "ultra"
 sandbox_mode = "danger-full-access"
-model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
-model = "kiro/gpt-5.6-sol"
 # Auto-injected by opencodex
 openai_base_url = "http://127.0.0.1:45891/v1"
 
@@ -34,10 +34,10 @@ status_line_use_colors = true
 "gpt-5.6-sol" = 4
 
 [marketplaces.agent-toolkit-for-aws]
-last_updated = "2026-08-04T01:54:21Z"
 last_revision = "5bf16f7b56b4723f5fdc0f90c1901ffaba8d693a"
-source_type = "git"
+last_updated = "2026-08-04T01:54:21Z"
 source = "https://github.com/aws/agent-toolkit-for-aws.git"
+source_type = "git"
 
 # ====================
 # MCP Servers
