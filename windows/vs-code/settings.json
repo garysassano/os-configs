@@ -229,6 +229,9 @@
 	// resolution too, so a repo pinning prettier re-points it in .vscode/settings.json.
 	"prettier.prettierPath": "/home/user/.local/share/mise/installs/prettier/latest/node_modules/prettier",
 
+	// Biome is deliberately absent: the extension resolves the repo's own
+	// node_modules binary, so a path here would override the CI-pinned version.
+
 	// ====================
 	// === SCHEMA TRUST ===
 	// ====================
