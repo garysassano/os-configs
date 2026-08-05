@@ -25,6 +25,7 @@ required_sources=(
 	"${HOME}/.gnupg/gpg-agent.conf"
 	"${HOME}/.granted/config"
 	"${HOME}/.profile"
+	"${HOME}/.reasonix/config.toml"
 	"${HOME}/git-mushi/.gitconfig"
 )
 
@@ -57,6 +58,7 @@ mkdir -p \
 	"${ubuntu_dir}/.gnupg" \
 	"${ubuntu_dir}/.granted" \
 	"${ubuntu_dir}/.local/bin" \
+	"${ubuntu_dir}/.reasonix" \
 	"${ubuntu_dir}/git-mushi"
 
 cp -a "${HOME}/.agents/AGENTS.md" "${ubuntu_dir}/.agents/AGENTS.md"
@@ -96,6 +98,8 @@ cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
 cp -a "${HOME}/.gnupg/gpg-agent.conf" "${ubuntu_dir}/.gnupg/gpg-agent.conf"
 cp -a "${HOME}/.granted/config" "${ubuntu_dir}/.granted/config"
 cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
+# Named file, never the directory: ~/.reasonix/.env holds provider API keys.
+cp -a "${HOME}/.reasonix/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
 cp -a "${HOME}/git-mushi/.gitconfig" "${ubuntu_dir}/git-mushi/.gitconfig"
 
 for source in "${HOME}/.agents/skills/"*; do
@@ -124,7 +128,7 @@ for wrapper in "${wrappers[@]}"; do
 done
 
 taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/.taplo.toml" \
-	"${ubuntu_dir}/.config/mise/config.toml"
+	"${ubuntu_dir}/.config/mise/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
 # -x so the sourced lib/scan-secrets.sh is followed rather than reported as SC1091.
 # test-gh-wrapper.sh is linted but never run here: it needs network access, live
 # credentials, and it creates throwaway repositories. Run it by hand.

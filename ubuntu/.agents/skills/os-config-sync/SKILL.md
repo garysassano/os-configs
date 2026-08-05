@@ -26,6 +26,7 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
    - `~/.config/opencode/kiro.json` and `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: the sibling `kiro-oidc-clients.json` holds a live `clientSecret`
    - `~/.gnupg/gpg-agent.conf` and `~/.granted/config`, both WSL-only — they point at `pinentry.exe` and the Windows Firefox binary, so a macOS machine needs its own copies rather than these
    - `~/.gitconfig` and `~/git-mushi/.gitconfig`, which together preserve directory-scoped Git identity and credential selection. `~/git-mushi/` is a personal secondary account and is the only `~/git-<name>/` tree captured; client trees are never synced
+   - `~/.reasonix/config.toml`, named individually rather than by directory: the sibling `.env` holds provider API keys
    - explicitly allowlisted wrappers from `~/.local/bin/`
 4. Review the complete diff. Remove machine-generated state, credentials, tokens, caches, compiled binaries, transient test files, and wrappers tied to temporary build paths.
 5. Run the validations printed by the script, plus the skill validator for every new or changed skill when it is available.
