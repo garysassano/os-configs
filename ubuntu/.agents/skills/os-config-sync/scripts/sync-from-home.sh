@@ -16,6 +16,7 @@ required_sources=(
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
 	"${HOME}/.config/fish/config.fish"
+	"${HOME}/.config/mise/.markdownlint.jsonc"
 	"${HOME}/.config/mise/.taplo.toml"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json"
@@ -24,7 +25,6 @@ required_sources=(
 	"${HOME}/.gitconfig"
 	"${HOME}/.gnupg/gpg-agent.conf"
 	"${HOME}/.granted/config"
-	"${HOME}/.markdownlint.jsonc"
 	"${HOME}/.profile"
 	"${HOME}/.reasonix/config.toml"
 	"${HOME}/git-mushi/.gitconfig"
@@ -86,6 +86,9 @@ cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
 # Only config.fish is durable. conf.d/, functions/, and completions/ are empty,
 # and fish_variables is regenerated stock state (colors, key bindings).
 cp -a "${HOME}/.config/fish/config.fish" "${ubuntu_dir}/.config/fish/config.fish"
+# Base markdownlint rules for every repository. VS Code's user settings point at
+# this path, so it has to exist under ~ for a rebuilt machine to lint the same way.
+cp -a "${HOME}/.config/mise/.markdownlint.jsonc" "${ubuntu_dir}/.config/mise/.markdownlint.jsonc"
 cp -a "${HOME}/.config/mise/.taplo.toml" "${ubuntu_dir}/.config/mise/.taplo.toml"
 cp -a "${HOME}/.config/mise/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 cp -a "${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json" \
@@ -98,9 +101,6 @@ cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
 # WSL-only: pinentry.exe and the Windows Firefox paths have no macOS counterpart.
 cp -a "${HOME}/.gnupg/gpg-agent.conf" "${ubuntu_dir}/.gnupg/gpg-agent.conf"
 cp -a "${HOME}/.granted/config" "${ubuntu_dir}/.granted/config"
-# Base markdownlint rules for every repository. VS Code's user settings point at
-# this path, so it has to exist under ~ for a rebuilt machine to lint the same way.
-cp -a "${HOME}/.markdownlint.jsonc" "${ubuntu_dir}/.markdownlint.jsonc"
 cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
 # Named file, never the directory: ~/.reasonix/.env holds provider API keys.
 cp -a "${HOME}/.reasonix/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
