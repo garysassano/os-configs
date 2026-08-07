@@ -9,7 +9,12 @@ kiro-cli = "2.16.0"
 opencode = "latest"
 opencodex = "latest"
 pi = "latest"
-reasonix = { version = "latest", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
+reasonix = { version = "1.21.1", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
+# @pierre/theme dropped provenance at 1.1.0 when publishing moved from mdo (CI)
+# to amadeusdemarzi (manual). Reviewed: no deps, empty scripts, frozen-JSON
+# themes only. Re-review if this needs widening on a future t3 release.
+# node-pty ships no linux-x64 prebuild, so it must compile via node-gyp on install.
+t3 = { version = "latest", trust_policy_excludes = ["@pierre/theme@1.1.0"], allow_builds = ["node-pty"] }
 
 # ====================
 # Development
@@ -125,6 +130,7 @@ moon = "aqua:moonrepo/moon"
 opencodex = "npm:@bitkyc08/opencodex"
 prettier = "npm:prettier"
 reasonix = "github:esengine/DeepSeek-Reasonix"
+t3 = "npm:t3"
 wrangler = "npm:wrangler"
 
 # ====================
@@ -138,6 +144,8 @@ minimum_release_age_excludes = [
   "opencodex",
   "opencode",
   "pi",
+  "reasonix",
+  "t3",
 ]
 
 [settings.cargo]

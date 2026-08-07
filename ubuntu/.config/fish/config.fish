@@ -52,6 +52,28 @@ if status is-interactive
     oh-my-posh init fish --strict --config $HOME/.config/oh-my-posh/themes/multiverse-neon.omp.json | source
 end
 
+### BROWSER
+# Many CLIs check $BROWSER first and just print the URL when it is empty, which is
+# why so many of them refused to open anything. Point it at xdg-open rather than a
+# browser directly, so one place decides which browser opens: the default handler
+# registered with xdg-settings. That resolves to wsl-explorer.desktop ->
+# /mnt/c/WINDOWS/explorer.exe, handing the URL to the Windows default browser via
+# WSL interop. explorer.exe is a Windows built-in, so this needs no wslu, which was
+# archived upstream on 2025-03-01 and removed from this machine.
+#
+# xdg-open strips itself out of $BROWSER internally, so this cannot recurse.
+# Caveat: explorer.exe returns non-zero even on success and xdg-open passes that
+# through (exit 4). Launches are reliable; only the status is wrong.
+#
+# To switch to a WSL-native browser, repoint the handler rather than editing here:
+#   xdg-settings set default-web-browser google-chrome.desktop
+set -gx BROWSER xdg-open
+
+### GPG
+# pinentry-curses draws its prompt on a terminal, and gpg-agent needs to be told
+# which one. Without this, signing fails with "Inappropriate ioctl for device".
+set -gx GPG_TTY (tty)
+
 ### ALIASES
 alias ll 'ls -alF'
 alias la 'ls -A'

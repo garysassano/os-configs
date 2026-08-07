@@ -10,6 +10,13 @@ ubuntu/.codex-kiro/
 ubuntu/.gemini/
 ubuntu/.kiro/
 
+# Never snapshot SSH material. The sync copies an explicit allowlist and never
+# reaches here, and scan-secrets.sh would catch a private key in a listed source —
+# but neither guard sees a file copied in by hand. Commit signing keys are
+# per-machine and regenerated on rebuild; only the public half belongs in the
+# repository, and it already lives in ubuntu/.config/git/allowed_signers.
+ubuntu/.ssh/
+
 # Pulled in by tooling that runs inside a synced config directory.
 node_modules/
 

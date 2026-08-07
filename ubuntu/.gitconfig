@@ -1,7 +1,7 @@
 [user]
 	name = Gary Sassano
 	email = 10464497+garysassano@users.noreply.github.com
-	signingkey = F8FE82821AD22F8F
+	signingkey = ~/.ssh/id_sign_garysassano.pub
 [commit]
 	gpgsign = true
 [init]
@@ -47,3 +47,7 @@
 	wta = "!f() { git worktree add -b \"$1\" \"../$1\"; }; f"
 	wtl = "!f() { git worktree list; }; f"
 	wtr = "!f() { git worktree remove \"../$1\"; }; f"
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers

@@ -24,8 +24,11 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
    - `~/.codex/config.toml`
    - `~/.config/mise/config.toml` and the adjacent `.taplo.toml` formatting policy
    - `~/.cargo/config.toml` and `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
-   - `~/.config/opencode/kiro.json` and `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: the sibling `kiro-oidc-clients.json` holds a live `clientSecret`
-   - `~/.gnupg/gpg-agent.conf` and `~/.granted/config`, both WSL-only — they point at `pinentry.exe` and the Windows Firefox binary, so a macOS machine needs its own copies rather than these
+   - `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: that directory accumulates provider state beside it, and the Kiro integration removed on 2026-08-07 kept a live `clientSecret` in `kiro-oidc-clients.json`
+   - `~/.config/git/allowed_signers`, which maps a signing identity to its public key so `git log --show-signature` can name the signer. Public keys only
+   - `~/.gnupg/gpg-agent.conf`, now vestigial: commit signing moved to SSH on 2026-08-07 and no GPG private key remains on the machine
+   - `~/.granted/config`, WSL-only — granted cannot defer to `$BROWSER` or `xdg-open`, so it names the Windows Firefox binary by absolute path and a macOS machine needs its own copy
+   - `~/.local/share/applications/wsl-explorer.desktop`, the URL handler `$BROWSER` and `xdg-open` resolve to; WSL-only, it execs `explorer.exe`
    - `~/.gitconfig` and `~/git-mushi/.gitconfig`, which together preserve directory-scoped Git identity and credential selection. `~/git-mushi/` is a personal secondary account and is the only `~/git-<name>/` tree captured; client trees are never synced
    - `~/.reasonix/config.toml`, named individually rather than by directory: the sibling `.env` holds provider API keys
    - explicitly allowlisted wrappers from `~/.local/bin/`
@@ -47,8 +50,12 @@ non-interactive guard, and without the shims a spawned bash resolves `rg` to
 agents to prefer. Only `config.fish` gets `mise activate`, and only when
 interactive.
 
-Capture only `config.fish`. `conf.d/`, `functions/`, and `completions/` are
-empty, and `fish_variables` is regenerated stock state.
+Capture only `config.fish`. `conf.d/`, `functions/`, and `completions/` are kept
+empty **deliberately** — every interactive setting lives in `config.fish` so there
+is one file to read and one file to sync. A snippet dropped into `conf.d/` works on
+the live machine but is silently absent from the snapshot, so a rebuild loses it.
+If you add shell configuration, add it to `config.fish`. `fish_variables` is
+regenerated stock state and stays untracked.
 
 ## Harness fan-out
 

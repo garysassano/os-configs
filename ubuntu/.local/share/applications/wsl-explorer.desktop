@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Windows Default Browser
+GenericName=Web Browser
+Comment=Open links in the Windows default browser via WSL interop
+Exec=/mnt/c/WINDOWS/explorer.exe %u
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/unknown;x-scheme-handler/about;x-scheme-handler/http;x-scheme-handler/https;text/html;

@@ -17,15 +17,16 @@ required_sources=(
 	"${HOME}/.codex/config.toml"
 	"${HOME}/.codex/skills"
 	"${HOME}/.config/fish/config.fish"
+	"${HOME}/.config/git/allowed_signers"
 	"${HOME}/.config/mise/.markdownlint.jsonc"
 	"${HOME}/.config/mise/.taplo.toml"
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json"
-	"${HOME}/.config/opencode/kiro.json"
 	"${HOME}/.config/opencode/opencode.jsonc"
 	"${HOME}/.gitconfig"
 	"${HOME}/.gnupg/gpg-agent.conf"
 	"${HOME}/.granted/config"
+	"${HOME}/.local/share/applications/wsl-explorer.desktop"
 	"${HOME}/.profile"
 	"${HOME}/.reasonix/config.toml"
 	"${HOME}/git-mushi/.gitconfig"
@@ -54,12 +55,14 @@ mkdir -p \
 	"${ubuntu_dir}/.claude" \
 	"${ubuntu_dir}/.codex/skills" \
 	"${ubuntu_dir}/.config/fish" \
+	"${ubuntu_dir}/.config/git" \
 	"${ubuntu_dir}/.config/mise" \
 	"${ubuntu_dir}/.config/oh-my-posh/themes" \
 	"${ubuntu_dir}/.config/opencode" \
 	"${ubuntu_dir}/.gnupg" \
 	"${ubuntu_dir}/.granted" \
 	"${ubuntu_dir}/.local/bin" \
+	"${ubuntu_dir}/.local/share/applications" \
 	"${ubuntu_dir}/.reasonix" \
 	"${ubuntu_dir}/git-mushi"
 
@@ -89,9 +92,14 @@ jq --argjson keys "$claude_global_keys" \
 	"${HOME}/.claude.json" >"${ubuntu_dir}/.claude.json"
 ln -sfn ../.agents/AGENTS.md "${ubuntu_dir}/.codex/AGENTS.md"
 cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
-# Only config.fish is durable. conf.d/, functions/, and completions/ are empty,
-# and fish_variables is regenerated stock state (colors, key bindings).
+# Only config.fish is durable. conf.d/, functions/, and completions/ are kept empty
+# deliberately — everything interactive lives in config.fish so there is one file to
+# read and one file to sync — and fish_variables is regenerated stock state.
 cp -a "${HOME}/.config/fish/config.fish" "${ubuntu_dir}/.config/fish/config.fish"
+# Maps a signing identity to its public key so `git log --show-signature` can name
+# the signer; without it git reports "No principal matched" for otherwise valid
+# signatures. Public keys only — the private half is never captured.
+cp -a "${HOME}/.config/git/allowed_signers" "${ubuntu_dir}/.config/git/allowed_signers"
 # Base markdownlint rules for every repository. VS Code's user settings point at
 # this path, so it has to exist under ~ for a rebuilt machine to lint the same way.
 cp -a "${HOME}/.config/mise/.markdownlint.jsonc" "${ubuntu_dir}/.config/mise/.markdownlint.jsonc"
@@ -99,14 +107,21 @@ cp -a "${HOME}/.config/mise/.taplo.toml" "${ubuntu_dir}/.config/mise/.taplo.toml
 cp -a "${HOME}/.config/mise/config.toml" "${ubuntu_dir}/.config/mise/config.toml"
 cp -a "${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json" \
 	"${ubuntu_dir}/.config/oh-my-posh/themes/multiverse-neon.omp.json"
-# Named files, never the directory: ~/.config/opencode also holds
-# kiro-oidc-clients.json, whose clientSecret is a live credential.
-cp -a "${HOME}/.config/opencode/kiro.json" "${ubuntu_dir}/.config/opencode/kiro.json"
+# A named file, never the directory: ~/.config/opencode accumulates provider state
+# beside it, and the Kiro integration that used to live here kept a live clientSecret
+# in kiro-oidc-clients.json. That integration was removed on 2026-08-07; naming the
+# file explicitly keeps the next one from being captured by accident.
 cp -a "${HOME}/.config/opencode/opencode.jsonc" "${ubuntu_dir}/.config/opencode/opencode.jsonc"
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
-# WSL-only: pinentry.exe and the Windows Firefox paths have no macOS counterpart.
 cp -a "${HOME}/.gnupg/gpg-agent.conf" "${ubuntu_dir}/.gnupg/gpg-agent.conf"
+# WSL-only: granted cannot defer to $BROWSER or xdg-open, so it names the Windows
+# Firefox binary by absolute path. A macOS machine needs its own copy.
 cp -a "${HOME}/.granted/config" "${ubuntu_dir}/.granted/config"
+# The URL handler $BROWSER and xdg-open resolve to. WSL-only: it execs
+# /mnt/c/WINDOWS/explorer.exe. Registering it as the default is a separate,
+# unsynced step — see "Rebuilding a machine" in README.md.
+cp -a "${HOME}/.local/share/applications/wsl-explorer.desktop" \
+	"${ubuntu_dir}/.local/share/applications/wsl-explorer.desktop"
 cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
 # Named file, never the directory: ~/.reasonix/.env holds provider API keys.
 cp -a "${HOME}/.reasonix/config.toml" "${ubuntu_dir}/.reasonix/config.toml"

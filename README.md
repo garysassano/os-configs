@@ -76,6 +76,12 @@ give directory-scoped identity and credential selection. The `gh` wrapper in
 `ubuntu/.local/bin/` pulls the matching token from the credential helper so the
 right account is used per checkout.
 
+Commits are signed with SSH rather than GPG (`gpg.format = ssh`), which removes
+`gpg-agent` and its separately-configured pinentry from the path entirely — a
+layer that failed silently here for months, pointing at a Gpg4win binary that was
+never installed. `ubuntu/.config/git/allowed_signers` carries the public half so
+signatures verify locally; the private key is per-machine and never captured.
+
 ## Refreshing the snapshot
 
 Both scripts read the live machine and write here. Neither commits, pushes, nor
@@ -132,21 +138,75 @@ and history with nothing.
 
    ```bash
    helper="$(git config --global --get credential.helper)"
-   "${helper//\\ / }" github login   # once per account; list them with: github list
+   "${helper//\\ / }" github login --username <account>   # once per account
    ```
 
    The expansion undoes the escaping Git applies to a helper path containing
    spaces; the configured value is not a shell command and running it through
    `eval` would treat it as one.
 
+   **`--username` is required, not optional.** Without it GCM files the credential
+   under the unqualified `git:https://github.com` target, while every lookup — from
+   Git and from the `gh` wrapper — asks for `<account>@github.com`, because
+   `credential.<url>.username` is set per tree. The sign-in reports success, the
+   next operation fails identically, and GCM prompts again: a loop no amount of
+   signing in escapes. Verify with `cmdkey.exe /list`, which should show a
+   `git:https://<account>@github.com` entry per account. `github list` shows GCM's
+   own view and is not proof the target exists.
+
    Never run `gh auth login`. It gives `gh` a stored account, and that account
    becomes a global default overriding the per-directory selection the wrapper
    exists to guarantee.
+
 6. **Leave `~/.config/gh/hosts.yml` absent or `{}`.** Either state is correct;
    anything else means step 5 was done the wrong way.
-7. **`ubuntu/.agents/link.sh`** to fan the canonical agent configuration into each
+7. **Generate a commit signing key.** Signing is SSH-based (`gpg.format = ssh`),
+   and a private key is never captured here, so each machine makes its own:
+
+   ```bash
+   ssh-keygen -t ed25519 -C "<account> signing key" -f ~/.ssh/id_sign_<account>
+   ```
+
+   Add the **public** key at <https://github.com/settings/ssh/new> with
+   **Key type: Signing Key** — the dropdown defaults to *Authentication*, which
+   signs fine locally and never shows Verified. Then replace the public key in
+   `~/.config/git/allowed_signers`, which still holds the old machine's; without a
+   matching entry `git log --show-signature` reports "No principal matched" for
+   otherwise valid signatures.
+
+   Press Enter at the passphrase prompt: **this key is deliberately unencrypted.**
+   A signing key grants no access — it cannot push, decrypt, or authenticate
+   anywhere, so the worst a stolen copy allows is forged commit attribution, and
+   pushing those still needs the separate credential in Git Credential Manager.
+   Encrypting it buys little and costs a great deal: an agent has to hold the
+   unlocked key, every agent inside WSL dies with `wsl --shutdown`, and so every
+   restart demands another `ssh-add`. Worse, a cold agent makes `ssh-keygen` reach
+   for `$SSH_ASKPASS`, which is not installed, so commits from any context without
+   a terminal — VS Code's SCM panel, an agent harness — fail outright rather than
+   prompting. Unencrypted, signing works everywhere with no agent at all.
+
+   A lost key is regenerated and re-registered, not recovered — there is nothing
+   to back up. Existing commits keep their badge from the public key already on
+   GitHub.
+8. **Register the browser handler.** `$BROWSER` and `xdg-open` resolve to
+   `wsl-explorer.desktop`, which execs `explorer.exe` so URLs open in the Windows
+   browser you are already signed in to. The file restores with the tree, but being
+   the *default* is machine state:
+
+   ```bash
+   update-desktop-database ~/.local/share/applications
+   xdg-settings set default-web-browser wsl-explorer.desktop
+   sudo update-alternatives --install /usr/bin/x-www-browser x-www-browser \
+     /mnt/c/WINDOWS/explorer.exe 100
+   ```
+
+   Do **not** install `wslu` for this. It was archived upstream on 2025-03-01 and
+   `explorer.exe` needs no package. Setting `$BROWSER` at all matters more than it
+   looks: many CLIs check it first and silently print a URL instead of opening one
+   when it is empty.
+9. **`ubuntu/.agents/link.sh`** to fan the canonical agent configuration into each
    installed harness (see below).
-8. **Verify**, from the cloned repository:
+10. **Verify**, from the cloned repository:
 
    ```bash
    ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh ~/git/<repo> ~/git-<name>/<repo>

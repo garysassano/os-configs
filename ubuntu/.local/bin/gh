@@ -151,7 +151,11 @@ while IFS= read -r helper; do
 done < <(git config --global --includes --get-all credential.helper 2>/dev/null || true)
 
 if [[ -n "$credential_helper" ]]; then
-	credential_maintenance="${credential_helper} github login"
+	# --username is required, not decorative: without it GCM files the credential
+	# under the unqualified `git:https://github.com` target, while the lookup below
+	# asks for `<account>@github.com`. The sign-in then appears to succeed and the
+	# next run fails identically, prompting forever.
+	credential_maintenance="${credential_helper} github login --username ${expected_username}"
 else
 	credential_maintenance="set a global credential.helper first"
 fi
