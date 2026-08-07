@@ -26,7 +26,6 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
    - `~/.cargo/config.toml` and `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
    - `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: that directory accumulates provider state beside it, and the Kiro integration removed on 2026-08-07 kept a live `clientSecret` in `kiro-oidc-clients.json`
    - `~/.config/git/allowed_signers`, which maps a signing identity to its public key so `git log --show-signature` can name the signer. Public keys only
-   - `~/.gnupg/gpg-agent.conf`, now vestigial: commit signing moved to SSH on 2026-08-07 and no GPG private key remains on the machine
    - `~/.granted/config`, WSL-only — granted cannot defer to `$BROWSER` or `xdg-open`, so it names the Windows Firefox binary by absolute path and a macOS machine needs its own copy
    - `~/.local/share/applications/wsl-explorer.desktop`, the URL handler `$BROWSER` and `xdg-open` resolve to; WSL-only, it execs `explorer.exe`
    - `~/.gitconfig` and `~/git-mushi/.gitconfig`, which together preserve directory-scoped Git identity and credential selection. `~/git-mushi/` is a personal secondary account and is the only `~/git-<name>/` tree captured; client trees are never synced

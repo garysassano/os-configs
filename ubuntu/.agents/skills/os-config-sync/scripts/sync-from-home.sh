@@ -24,7 +24,6 @@ required_sources=(
 	"${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json"
 	"${HOME}/.config/opencode/opencode.jsonc"
 	"${HOME}/.gitconfig"
-	"${HOME}/.gnupg/gpg-agent.conf"
 	"${HOME}/.granted/config"
 	"${HOME}/.local/share/applications/wsl-explorer.desktop"
 	"${HOME}/.profile"
@@ -59,7 +58,6 @@ mkdir -p \
 	"${ubuntu_dir}/.config/mise" \
 	"${ubuntu_dir}/.config/oh-my-posh/themes" \
 	"${ubuntu_dir}/.config/opencode" \
-	"${ubuntu_dir}/.gnupg" \
 	"${ubuntu_dir}/.granted" \
 	"${ubuntu_dir}/.local/bin" \
 	"${ubuntu_dir}/.local/share/applications" \
@@ -113,7 +111,6 @@ cp -a "${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json" \
 # file explicitly keeps the next one from being captured by accident.
 cp -a "${HOME}/.config/opencode/opencode.jsonc" "${ubuntu_dir}/.config/opencode/opencode.jsonc"
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
-cp -a "${HOME}/.gnupg/gpg-agent.conf" "${ubuntu_dir}/.gnupg/gpg-agent.conf"
 # WSL-only: granted cannot defer to $BROWSER or xdg-open, so it names the Windows
 # Firefox binary by absolute path. A macOS machine needs its own copy.
 cp -a "${HOME}/.granted/config" "${ubuntu_dir}/.granted/config"
