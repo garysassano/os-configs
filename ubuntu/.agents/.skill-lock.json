@@ -1,15 +1,6 @@
 {
   "version": 3,
   "skills": {
-    "aws-cdk": {
-      "source": "aws/agent-toolkit-for-aws",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/aws/agent-toolkit-for-aws.git",
-      "skillPath": "plugins/aws-core/skills/aws-cdk/SKILL.md",
-      "skillFolderHash": "1c69221e639f1e6efe81befa51d3b5cdb064f737",
-      "installedAt": "2026-05-20T04:54:32.541Z",
-      "updatedAt": "2026-05-20T04:54:32.541Z"
-    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",

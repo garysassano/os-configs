@@ -1,12 +1,11 @@
 approvals_reviewer = "auto_review"
-model = "kiro/gpt-5.6-sol"
-model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
 model_reasoning_effort = "xhigh"
 personality = "pragmatic"
 plan_mode_reasoning_effort = "ultra"
 sandbox_mode = "danger-full-access"
+model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
 # Auto-injected by opencodex
-openai_base_url = "http://127.0.0.1:45891/v1"
+openai_base_url = "http://127.0.0.1:44821/v1"
 
 [features]
 fast_mode = true
@@ -34,10 +33,10 @@ status_line_use_colors = true
 "gpt-5.6-sol" = 4
 
 [marketplaces.agent-toolkit-for-aws]
-last_revision = "5bf16f7b56b4723f5fdc0f90c1901ffaba8d693a"
-last_updated = "2026-08-04T01:54:21Z"
-source = "https://github.com/aws/agent-toolkit-for-aws.git"
+last_updated = "2026-08-07T03:31:49Z"
+last_revision = "b33847dd218c6ceef176cd5efdcfff50560faf7d"
 source_type = "git"
+source = "https://github.com/aws/agent-toolkit-for-aws.git"
 
 # ====================
 # MCP Servers
@@ -49,6 +48,14 @@ command = "npx"
 [mcp_servers.playwright]
 args = ["@playwright/mcp@latest"]
 command = "npx"
+enabled = false
+
+# Provided by the aws-agents plugin. Redundant with aws-mcp from aws-core, which
+# serves the same docs tools and no longer needs auth to do it. Disabled rather
+# than removing the plugin, which would also drop its 8 AgentCore skills.
+# Upstream: https://github.com/aws/agent-toolkit-for-aws/issues/223
+[mcp_servers.awsknowledge]
+url = "https://knowledge-mcp.global.api.aws"
 enabled = false
 
 # ====================
@@ -153,5 +160,11 @@ trust_level = "trusted"
 [projects."/home/user/git/career-cv"]
 trust_level = "trusted"
 
+[projects."/home/user/git/opencodex"]
+trust_level = "trusted"
+
 [plugins."aws-agents@agent-toolkit-for-aws"]
+enabled = true
+
+[plugins."aws-core@agent-toolkit-for-aws"]
 enabled = true
