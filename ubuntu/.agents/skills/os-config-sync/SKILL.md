@@ -14,6 +14,7 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
 3. Run `scripts/sync-from-home.sh`. The script copies:
    - `~/.agents/AGENTS.md`
    - `~/.agents/link.sh`, the harness fan-out script
+   - `~/.agents/.skill-lock.json`, npx skills' record of which skills are vendored and which harnesses it targets
    - the `~/.codex/AGENTS.md` compatibility symlink to the canonical global instructions
    - `~/.config/fish/config.fish`, the interactive shell configuration
    - `~/.profile`, which is stock Ubuntu apart from a mise shims block; see below
