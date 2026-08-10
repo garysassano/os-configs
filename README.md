@@ -13,7 +13,7 @@ Windows host and connecting into the WSL remote.
 | --- | --- |
 | `ubuntu/` | WSL environment — shell, agent configuration, mise, git, Codex, Claude Code, VS Code remote extensions |
 | `windows/` | Windows host — VS Code settings and extensions, fonts, scheduled tasks |
-| `macos/` | VS Code keybindings only; kept as an archive, not synced |
+| `macos/` | macOS fish, mise, prompt theme, Codex, OpenCodex, OpenCode, Claude preference, and VS Code configuration |
 
 Files sit at the path they occupy in the real home directory, so
 `ubuntu/.config/fish/config.fish` is `~/.config/fish/config.fish`.
@@ -34,8 +34,15 @@ window. Ghostty filled the external-window role until July 2026 and was dropped
 once the integrated terminal stopped corrupting TUI output — see the
 `gpuAcceleration` note in `windows/vs-code/settings.json`.
 
-**Tools.** `ubuntu/.config/mise/config.toml` is the authoritative list of CLI
-tooling. Everything is installed through [mise](https://mise.jdx.dev/) so
+**Tools.** Each OS snapshot carries its own
+`~/.config/mise/config.toml`. The Ubuntu and macOS files share the personal
+baseline but remain separate so platform differences stay explicit: macOS adds
+native tools such as fish and 1Password CLI, omits the multi-account GitHub
+wrapper settings, and carries fewer AI CLIs. Work-only mise files such as
+`config.devops.toml`, plus shared tasks, packages, and organization
+documentation, are never captured.
+
+Everything is installed through [mise](https://mise.jdx.dev/) so
 versions are pinned and reproducible; nothing is installed imperatively via
 `cargo install`, `npm i -g`, or `brew`. Tools that churn or break across versions
 are pinned explicitly, the rest track `latest`. The adjacent `.taplo.toml` owns
@@ -71,10 +78,19 @@ files, so `ubuntu/.claude.json` carries the preference keys of the second one,
 filtered to an allowlist — the rest of that file is the signed-in account,
 per-project history, and caches, and stays out.
 
-**Git identity.** `ubuntu/.gitconfig` and `ubuntu/git-mushi/.gitconfig` together
-give directory-scoped identity and credential selection. The `gh` wrapper in
-`ubuntu/.local/bin/` pulls the matching token from the credential helper so the
-right account is used per checkout.
+The macOS snapshot also keeps Codex and OpenCodex distinct.
+`macos/.codex/config.toml` contains only portable Codex preferences; OpenCodex's
+injected model, localhost proxy, generated catalog, plugin state, hooks, and
+project trust are deliberately filtered out. `macos/.opencodex/config.json` is
+the validated OpenCodex configuration export. OpenCodex authentication,
+service/runtime state, usage, logs, and catalogs remain local.
+
+**Git identity.** `ubuntu/.gitconfig` contains the directory-scoped identity and
+credential selection rules used by the WSL machine. Account-specific
+`~/git-<name>/.gitconfig` files remain local and are never captured. The `gh`
+wrapper in `ubuntu/.local/bin/` pulls the matching token from the credential
+helper so the right account is used per checkout. macOS uses the normal `gh`
+binary and does not enable mise's Git credential integration.
 
 Commits are signed with SSH rather than GPG (`gpg.format = ssh`), which removes
 `gpg-agent` and its separately-configured pinentry from the path entirely — a
@@ -84,21 +100,29 @@ signatures verify locally; the private key is per-machine and never captured.
 
 ## Refreshing the snapshot
 
-Both scripts read the live machine and write here. Neither commits, pushes, nor
-touches the live machine. Review the diff before staging.
+The sync scripts read the live machine and write here. None commits, pushes, or
+changes the live machine. Review the diff before staging.
 
 ```bash
 ubuntu/.agents/skills/os-config-sync/scripts/sync-from-home.sh
+ubuntu/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
 ubuntu/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 ```
 
 `sync-from-home.sh` captures the shell, agent, mise, git, and Codex
-configuration. `sync-vscode.sh` captures VS Code settings, keybindings,
-snippets, and the two extension lists — Windows host and WSL remote are separate
-sets and not interchangeable. It replaced the manual `Default.code-profile`
-export, which was 78% window-layout state and produced unreadable diffs.
+configuration on Ubuntu. `sync-macos-from-home.sh` captures macOS fish, a
+shim-only `.profile` fallback for explicit `bash -lc` subprocesses, personal mise
+configuration, prompt theme, portable Codex preferences, the validated OpenCodex
+config, the named OpenCode config, the safe Claude preference subset, and VS
+Code settings, keybindings, and extensions. It deliberately excludes the Mac's
+work-specific `.gitconfig`. The Mac extension list must contain the Windows host
+baseline except for the WSL-only remote extension.
+`sync-vscode.sh` captures Windows settings, keybindings, snippets, and the
+Windows-host and WSL-remote extension lists. It replaced the manual
+`Default.code-profile` export, which was 78% window-layout state and produced
+unreadable diffs.
 
-Both refuse to run when a credential-shaped string appears in a source file; the
+They refuse to run when a credential-shaped string appears in a source file; the
 shared scan lives in `scripts/lib/scan-secrets.sh`. Full operating notes are in
 `ubuntu/.agents/skills/os-config-sync/SKILL.md`.
 
@@ -129,10 +153,11 @@ and history with nothing.
    matters more than it looks — see *What is here*.
 3. **`mise install`** to materialise the pinned toolchain from
    `ubuntu/.config/mise/config.toml`.
-4. **Create the account trees** before anything needs them. `~/git/` is the
-   primary account and `~/git-<name>/` each secondary one; the `includeIf` rules
-   in `ubuntu/.gitconfig` select identity by tree, so a tree that does not exist
-   selects nothing.
+4. **Create account trees and their local Git configuration** before anything
+   needs them. `~/git/` is the primary account and `~/git-<name>/` each
+   secondary one; the `includeIf` rules in `ubuntu/.gitconfig` select identity
+   by tree. The referenced `~/git-<name>/.gitconfig` files are deliberately not
+   part of this repository.
 5. **Sign each account into Git Credential Manager**, which is where the tokens
    live — this repository holds none:
 

@@ -1,0 +1,231 @@
+{
+	// =========================
+	// === LANGUAGE SETTINGS ===
+	// =========================
+
+	// RUST
+	"[rust]": {
+		"editor.defaultFormatter": "rust-lang.rust-analyzer"
+	},
+
+	// GO
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	},
+
+	// PYTHON
+	"[python]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll": "explicit"
+		},
+		"editor.defaultFormatter": "charliermarsh.ruff"
+	},
+	// Venv activation is handled by mise via each repo's mise.local.toml.
+	"python-envs.terminal.autoActivationType": "off",
+
+	// TYPESCRIPT
+	"[typescript]": {
+		"editor.codeActionsOnSave": {
+			"source.addMissingImports.ts": "explicit",
+			"source.fixAll.biome": "explicit",
+			"source.organizeImports.biome": "explicit"
+		},
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"biome.requireConfiguration": true,
+	"biome.suggestInstallingGlobally": false,
+	"eslint.workingDirectories": [{ "mode": "auto" }],
+	"js/ts.updateImportsOnFileMove.enabled": "always",
+
+	// JAVASCRIPT
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+
+	// SHELLSCRIPT
+	"[shellscript]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	},
+
+	// MARKDOWN
+	"[markdown]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"markdown-preview-enhanced.previewTheme": "github-dark.css",
+
+	// MAKEFILE
+	"[makefile]": {
+		"editor.defaultFormatter": "ms-vscode.makefile-tools"
+	},
+	"makefile.configureOnOpen": false,
+
+	// DOCKERFILE
+	"[dockerfile]": {
+		"editor.defaultFormatter": "ms-azuretools.vscode-containers"
+	},
+
+	// HTML
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// XML
+	"[xml]": {
+		"editor.defaultFormatter": "redhat.vscode-xml"
+	},
+
+	// CSS
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+
+	// JSON / JSONC
+	"[json][jsonc]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.biome": "explicit"
+		},
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+
+	// YAML
+	"[yaml]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"prettier.quoteProps": "consistent"
+	},
+
+	// TOML
+	"[toml]": {
+		"editor.defaultFormatter": "tamasfe.even-better-toml"
+	},
+
+	// GITHUB ACTIONS WORKFLOW
+	"[github-actions-workflow]": {
+		"editor.defaultFormatter": "github.vscode-github-actions"
+	},
+
+	// GROOVY (JENKINS)
+	"[groovy]": {
+		"editor.defaultFormatter": "NicolasVuillamy.vscode-groovy-lint"
+	},
+	"groovyLint.basic.loglevel": "error",
+
+	// TERRAFORM
+	"[terraform][terraform-vars]": {
+		"editor.defaultFormatter": "hashicorp.terraform",
+		"editor.formatOnSaveMode": "file"
+	},
+
+	// ASTRO
+	"[astro]": {
+		"editor.defaultFormatter": "astro-build.astro-vscode"
+	},
+
+	// SVELTE
+	"[svelte]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"svelte.enable-ts-plugin": true,
+
+	// ===================
+	// === AI SETTINGS ===
+	// ===================
+
+	// GITHUB COPILOT
+	"github.copilot.nextEditSuggestions.enabled": true,
+
+	// ==========================
+	// === EXTENSION SETTINGS ===
+	// ==========================
+
+	// AWS
+	"aws.cloudformation.telemetry.enabled": false,
+	"aws.telemetry": false,
+
+	// GITHUB
+	"git.terminalAuthentication": false,
+	"github.gitAuthentication": false,
+
+	// GITLENS
+	"gitlens.codeLens.enabled": false,
+	"gitlens.plusFeatures.enabled": false,
+	"gitlens.statusBar.enabled": false,
+	"gitlens.telemetry.enabled": false,
+
+	// GRAFANA
+	"grafana-vscode.telemetry": false,
+
+	// =======================
+	// === EDITOR SETTINGS ===
+	// =======================
+
+	"editor.formatOnSave": true,
+	"editor.minimap.enabled": false,
+	"editor.tabSize": 2,
+	"editor.unicodeHighlight.ambiguousCharacters": false,
+	"explorer.compactFolders": false,
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"files.autoSave": "onFocusChange",
+	"files.trimTrailingWhitespace": true,
+	"git.mergeEditor": true,
+	"git.openRepositoryInParentFolders": "never",
+	"git.suggestSmartCommit": false,
+	"remote.autoForwardPorts": false,
+	"security.workspace.trust.untrustedFiles": "open",
+	"telemetry.telemetryLevel": "off",
+
+	// =========================
+	// === TERMINAL SETTINGS ===
+	// =========================
+
+	"terminal.explorerKind": "integrated",
+	"terminal.integrated.defaultProfile.osx": "fish",
+	"terminal.integrated.profiles.osx": {
+		"fish": {
+			"path": "/Users/sassanog/.local/share/mise/installs/fish/latest/fish.pkg/Payload/usr/local/bin/fish"
+		}
+	},
+	"terminal.integrated.fontFamily": "Liga SFMono Nerd Font",
+	"terminal.integrated.fontSize": 14,
+	"terminal.integrated.initialHint": false,
+	"terminal.integrated.macOptionIsMeta": false,
+
+	// =====================
+	// === CHAT SETTINGS ===
+	// =====================
+
+	"chat.mcp.gallery.enabled": true,
+	"chat.viewSessions.orientation": "stacked",
+
+	// ===========================
+	// === APPEARANCE SETTINGS ===
+	// ===========================
+
+	"vsicons.dontShowNewVersionMessage": true,
+	"workbench.colorTheme": "GitHub Dark Default",
+	"workbench.iconTheme": "vscode-icons",
+
+	// ==================
+	// === TOOL PATHS ===
+	// ==================
+
+	"evenBetterToml.taplo.configFile.path": "/Users/sassanog/.config/mise/.taplo.toml",
+	"markdownlint.configFile": "/Users/sassanog/.config/mise/.markdownlint.jsonc",
+	"ruff.path": ["/Users/sassanog/.local/share/mise/shims/ruff"],
+	"prettier.prettierPath": "/Users/sassanog/.local/share/mise/installs/prettier/latest/node_modules/prettier",
+
+	// ====================
+	// === SCHEMA TRUST ===
+	// ====================
+
+	"json.schemaDownload.trustedDomains": {
+		"https://biomejs.dev": true,
+		"https://json-schema.org/": true,
+		"https://json.schemastore.org/": true,
+		"https://models.dev": true,
+		"https://opencode.ai/": true,
+		"https://raw.githubusercontent.com/": true,
+		"https://schemastore.azurewebsites.net/": true,
+		"https://www.schemastore.org/": true
+	}
+}

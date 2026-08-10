@@ -35,26 +35,27 @@ ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh <primary-repo> <
   describe one machine's installed harnesses.
 - Weaken `scripts/lib/scan-secrets.sh` to get a sync to pass. Sanitize the source
   file instead.
-- Add a tool by installing it imperatively. Declare it in
-  `ubuntu/.config/mise/config.toml`.
+- Add a tool by installing it imperatively. Declare it in the live machine's
+  `~/.config/mise/config.toml`, then sync the matching OS snapshot. For tools
+  outside the mise registry, add a `[tool_alias]` entry and use that alias in
+  `[tools]`; explicit `cargo:` entries are the intended exception.
 - Run `gh auth login`, or let `~/.config/gh/hosts.yml` gain an account. It stays
   `{}` on purpose: a stored account is a global default that any `gh` reaching past
   `ubuntu/.local/bin/gh` would use in every tree, which is exactly the per-directory
   selection that wrapper exists to guarantee. Credentials belong to Git Credential
   Manager. The wrapper blocks the command, but nothing stops a human from running
   the real binary.
-- Sync anything from a client's `~/git-<client>/` tree. Client configuration is
-  not preserved here at all, and those trees may hold confidential material. The
-  one tracked exception, `~/git-mushi/.gitconfig`, is a personal secondary
-  account; it also serves as the worked example of the `includeIf` pattern, and
-  one example is enough.
+- Sync anything from a `~/git-<name>/` tree. Account- and client-specific Git
+  configuration remains local, and client trees may hold confidential material.
+- Sync macOS work configuration such as
+  `~/.config/mise/config.devops.toml`, `shared_tasks/`, `packages/`, or
+  organization documentation. The Mac sync copies only its explicit allowlist.
 
 ## Before making this repository public
 
-It is private, and two things assume that. `ubuntu/git-mushi/.gitconfig` and the
-`includeIf` in `ubuntu/.gitconfig` link the main account to a secondary one, and
-`windows/vs-code/settings.json` reflects a real working setup. Strip both before
-flipping visibility.
+It is private, and two things assume that. The `includeIf` entries in
+`ubuntu/.gitconfig` name local account trees, and `windows/vs-code/settings.json`
+reflects a real working setup. Strip both before flipping visibility.
 
 ## Checks
 

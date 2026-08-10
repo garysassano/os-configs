@@ -1,0 +1,9 @@
+model_reasoning_effort = "medium"
+approvals_reviewer = "user"
+
+[features]
+fast_mode = false
+
+[tui]
+status_line = ["context-used", "model-with-reasoning", "current-dir", "permissions", "git-branch", "used-tokens", "pull-request-number"]
+status_line_use_colors = true

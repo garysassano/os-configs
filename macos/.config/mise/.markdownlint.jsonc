@@ -1,0 +1,12 @@
+{
+	// Base markdownlint configuration for every repository, pointed at by
+	// "markdownlint.configFile" in VS Code's user settings. It is a base only:
+	// a .markdownlint.* file inside a workspace still wins over it.
+	//
+	// MD013 (line-length, default 80) is the only thing telling editors and agents
+	// to hard-wrap prose. Prettier's markdown printWidth doesn't reflow existing
+	// paragraphs, so the 80-column squeeze came entirely from this rule. Off means
+	// one sentence per line stays one line. "default": true keeps every other rule.
+	"default": true,
+	"MD013": false
+}

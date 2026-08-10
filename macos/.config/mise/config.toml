@@ -1,0 +1,135 @@
+[tools]
+# ====================
+# AI CLIs
+# ====================
+claude-code = "latest"
+codex = "latest"
+opencode = "latest"
+opencodex = "latest"
+
+# ====================
+# Development
+# ====================
+# Build Systems
+bazel = "9.2.0"
+cmake = "4.4.2"
+just = "1.56.0"
+moon = "latest"
+
+# Languages
+go = "1.25"
+python = "3.14"
+rust = { version = "stable", components = "rustfmt", targets = "aarch64-apple-darwin, wasm32-unknown-unknown" }
+zig = "0.16"
+
+# JS Runtimes
+bun = "latest"
+node = "lts"
+
+# JS Tools
+aube = "latest"
+biome = "2"
+pnpm = "11"
+prettier = "latest"
+yarn = "1"
+
+# Python Tools
+ruff = "latest"
+uv = "latest"
+
+# Rust Tools
+cargo-binstall = "latest"
+"cargo:cargo-audit" = "latest"
+"cargo:cargo-deny" = "latest"
+"cargo:cargo-edit" = "0.13.11"
+"cargo:cargo-lambda" = "latest"
+"cargo:cargo-machete" = "latest"
+"cargo:cargo-nextest" = "0.9.140"
+"cargo:cargo-outdated" = "latest"
+"cargo:cargo-udeps" = "latest"
+"cargo:trunk" = "latest"
+
+# Shell Tools
+fish = "latest"
+shellcheck = "latest"
+shfmt = "latest"
+
+# YAML/JSON Tools
+actionlint = "latest"
+jq = "latest"
+taplo = "latest"
+yq = "latest"
+
+# Git
+git-filter-repo = "latest"
+git-lfs = "latest"
+github-cli = "latest"
+
+# ====================
+# Cloud
+# ====================
+# AWS
+aws-cdk = "2"
+aws-cli = "2"
+aws-sam = "1"
+cli53 = "latest"
+granted = "0.38.0"
+runs-on = "2.12.6"
+
+# Generic
+opentofu = "1"
+packer = "latest"
+pulumi = "3"
+terraform = "1"
+
+# Others
+glab = "latest"
+
+# ====================
+# Security
+# ====================
+age = "latest"
+cosign = "3"
+op = "latest"
+slsa-verifier = "latest"
+sops = "latest"
+
+# ====================
+# Utilities
+# ====================
+bat = "latest"
+edit = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+oh-my-posh = "latest"
+oha = "latest"
+powershell = "7"
+ripgrep = "latest"
+sqlite = "3.53.3"
+
+# ====================
+# Tool Aliases
+# ====================
+[tool_alias]
+fish = "aqua:fish-shell/fish-shell"
+moon = "aqua:moonrepo/moon"
+opencodex = "npm:@bitkyc08/opencodex"
+prettier = "npm:prettier"
+runs-on = "github:runs-on/cli"
+sqlite = "asdf:mise-plugins/mise-sqlite"
+
+# ====================
+# Settings
+# ====================
+[settings]
+minimum_release_age_excludes = [
+  "claude-code",
+  "codex",
+  "opencodex",
+  "opencode",
+]
+
+[settings.cargo]
+# Only use cargo-binstall for installation; fail if a binary is unavailable.
+binstall_only = true

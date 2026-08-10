@@ -1,11 +1,11 @@
 ---
 name: os-config-sync
-description: Refresh the Ubuntu snapshot in the os-configs repository from the current machine's shell startup files, global agent instructions, user-authored agent and Codex skills, Codex configuration, mise configuration, and durable command wrappers. Use when asked to update, synchronize, capture, or publish local Ubuntu configuration changes in os-configs.
+description: Refresh the Ubuntu or macOS snapshot in the os-configs repository from the current machine's maintained configuration. Use when asked to update, synchronize, capture, or publish local machine configuration changes in os-configs.
 ---
 
 # OS Config Sync
 
-Synchronize the maintained Ubuntu configuration from the live home directory into this repository without copying credentials, generated system skills, plugin caches, binaries, or temporary development launchers.
+Synchronize maintained configuration from the live home directory into this repository without copying credentials, generated system skills, plugin caches, binaries, or temporary development launchers.
 
 ## Workflow
 
@@ -28,16 +28,42 @@ Synchronize the maintained Ubuntu configuration from the live home directory int
    - `~/.config/git/allowed_signers`, which maps a signing identity to its public key so `git log --show-signature` can name the signer. Public keys only
    - `~/.granted/config`, WSL-only — granted cannot defer to `$BROWSER` or `xdg-open`, so it names the Windows Firefox binary by absolute path and a macOS machine needs its own copy
    - `~/.local/share/applications/wsl-explorer.desktop`, the URL handler `$BROWSER` and `xdg-open` resolve to; WSL-only, it execs `explorer.exe`
-   - `~/.gitconfig` and `~/git-mushi/.gitconfig`, which together preserve directory-scoped Git identity and credential selection. `~/git-mushi/` is a personal secondary account and is the only `~/git-<name>/` tree captured; client trees are never synced
+   - `~/.gitconfig`, which preserves directory-scoped Git identity and credential selection rules. Referenced account-specific `~/git-<name>/.gitconfig` files remain local and are never captured
    - `~/.reasonix/config.toml`, named individually rather than by directory: the sibling `.env` holds provider API keys
    - explicitly allowlisted wrappers from `~/.local/bin/`
 4. Review the complete diff. Remove machine-generated state, credentials, tokens, caches, compiled binaries, transient test files, and wrappers tied to temporary build paths.
 5. Run the validations printed by the script, plus the skill validator for every new or changed skill when it is available.
 6. Confirm executable bits for scripts and wrappers, run `git diff --check`, then commit and push only when requested.
 
+## macOS
+
+Run `scripts/sync-macos-from-home.sh` on macOS. It captures:
+
+- `~/.config/fish/config.fish`
+- `~/.profile`, a shim-only fallback for POSIX login shells and explicit
+  `bash -lc` subprocesses; interactive setup remains in fish
+- the personal `~/.config/mise/config.toml`
+- the adjacent Taplo and markdownlint policies
+- the Oh My Posh theme at `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
+- `~/.config/opencode/opencode.json`, named individually so generated package
+  state and the `AGENTS.md` symlink beside it stay out
+- the portable preference subset of `~/.codex/config.toml`; OpenCodex-injected
+  model, proxy, catalog, plugin state, hooks, and project trust stay local
+- OpenCodex's validated configuration export as `~/.opencodex/config.json`;
+  authentication, service/runtime state, usage, logs, and catalogs stay out
+- the allowlisted preference subset of `~/.claude.json`
+- VS Code settings, keybindings, and extensions
+
+The Mac sync names every source file explicitly. It must never capture
+`config.devops.toml`, `shared_tasks/`, `packages/`, README files, or any other
+work or organization content near the personal mise config. It leaves the
+work-specific `~/.gitconfig` out of this personal snapshot.
+
 ## Shells
 
-fish is the interactive shell; `~/.config/fish/config.fish` holds everything.
+fish is the interactive shell on both maintained systems;
+`~/.config/fish/config.fish` holds everything. The OS snapshots remain separate
+because paths, browser integration, and keyboard behavior differ.
 `~/.bashrc` and `~/.bash_aliases` were reset to the Ubuntu skeleton on
 2026-07-25 and are no longer tracked.
 
@@ -48,6 +74,10 @@ non-interactive guard, and without the shims a spawned bash resolves `rg` to
 `/usr/bin/rg` rather than the mise-managed build the global AGENTS.md tells
 agents to prefer. Only `config.fish` gets `mise activate`, and only when
 interactive.
+
+macOS has a smaller `~/.profile` for the same class of explicit `bash -lc` and
+POSIX-login subprocesses. Fish does not read it; it only exposes mise shims and
+`~/.local/bin`, while interactive activation remains in `config.fish`.
 
 Capture only `config.fish`. `conf.d/`, `functions/`, and `completions/` are kept
 empty **deliberately** — every interactive setting lives in `config.fish` so there
@@ -82,14 +112,22 @@ infer the filename from another harness.
 ## Boundaries
 
 - Treat the live home directory as the source and `ubuntu/` as the snapshot destination.
+- On macOS, treat `macos/` as the snapshot destination and copy only the
+  explicit allowlist in `sync-macos-from-home.sh`.
 - Keep `ubuntu/.agents/skills/os-config-sync/` repository-owned; the sync operation must not delete it merely because it is absent from the live skills directory.
 - Keep `ubuntu/.agents/AGENTS.md` canonical and `ubuntu/.codex/AGENTS.md` as a relative symlink to it.
 - Never commit the derived harness symlinks. `link.sh` regenerates them from `~/.agents/`; snapshotting them would encode one machine's installed harnesses.
 - Treat `ubuntu/.claude.json` as a filtered subset rather than a copy, in both directions: capture only the allowlisted preference keys, and never restore it over an existing `~/.claude.json`, which would drop that machine's account and project history.
 - Do not copy `~/.codex/skills/.system/`, `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries.
+- On macOS, treat Codex and OpenCodex as separate configurations: filter
+  portable Codex preferences from `~/.codex/config.toml`, and use
+  `opencodex config export` for OpenCodex. Never capture either runtime tree.
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.
 - Preserve mise as the owner of tool versions. Wrappers should resolve mise-managed executables dynamically rather than pinning mise installation paths or versions.
+- For any non-registry tool, declare a `[tool_alias]` and use the alias in
+  `[tools]`. Keep explicit `cargo:` declarations for tools intentionally
+  installed through the Cargo backend.
 - Keep shell initialization consistent with the captured tool configuration: activate mise before invoking mise-managed tools and put `~/.local/bin` before mise when local wrappers must take precedence.
 - Stop before staging if the privacy scan reports a possible secret; inspect and sanitize the source instead of weakening the scan.
 
@@ -122,11 +160,17 @@ Restoring is not one click, which is the cost of dropping the export:
 xargs -n1 code --install-extension < ubuntu/vs-code/extensions.txt
 ```
 
+The macOS snapshot carries its own settings and keybindings because terminal
+paths and keyboard remapping differ. Its extension list otherwise contains the
+Windows host baseline, excluding only `ms-vscode-remote.remote-wsl`; additional
+native Mac extensions are allowed.
+
 ## Scripts
 
-Run from the repository root; neither script commits or pushes:
+Run from the repository root; none of these scripts commits or pushes:
 
 ```bash
 ubuntu/.agents/skills/os-config-sync/scripts/sync-from-home.sh
+ubuntu/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
 ubuntu/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 ```

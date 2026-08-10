@@ -28,7 +28,6 @@ required_sources=(
 	"${HOME}/.local/share/applications/wsl-explorer.desktop"
 	"${HOME}/.profile"
 	"${HOME}/.reasonix/config.toml"
-	"${HOME}/git-mushi/.gitconfig"
 )
 
 for source in "${required_sources[@]}"; do
@@ -61,8 +60,7 @@ mkdir -p \
 	"${ubuntu_dir}/.granted" \
 	"${ubuntu_dir}/.local/bin" \
 	"${ubuntu_dir}/.local/share/applications" \
-	"${ubuntu_dir}/.reasonix" \
-	"${ubuntu_dir}/git-mushi"
+	"${ubuntu_dir}/.reasonix"
 
 cp -a "${HOME}/.agents/AGENTS.md" "${ubuntu_dir}/.agents/AGENTS.md"
 cp -a "${HOME}/.agents/link.sh" "${ubuntu_dir}/.agents/link.sh"
@@ -122,7 +120,6 @@ cp -a "${HOME}/.local/share/applications/wsl-explorer.desktop" \
 cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
 # Named file, never the directory: ~/.reasonix/.env holds provider API keys.
 cp -a "${HOME}/.reasonix/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
-cp -a "${HOME}/git-mushi/.gitconfig" "${ubuntu_dir}/git-mushi/.gitconfig"
 
 for source in "${HOME}/.agents/skills/"*; do
 	[[ -d "$source" ]] || continue
