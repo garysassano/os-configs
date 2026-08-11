@@ -4,7 +4,7 @@ Use latest stable unless the user asks otherwise or the project documents a comp
 
 ## GitHub CLI
 
-Inside the target repository, always invoke `~/.local/bin/gh`, never bare `gh` or another `gh` executable. The wrapper selects the mapped GitHub account automatically. Never set `GH_TOKEN` or `GITHUB_TOKEN`, and use `gh auth` only for status or help. If credentials are missing, stop and ask the user to sign the mapped account into Git Credential Manager.
+A per-directory account-selecting wrapper lives at `~/.local/bin/gh` on the WSL/Ubuntu machine, but not on macOS. When it is present, always invoke `~/.local/bin/gh` inside the target repository, never bare `gh` or another `gh` executable; it selects the mapped GitHub account automatically. When it is absent (macOS), use the normal `gh` binary. Either way, never set `GH_TOKEN` or `GITHUB_TOKEN`, use `gh auth` only for status or help, and if credentials are missing, stop and ask the user to sign the mapped account into the credential manager (Git Credential Manager on WSL).
 
 ## Tools
 
