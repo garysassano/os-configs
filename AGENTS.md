@@ -10,9 +10,9 @@ change configuration, edit the real file under `~`, then run the sync script and
 review the diff.
 
 Two paths are the exception and are edited here, because they are the source:
-`ubuntu/.agents/skills/os-config-sync/` and `README.md`.
+`shared/.agents/skills/os-config-sync/` and `README.md`.
 
-`ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh` lives inside that
+`shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh` lives inside that
 exception. It has no counterpart under `~`, and it survives syncs because the skill
 loop only copies directories that exist in `~/.agents/skills/` and never deletes
 repository-only ones. The sync lints it and does not run it: it needs network
@@ -20,7 +20,7 @@ access, live Git Credential Manager credentials, and it creates throwaway
 repositories. Run it by hand after changing `ubuntu/.local/bin/gh`:
 
 ```
-ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh <primary-repo> <secondary-repo>
+shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh <primary-repo> <secondary-repo>
 ```
 
 ## Do not

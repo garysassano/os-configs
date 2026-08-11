@@ -5,6 +5,9 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../../../.." && pwd)"
 ubuntu_dir="${repo_root}/ubuntu"
+# The canonical agent configuration is OS-independent — the same AGENTS.md, skills,
+# link.sh, and skill lock on every machine — so it lives outside the per-OS trees.
+shared_dir="${repo_root}/shared"
 
 required_sources=(
 	"${HOME}/.agents/.skill-lock.json"
@@ -14,7 +17,6 @@ required_sources=(
 	"${HOME}/.claude.json"
 	"${HOME}/.claude/settings.json"
 	"${HOME}/.codex/config.toml"
-	"${HOME}/.codex/skills"
 	"${HOME}/.config/fish/config.fish"
 	"${HOME}/.config/git/allowed_signers"
 	"${HOME}/.config/mise/.markdownlint.jsonc"
@@ -47,9 +49,9 @@ scan_for_secrets "${required_sources[@]}" \
 	"${script_dir}/test-gh-wrapper.sh" || exit 1
 
 mkdir -p \
-	"${ubuntu_dir}/.agents/skills" \
+	"${shared_dir}/.agents/skills" \
 	"${ubuntu_dir}/.claude" \
-	"${ubuntu_dir}/.codex/skills" \
+	"${ubuntu_dir}/.codex" \
 	"${ubuntu_dir}/.config/fish" \
 	"${ubuntu_dir}/.config/git" \
 	"${ubuntu_dir}/.config/mise" \
@@ -60,13 +62,13 @@ mkdir -p \
 	"${ubuntu_dir}/.local/share/applications" \
 	"${ubuntu_dir}/.reasonix"
 
-cp -a "${HOME}/.agents/AGENTS.md" "${ubuntu_dir}/.agents/AGENTS.md"
-cp -a "${HOME}/.agents/link.sh" "${ubuntu_dir}/.agents/link.sh"
+cp -a "${HOME}/.agents/AGENTS.md" "${shared_dir}/.agents/AGENTS.md"
+cp -a "${HOME}/.agents/link.sh" "${shared_dir}/.agents/link.sh"
 # npx skills' own state: which skills under ~/.agents/skills are vendored copies
 # rather than hand-written, and which harnesses it writes into. Without it a rebuilt
 # machine cannot tell a vendored skill from a local one, and `npx skills update`
 # has nothing to update.
-cp -a "${HOME}/.agents/.skill-lock.json" "${ubuntu_dir}/.agents/.skill-lock.json"
+cp -a "${HOME}/.agents/.skill-lock.json" "${shared_dir}/.agents/.skill-lock.json"
 cp -a "${HOME}/.claude/settings.json" "${ubuntu_dir}/.claude/settings.json"
 # ~/.claude.json mixes preferences with app-managed state — oauthAccount, machineID,
 # per-project history, rotating caches — so only the preference keys are captured.
@@ -83,7 +85,6 @@ claude_global_keys='[
 jq --argjson keys "$claude_global_keys" \
 	'with_entries(select(.key as $k | $keys | index($k)))' \
 	"${HOME}/.claude.json" >"${ubuntu_dir}/.claude.json"
-ln -sfn ../.agents/AGENTS.md "${ubuntu_dir}/.codex/AGENTS.md"
 # opencodex shims Codex while it runs: it injects a routed model, its generated
 # model_catalog_json, the localhost proxy openai_base_url, and a
 # [tui.model_availability_nux] block, then strips them again when it restores the
@@ -136,19 +137,27 @@ cp -a "${HOME}/.profile" "${ubuntu_dir}/.profile"
 # Named file, never the directory: ~/.reasonix/.env holds provider API keys.
 cp -a "${HOME}/.reasonix/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
 
+# The skills sync is additive on purpose. Every real directory under
+# ~/.agents/skills is refreshed, but a repository skill missing there is left
+# alone, never deleted — a skill authored on another machine must survive a sync
+# run from this one. Removal is therefore always deliberate: delete the skill from
+# ~/.agents/skills and `git rm` it here. The cost is drift, so the loop below
+# surfaces repository-only skills as a note rather than acting on them.
 for source in "${HOME}/.agents/skills/"*; do
 	[[ -d "$source" ]] || continue
 	[[ -L "$source" ]] && continue
-	cp -a "$source" "${ubuntu_dir}/.agents/skills/"
+	cp -a "$source" "${shared_dir}/.agents/skills/"
 done
 
-# Skip symlinks: link.sh fans the canonical ~/.agents/skills into every harness,
-# so a symlink here is a derived copy of a skill already captured above. Copying
-# it would snapshot a dangling absolute path into the repository.
-for source in "${HOME}/.codex/skills/"*; do
-	[[ -d "$source" ]] || continue
-	[[ -L "$source" ]] && continue
-	cp -a "$source" "${ubuntu_dir}/.codex/skills/"
+# os-config-sync is the one repository-owned skill with no ~ counterpart, so it is
+# never flagged. Any other repository-only skill is drift to review by hand.
+for repo_skill in "${shared_dir}/.agents/skills/"*/; do
+	name="$(basename "$repo_skill")"
+	[[ "$name" == "os-config-sync" ]] && continue
+	if [[ ! -e "${HOME}/.agents/skills/${name}" ]]; then
+		printf 'Note: %s is in the repository but not under ~/.agents/skills; remove it by hand if that is intended.\n' \
+			"$name" >&2
+	fi
 done
 
 wrappers=(gh)
@@ -166,10 +175,10 @@ taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/.taplo
 # -x so the sourced lib/scan-secrets.sh is followed rather than reported as SC1091.
 # test-gh-wrapper.sh is linted but never run here: it needs network access, live
 # credentials, and it creates throwaway repositories. Run it by hand.
-shellcheck -x "${ubuntu_dir}/.local/bin/gh" "${ubuntu_dir}/.agents/link.sh" \
+shellcheck -x "${ubuntu_dir}/.local/bin/gh" "${shared_dir}/.agents/link.sh" \
 	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" \
 	"${script_dir}/test-gh-wrapper.sh" "$0"
-shfmt -d "${ubuntu_dir}/.local/bin/gh" "${ubuntu_dir}/.agents/link.sh" \
+shfmt -d "${ubuntu_dir}/.local/bin/gh" "${shared_dir}/.agents/link.sh" \
 	"${script_dir}/lib/scan-secrets.sh" "${script_dir}/sync-vscode.sh" \
 	"${script_dir}/test-gh-wrapper.sh" "$0"
 git -C "$repo_root" diff --check

@@ -15,11 +15,11 @@ Synchronize maintained configuration from the live home directory into this repo
    - `~/.agents/AGENTS.md`
    - `~/.agents/link.sh`, the harness fan-out script
    - `~/.agents/.skill-lock.json`, npx skills' record of which skills are vendored and which harnesses it targets
-   - the `~/.codex/AGENTS.md` compatibility symlink to the canonical global instructions
    - `~/.config/fish/config.fish`, the interactive shell configuration
    - `~/.profile`, which is stock Ubuntu apart from a mise shims block; see below
-   - all visible directories under `~/.agents/skills/`
-   - all visible user-authored directories under `~/.codex/skills/`; the hidden `.system/` directory and plugin caches are excluded
+   - all visible directories under `~/.agents/skills/`, additively: a repository skill with no counterpart here is left in place and flagged for manual review, never deleted
+
+   The canonical `~/.agents/` set — `AGENTS.md`, `link.sh`, `.skill-lock.json`, and `skills/` — lands under `shared/.agents/` because it is OS-independent; the per-OS files below land under `ubuntu/`. The harness copies link.sh fans out (`~/.codex/AGENTS.md`, `~/.codex/skills/`, `~/.claude/skills/`, …) are symlinks, gitignored, and never captured.
    - `~/.claude/settings.json`, and the preference keys of `~/.claude.json` filtered through an explicit allowlist; the rest of that file is app-managed state and stays out
    - `~/.codex/config.toml`
    - `~/.config/mise/config.toml` and the adjacent `.taplo.toml` formatting policy
@@ -112,11 +112,11 @@ infer the filename from another harness.
 - Treat the live home directory as the source and `ubuntu/` as the snapshot destination.
 - On macOS, treat `macos/` as the snapshot destination and copy only the
   explicit allowlist in `sync-macos-from-home.sh`.
-- Keep `ubuntu/.agents/skills/os-config-sync/` repository-owned; the sync operation must not delete it merely because it is absent from the live skills directory.
-- Keep `ubuntu/.agents/AGENTS.md` canonical and `ubuntu/.codex/AGENTS.md` as a relative symlink to it.
+- Keep `shared/.agents/skills/os-config-sync/` repository-owned; the sync operation must not delete it merely because it is absent from the live skills directory.
+- Keep `shared/.agents/AGENTS.md` canonical. The per-harness copies — `~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, and the rest — are link.sh symlinks, gitignored, and never tracked.
 - Never commit the derived harness symlinks. `link.sh` regenerates them from `~/.agents/`; snapshotting them would encode one machine's installed harnesses.
 - Treat `ubuntu/.claude.json` as a filtered subset rather than a copy, in both directions: capture only the allowlisted preference keys, and never restore it over an existing `~/.claude.json`, which would drop that machine's account and project history.
-- Do not copy `~/.codex/skills/.system/`, `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries.
+- Do not copy `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries. `~/.codex/skills/` is no longer captured at all — it holds only link.sh symlinks plus the excluded `.system/` tree.
 - Filter portable Codex preferences out of `~/.codex/config.toml` on both OSes,
   dropping the block OpenCodex injects while it shims Codex. OpenCodex's own
   `~/.opencodex/` tree is never captured on either machine.
@@ -168,7 +168,7 @@ native Mac extensions are allowed.
 Run from the repository root; none of these scripts commits or pushes:
 
 ```bash
-ubuntu/.agents/skills/os-config-sync/scripts/sync-from-home.sh
-ubuntu/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
-ubuntu/.agents/skills/os-config-sync/scripts/sync-vscode.sh
+shared/.agents/skills/os-config-sync/scripts/sync-from-home.sh
+shared/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
+shared/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 ```

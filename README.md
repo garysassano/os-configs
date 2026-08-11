@@ -11,7 +11,8 @@ Windows host and connecting into the WSL remote.
 
 | Path | Contents |
 | --- | --- |
-| `ubuntu/` | WSL environment — shell, agent configuration, mise, git, Codex, Claude Code, VS Code remote extensions |
+| `shared/` | OS-independent configuration used identically on every machine — the canonical `.agents/` set (AGENTS.md, skills, link.sh, skill lock) |
+| `ubuntu/` | WSL environment — shell, mise, git, Codex, Claude Code, VS Code remote extensions |
 | `windows/` | Windows host — VS Code settings and extensions, fonts, scheduled tasks |
 | `macos/` | macOS fish, mise, prompt theme, Codex, OpenCode, Claude preference, and VS Code configuration |
 
@@ -57,10 +58,11 @@ the mise-managed Biome on `PATH`; no versioned install path or project-specific
 Prettier and markdownlint are pointed at explicitly for the same reason Taplo is: `prettier.prettierPath` resolves to the mise install so Ctrl-S matches the terminal, and `markdownlint.configFile` resolves to `ubuntu/.config/mise/.markdownlint.jsonc`, which turns MD013 off so prose is never hard-wrapped.
 Both are base configuration only — a repository pinning its own Prettier or shipping its own `.markdownlint.*` still wins.
 
-**Agents.** `ubuntu/.agents/` is the canonical source for agent configuration —
-one `AGENTS.md` and one skills directory, shared across every harness. No
-cross-harness standard exists for where those live, so `ubuntu/.agents/link.sh`
-symlinks them into each one.
+**Agents.** `shared/.agents/` is the canonical source for agent configuration —
+one `AGENTS.md` and one skills directory, identical on every machine, which is
+why it sits in `shared/` rather than a per-OS tree. No cross-harness standard
+exists for where those live, so `shared/.agents/link.sh` symlinks them into each
+one.
 
 | Canonical | Fanned out to |
 | --- | --- |
@@ -114,9 +116,9 @@ The sync scripts read the live machine and write here. None commits, pushes, or
 changes the live machine. Review the diff before staging.
 
 ```bash
-ubuntu/.agents/skills/os-config-sync/scripts/sync-from-home.sh
-ubuntu/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
-ubuntu/.agents/skills/os-config-sync/scripts/sync-vscode.sh
+shared/.agents/skills/os-config-sync/scripts/sync-from-home.sh
+shared/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
+shared/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 ```
 
 `sync-from-home.sh` captures the shell, agent, mise, git, and Codex
@@ -134,20 +136,23 @@ unreadable diffs.
 
 They refuse to run when a credential-shaped string appears in a source file; the
 shared scan lives in `scripts/lib/scan-secrets.sh`. Full operating notes are in
-`ubuntu/.agents/skills/os-config-sync/SKILL.md`.
+`shared/.agents/skills/os-config-sync/SKILL.md`.
 
 ## Restoring onto a new machine
 
-Files sit at the path they occupy in the real home directory, but the tree is not
-a blanket copy target. Two paths are repository-owned and have no live-home
-counterpart, so copying them into `~` is wrong:
+Files sit at the path they occupy in the real home directory — the OS-specific
+tree (`ubuntu/`, `macos/`) and the `shared/` tree both overlay onto `~`, so
+`shared/.agents/AGENTS.md` restores to `~/.agents/AGENTS.md` just as
+`ubuntu/.profile` restores to `~/.profile`. The tree is not a blanket copy
+target, though: two paths are repository-owned and have no live-home counterpart,
+so copying them into `~` is wrong:
 
 | Path | Why it is not a home file |
 | --- | --- |
-| `ubuntu/.agents/skills/os-config-sync/` | The sync skill itself, edited here rather than under `~`. Placing it in `~/.agents/skills/` would make the skill loop copy it back over itself. |
+| `shared/.agents/skills/os-config-sync/` | The sync skill itself, edited here rather than under `~`. Placing it in `~/.agents/skills/` would make the skill loop copy it back over itself. |
 | `ubuntu/vs-code/` | VS Code remote artifacts, restored by the steps below rather than by path. |
 
-Everything else under `ubuntu/` restores to the matching path in `~`.
+Everything else under `ubuntu/` and `shared/` restores to the matching path in `~`.
 
 `ubuntu/.claude.json` is the one partial file in the tree — Claude Code's
 preference keys only, since the rest of that file is the signed-in account,
@@ -239,12 +244,12 @@ and history with nothing.
    `explorer.exe` needs no package. Setting `$BROWSER` at all matters more than it
    looks: many CLIs check it first and silently print a URL instead of opening one
    when it is empty.
-9. **`ubuntu/.agents/link.sh`** to fan the canonical agent configuration into each
+9. **`shared/.agents/link.sh`** to fan the canonical agent configuration into each
    installed harness (see below).
 10. **Verify**, from the cloned repository:
 
    ```bash
-   ubuntu/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh ~/git/<repo> ~/git-<name>/<repo>
+   shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh ~/git/<repo> ~/git-<name>/<repo>
    ```
 
    It needs two repositories mapping to different accounts, and exits non-zero
@@ -253,8 +258,8 @@ and history with nothing.
 ## Applying to a machine
 
 ```bash
-ubuntu/.agents/link.sh --dry-run   # preview
-ubuntu/.agents/link.sh             # create the harness symlinks
+shared/.agents/link.sh --dry-run   # preview
+shared/.agents/link.sh             # create the harness symlinks
 ```
 
 `link.sh` is idempotent and only ever creates symlinks pointing into

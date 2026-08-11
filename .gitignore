@@ -1,11 +1,15 @@
 # Backups created by link.sh when it replaces a real file with a symlink.
 *.bak
 
-# Derived harness symlinks. link.sh regenerates these from ubuntu/.agents/;
+# Derived harness symlinks. link.sh regenerates these from shared/.agents/;
 # committing them would encode one machine's set of installed harnesses.
-# ubuntu/.claude/ is ignored by contents so settings.json can be negated back in.
+# ubuntu/.claude/ and ubuntu/.codex/ are ignored by contents so the one real
+# settings file in each — settings.json, config.toml — can be negated back in;
+# everything else there (AGENTS.md, skills/) is a link.sh symlink.
 ubuntu/.claude/*
 !ubuntu/.claude/settings.json
+ubuntu/.codex/*
+!ubuntu/.codex/config.toml
 ubuntu/.codex-kiro/
 ubuntu/.gemini/
 ubuntu/.kiro/
