@@ -13,7 +13,7 @@ Windows host and connecting into the WSL remote.
 | --- | --- |
 | `ubuntu/` | WSL environment — shell, agent configuration, mise, git, Codex, Claude Code, VS Code remote extensions |
 | `windows/` | Windows host — VS Code settings and extensions, fonts, scheduled tasks |
-| `macos/` | macOS fish, mise, prompt theme, Codex, OpenCodex, OpenCode, Claude preference, and VS Code configuration |
+| `macos/` | macOS fish, mise, prompt theme, Codex, OpenCode, Claude preference, and VS Code configuration |
 
 Files sit at the path they occupy in the real home directory, so
 `ubuntu/.config/fish/config.fish` is `~/.config/fish/config.fish`.
@@ -88,12 +88,12 @@ sync drops it and OpenCodex reinjects it on the next machine; the MCP,
 marketplace, project-trust, and plugin sections, which the Ubuntu snapshot keeps
 by design, are preserved with their comments.
 
-The macOS snapshot also keeps Codex and OpenCodex distinct.
-`macos/.codex/config.toml` contains only portable Codex preferences; OpenCodex's
-injected model, localhost proxy, generated catalog, plugin state, hooks, and
-project trust are deliberately filtered out. `macos/.opencodex/config.json` is
-the validated OpenCodex configuration export. OpenCodex authentication,
-service/runtime state, usage, logs, and catalogs remain local.
+The macOS snapshot filters Codex the same way. `macos/.codex/config.toml`
+contains only portable Codex preferences; OpenCodex's injected model, localhost
+proxy, generated catalog, plugin state, hooks, and project trust are deliberately
+filtered out. OpenCodex's own configuration is not captured on either OS —
+neither snapshot tracks a `.opencodex/` tree, so authentication, service and
+runtime state, usage, logs, and catalogs all stay local.
 
 **Git identity.** `ubuntu/.gitconfig` contains the directory-scoped identity and
 credential selection rules used by the WSL machine. Account-specific
@@ -122,9 +122,9 @@ ubuntu/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 `sync-from-home.sh` captures the shell, agent, mise, git, and Codex
 configuration on Ubuntu. `sync-macos-from-home.sh` captures macOS fish, a
 shim-only `.profile` fallback for explicit `bash -lc` subprocesses, personal mise
-configuration, prompt theme, portable Codex preferences, the validated OpenCodex
-config, the named OpenCode config, the safe Claude preference subset, and VS
-Code settings, keybindings, and extensions. It deliberately excludes the Mac's
+configuration, prompt theme, portable Codex preferences, the named OpenCode
+config, the safe Claude preference subset, and VS Code settings, keybindings, and
+extensions. It deliberately excludes the Mac's
 work-specific `.gitconfig`. The Mac extension list must contain the Windows host
 baseline except for the WSL-only remote extension.
 `sync-vscode.sh` captures Windows settings, keybindings, snippets, and the

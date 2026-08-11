@@ -14,7 +14,6 @@ required_sources=(
 	"${HOME}/.config/mise/config.toml"
 	"${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json"
 	"${HOME}/.config/opencode/opencode.json"
-	"${HOME}/.opencodex/config.json"
 	"${HOME}/.profile"
 	"${HOME}/Library/Application Support/Code/User/keybindings.json"
 	"${HOME}/Library/Application Support/Code/User/settings.json"
@@ -39,8 +38,7 @@ claude_tmp="$(mktemp)"
 codex_tmp="$(mktemp)"
 extensions_tmp="$(mktemp)"
 common_extensions_tmp="$(mktemp)"
-opencodex_tmp="$(mktemp)"
-trap 'rm -f "$claude_tmp" "$codex_tmp" "$extensions_tmp" "$common_extensions_tmp" "$opencodex_tmp"' EXIT
+trap 'rm -f "$claude_tmp" "$codex_tmp" "$extensions_tmp" "$common_extensions_tmp"' EXIT
 
 # ~/.claude.json mixes preferences with account and app-managed state. Keep the
 # same explicit preference allowlist as the Ubuntu sync.
@@ -74,19 +72,13 @@ yq -p=toml -o=toml '
 	del(.tui.model_availability_nux)
 ' "${HOME}/.codex/config.toml" >"$codex_tmp"
 
-# Use OpenCodex's validated export rather than copying its surrounding runtime
-# directory. Authentication, service state, usage, logs, catalogs, and proxy
-# mutation databases remain machine-local.
-opencodex config export "$opencodex_tmp"
-
 # Scan only Claude's filtered preferences, not its account, project history, or
 # caches. Other macOS sources are named individually so nearby work content,
 # including config.devops.toml, shared_tasks/, and packages/, cannot enter.
 scan_for_secrets \
 	"${required_sources[@]}" \
 	"$claude_tmp" \
-	"$codex_tmp" \
-	"$opencodex_tmp" || exit 1
+	"$codex_tmp" || exit 1
 
 mkdir -p \
 	"${macos_dir}/.codex" \
@@ -94,12 +86,10 @@ mkdir -p \
 	"${macos_dir}/.config/mise" \
 	"${macos_dir}/.config/oh-my-posh/themes" \
 	"${macos_dir}/.config/opencode" \
-	"${macos_dir}/.opencodex" \
 	"${macos_dir}/vs-code"
 
 install -m 0644 "$claude_tmp" "${macos_dir}/.claude.json"
 install -m 0600 "$codex_tmp" "${macos_dir}/.codex/config.toml"
-install -m 0600 "$opencodex_tmp" "${macos_dir}/.opencodex/config.json"
 install -m 0644 "${HOME}/.profile" "${macos_dir}/.profile"
 
 cp -a "${HOME}/.config/fish/config.fish" "${macos_dir}/.config/fish/config.fish"
@@ -141,7 +131,6 @@ taplo lint \
 	"${macos_dir}/.codex/config.toml" \
 	"${macos_dir}/.config/mise/.taplo.toml" \
 	"${macos_dir}/.config/mise/config.toml"
-jq empty "${macos_dir}/.opencodex/config.json"
 fish_bin="$(mise which fish)"
 fish_indent_bin="$(dirname "$fish_bin")/fish_indent"
 "$fish_bin" --no-execute "${macos_dir}/.config/fish/config.fish"

@@ -49,8 +49,6 @@ Run `scripts/sync-macos-from-home.sh` on macOS. It captures:
   state and the `AGENTS.md` symlink beside it stay out
 - the portable preference subset of `~/.codex/config.toml`; OpenCodex-injected
   model, proxy, catalog, plugin state, hooks, and project trust stay local
-- OpenCodex's validated configuration export as `~/.opencodex/config.json`;
-  authentication, service/runtime state, usage, logs, and catalogs stay out
 - the allowlisted preference subset of `~/.claude.json`
 - VS Code settings, keybindings, and extensions
 
@@ -119,9 +117,9 @@ infer the filename from another harness.
 - Never commit the derived harness symlinks. `link.sh` regenerates them from `~/.agents/`; snapshotting them would encode one machine's installed harnesses.
 - Treat `ubuntu/.claude.json` as a filtered subset rather than a copy, in both directions: capture only the allowlisted preference keys, and never restore it over an existing `~/.claude.json`, which would drop that machine's account and project history.
 - Do not copy `~/.codex/skills/.system/`, `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries.
-- On macOS, treat Codex and OpenCodex as separate configurations: filter
-  portable Codex preferences from `~/.codex/config.toml`, and use
-  `opencodex config export` for OpenCodex. Never capture either runtime tree.
+- Filter portable Codex preferences out of `~/.codex/config.toml` on both OSes,
+  dropping the block OpenCodex injects while it shims Codex. OpenCodex's own
+  `~/.opencodex/` tree is never captured on either machine.
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.
 - Preserve mise as the owner of tool versions. Wrappers should resolve mise-managed executables dynamically rather than pinning mise installation paths or versions.
