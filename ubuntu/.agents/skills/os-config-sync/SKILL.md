@@ -23,7 +23,7 @@ Synchronize maintained configuration from the live home directory into this repo
    - `~/.claude/settings.json`, and the preference keys of `~/.claude.json` filtered through an explicit allowlist; the rest of that file is app-managed state and stays out
    - `~/.codex/config.toml`
    - `~/.config/mise/config.toml` and the adjacent `.taplo.toml` formatting policy
-   - `~/.cargo/config.toml` and `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
+   - `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
    - `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: that directory accumulates provider state beside it, and the Kiro integration removed on 2026-08-07 kept a live `clientSecret` in `kiro-oidc-clients.json`
    - `~/.config/git/allowed_signers`, which maps a signing identity to its public key so `git log --show-signature` can name the signer. Public keys only
    - `~/.granted/config`, WSL-only — granted cannot defer to `$BROWSER` or `xdg-open`, so it names the Windows Firefox binary by absolute path and a macOS machine needs its own copy

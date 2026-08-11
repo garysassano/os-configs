@@ -11,7 +11,6 @@ required_sources=(
 	"${HOME}/.agents/AGENTS.md"
 	"${HOME}/.agents/link.sh"
 	"${HOME}/.agents/skills"
-	"${HOME}/.cargo/config.toml"
 	"${HOME}/.claude.json"
 	"${HOME}/.claude/settings.json"
 	"${HOME}/.codex/config.toml"
@@ -49,7 +48,6 @@ scan_for_secrets "${required_sources[@]}" \
 
 mkdir -p \
 	"${ubuntu_dir}/.agents/skills" \
-	"${ubuntu_dir}/.cargo" \
 	"${ubuntu_dir}/.claude" \
 	"${ubuntu_dir}/.codex/skills" \
 	"${ubuntu_dir}/.config/fish" \
@@ -69,7 +67,6 @@ cp -a "${HOME}/.agents/link.sh" "${ubuntu_dir}/.agents/link.sh"
 # machine cannot tell a vendored skill from a local one, and `npx skills update`
 # has nothing to update.
 cp -a "${HOME}/.agents/.skill-lock.json" "${ubuntu_dir}/.agents/.skill-lock.json"
-cp -a "${HOME}/.cargo/config.toml" "${ubuntu_dir}/.cargo/config.toml"
 cp -a "${HOME}/.claude/settings.json" "${ubuntu_dir}/.claude/settings.json"
 # ~/.claude.json mixes preferences with app-managed state — oauthAccount, machineID,
 # per-project history, rotating caches — so only the preference keys are captured.
