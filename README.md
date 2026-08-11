@@ -78,6 +78,16 @@ files, so `ubuntu/.claude.json` carries the preference keys of the second one,
 filtered to an allowlist — the rest of that file is the signed-in account,
 per-project history, and caches, and stays out.
 
+`ubuntu/.codex/config.toml` is captured whole except for the block OpenCodex
+injects while it shims Codex: the routed `model`, the generated
+`model_catalog_json`, the localhost proxy `openai_base_url`, and the
+`[tui.model_availability_nux]` state. OpenCodex regenerates all of it each run —
+the proxy port and the catalog it points at are live state — and strips it again
+when it restores the shim, so it is runtime state rather than configuration. The
+sync drops it and OpenCodex reinjects it on the next machine; the MCP,
+marketplace, project-trust, and plugin sections, which the Ubuntu snapshot keeps
+by design, are preserved with their comments.
+
 The macOS snapshot also keeps Codex and OpenCodex distinct.
 `macos/.codex/config.toml` contains only portable Codex preferences; OpenCodex's
 injected model, localhost proxy, generated catalog, plugin state, hooks, and

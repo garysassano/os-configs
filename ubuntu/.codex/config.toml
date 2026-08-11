@@ -3,10 +3,6 @@ model_reasoning_effort = "max"
 personality = "pragmatic"
 plan_mode_reasoning_effort = "ultra"
 sandbox_mode = "danger-full-access"
-model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
-model = "gpt-5.6-luna"
-# Auto-injected by opencodex
-openai_base_url = "http://127.0.0.1:46097/v1"
 
 [features]
 fast_mode = true
@@ -28,10 +24,6 @@ status_line = [
   "weekly-limit",
 ]
 status_line_use_colors = true
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-"gpt-5.6-sol" = 4
 
 [marketplaces.agent-toolkit-for-aws]
 last_updated = "2026-08-07T12:54:13Z"

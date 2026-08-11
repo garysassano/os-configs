@@ -87,7 +87,25 @@ jq --argjson keys "$claude_global_keys" \
 	'with_entries(select(.key as $k | $keys | index($k)))' \
 	"${HOME}/.claude.json" >"${ubuntu_dir}/.claude.json"
 ln -sfn ../.agents/AGENTS.md "${ubuntu_dir}/.codex/AGENTS.md"
-cp -a "${HOME}/.codex/config.toml" "${ubuntu_dir}/.codex/config.toml"
+# opencodex shims Codex while it runs: it injects a routed model, its generated
+# model_catalog_json, the localhost proxy openai_base_url, and a
+# [tui.model_availability_nux] block, then strips them again when it restores the
+# shim (codexShimAutoRestore in ~/.opencodex/config.json). All of it is live state
+# regenerated every run — the proxy port and the catalog it points at change
+# between sessions — so a raw copy churns the diff and freezes a dead port. Drop
+# it, the way the macOS sync does; opencodex reinjects it on the next machine.
+# Filtered by line rather than through yq so the MCP, marketplace, project, and
+# plugin sections keep the explanatory comments a TOML round-trip would discard.
+awk '
+	/^# Auto-injected by opencodex$/ { next }
+	/^model = / { next }
+	/^model_catalog_json = / { next }
+	/^openai_base_url = / { next }
+	/^\[tui\.model_availability_nux\]/ { drop = 1; next }
+	drop && /^\[/ { drop = 0 }
+	drop { next }
+	{ print }
+' "${HOME}/.codex/config.toml" >"${ubuntu_dir}/.codex/config.toml"
 # Only config.fish is durable. conf.d/, functions/, and completions/ are kept empty
 # deliberately — everything interactive lives in config.fish so there is one file to
 # read and one file to sync — and fish_variables is regenerated stock state.
