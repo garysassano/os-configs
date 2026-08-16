@@ -33,8 +33,9 @@ shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh <primary-repo> <
   wrapper wins.
 - Commit the harness symlinks that `link.sh` creates. They are gitignored; they
   describe one machine's installed harnesses.
-- Weaken `scripts/lib/scan-secrets.sh` to get a sync to pass. Sanitize the source
-  file instead.
+- Weaken `scripts/lib/scan-secrets.sh` or the rules in `scripts/lib/gitleaks.toml` to get a sync to pass. Sanitize the source file instead.
+  The two custom rules deliberately retain the policy for credential-shaped configuration keys and generic `sk-` model-provider keys; deleting one is not a simplification.
+  Adding a `keywords` prefilter to `config-credential-key` counts as weakening it because keywords stop the regex from running unless one matches, so an incomplete list silently disables the rule.
 - Add a tool by installing it imperatively. Declare it in the live machine's
   `~/.config/mise/config.toml`, then sync the matching OS snapshot. For tools
   outside the mise registry, add a `[tool_alias]` entry and use that alias in

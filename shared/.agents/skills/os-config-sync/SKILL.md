@@ -172,3 +172,7 @@ shared/.agents/skills/os-config-sync/scripts/sync-from-home.sh
 shared/.agents/skills/os-config-sync/scripts/sync-macos-from-home.sh
 shared/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 ```
+
+All three run the privacy scan in `scripts/lib/scan-secrets.sh`, which requires gitleaks and jq on `PATH` and reads its rules from `scripts/lib/gitleaks.toml`.
+The scanner ignores inline `gitleaks:allow` comments and filters gitleaks JSON to rule ID, file, and line before it writes a finding.
+gitleaks and jq are declared in each machine's `~/.config/mise/config.toml`; if either is missing, the scan stops the sync rather than passing silently.

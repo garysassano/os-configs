@@ -171,7 +171,8 @@ for wrapper in "${wrappers[@]}"; do
 done
 
 taplo lint "${ubuntu_dir}/.codex/config.toml" "${ubuntu_dir}/.config/mise/.taplo.toml" \
-	"${ubuntu_dir}/.config/mise/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
+	"${ubuntu_dir}/.config/mise/config.toml" "${ubuntu_dir}/.reasonix/config.toml" \
+	"${script_dir}/lib/gitleaks.toml"
 # -x so the sourced lib/scan-secrets.sh is followed rather than reported as SC1091.
 # test-gh-wrapper.sh is linted but never run here: it needs network access, live
 # credentials, and it creates throwaway repositories. Run it by hand.

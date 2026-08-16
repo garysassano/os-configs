@@ -1,0 +1,21 @@
+title = "os-config-sync"
+
+# gitleaks' maintained default rules catch known credential forms.
+# These two policy rules deliberately retain the scanner's broad configuration-key and generic sk- coverage.
+[extend]
+useDefault = true
+
+# Default rules match the credential values they recognize.
+# This rule fires on the key regardless of value, so a newly added password or client_secret field is caught immediately.
+# No keywords prefilter: an incomplete keyword list would silently prevent this regex from running.
+[[rules]]
+id = "config-credential-key"
+description = "Credential-shaped key in a configuration file, regardless of value"
+regex = '''(?i)(?m)^[[:space:]]*"?(api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|password|private[_-]?key)"?[[:space:]]*[:=]'''
+
+# The current default ruleset includes well-formed Anthropic API keys.
+# This broader rule intentionally retains generic sk- coverage for OpenAI-compatible and future providers without their own known-provider rule.
+[[rules]]
+id = "ai-provider-key-prefix"
+description = "sk- prefixed model provider key (generic coverage)"
+regex = '''\bsk-[A-Za-z0-9_-]{20,}'''

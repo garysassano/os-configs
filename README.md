@@ -134,9 +134,12 @@ Windows-host and WSL-remote extension lists. It replaced the manual
 `Default.code-profile` export, which was 78% window-layout state and produced
 unreadable diffs.
 
-They refuse to run when a credential-shaped string appears in a source file; the
-shared scan lives in `scripts/lib/scan-secrets.sh`. Full operating notes are in
-`shared/.agents/skills/os-config-sync/SKILL.md`.
+They refuse to run when a credential-shaped string appears in a source file.
+gitleaks provides its maintained default rules, and `scripts/lib/gitleaks.toml` deliberately adds two broader policy rules: credential-shaped configuration keys regardless of value and generic `sk-`-prefixed model-provider keys.
+The generic prefix rule supplements known-provider detection; it is not an Anthropic workaround, because the current default ruleset recognizes well-formed Anthropic API keys.
+`scripts/lib/scan-secrets.sh` invokes gitleaks with inline `gitleaks:allow` comments disabled and filters its JSON report to rule ID, file, and line before writing a finding.
+gitleaks is declared in each machine's `~/.config/mise/config.toml`; without gitleaks or jq the scan refuses to run rather than passing silently.
+Full operating notes are in `shared/.agents/skills/os-config-sync/SKILL.md`.
 
 ## Restoring onto a new machine
 
