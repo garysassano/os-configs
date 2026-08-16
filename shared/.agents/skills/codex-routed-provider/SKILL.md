@@ -21,7 +21,7 @@ timeout 1800 codex exec \
 ```
 
 `workspace-write` is enough to create, edit, and run tests in cwd — `exec` issues no approval prompts, and `--dangerously-bypass-approvals-and-sandbox` was never needed.
-Redirect stdin from `/dev/null` for the same reason the `codex-kiro` skill gives: `codex exec` appends stdin to the prompt and blocks forever waiting for EOF under any non-tty shell.
+Redirect stdin from `/dev/null`: `codex exec` reads stdin and appends it to the prompt as a `<stdin>` block, so with stdin still attached — which it is under any non-tty shell, including background dispatch — it blocks forever waiting for EOF, printing only `Reading additional input from stdin...` and never issuing a model request. It looks like a wedged model; it is not.
 
 Model syntax is `provider/model`.
 The prefix only resolves if that provider is **configured**; otherwise it silently falls through to the default provider (`openai`) and you get a confusing ChatGPT auth error instead of a routing error.
@@ -44,6 +44,20 @@ Always diff `config.json` before and after, and re-add anything that disappeared
 Credentials in `~/.opencodex/auth.json` survive this and do not need re-login.
 
 Routing also does **not** work until you restart — the running proxy will not pick up a newly added provider, and requests fall back to `openai`.
+
+### Restarting can leave the proxy down — always confirm it came back
+
+`ocx restart` fails outright against a proxy started by an older build: `❌ The running proxy predates process-bound restart support; no unsafe fallback was attempted.` It then tells you to run `ocx stop` and `ocx start` separately. That sequence has a trap: **`ocx start` runs in the foreground and does not return**, so under any tool with a timeout it gets killed or backgrounded, and if only the `stop` half landed the proxy is now **down**. Every routed request fails, including the user's own interactive Codex sessions — not just your delegation.
+
+So never leave a stop/start half-finished, and never assume it worked:
+
+```bash
+ocx stop
+ocx start &          # it does not return; background it deliberately
+ocx status | head -3 # ✅ Proxy: running (PID …) + Health: … ok (live)
+```
+
+The port changes on every restart and `~/.codex/config.toml` is rewritten to match — re-read `~/.opencodex/runtime-port.json` afterwards rather than reusing the old port. And restarting is rarely the fix you want in the first place: it does **not** reset a provider's usage quota, and it will not make an exhausted account work.
 
 ## Port is dynamic
 

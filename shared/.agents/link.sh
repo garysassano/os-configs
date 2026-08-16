@@ -30,8 +30,11 @@ dry_run=false
 # Verified:
 #   .claude       reads CLAUDE.md only; it does not read AGENTS.md
 #   .codex        $CODEX_HOME/AGENTS.md
-#   .codex-kiro   $CODEX_HOME/AGENTS.md (codex-home/src/instructions/mod.rs)
 #   opencode      ~/.config/opencode/AGENTS.md
+#
+# Deliberately absent: ~/.codex-kiro. That Codex fork is deprecated and was
+# removed from this machine on 2026-08-08 (binaries, CODEX_HOME, and clone);
+# do not re-add it as a target.
 #
 # Deliberately absent: ~/.gemini/GEMINI.md. Gemini CLI is deprecated and was
 # never used. ~/.gemini exists only because Antigravity nests its state under
@@ -40,7 +43,6 @@ dry_run=false
 instruction_targets=(
 	"${HOME}/.claude/CLAUDE.md"
 	"${HOME}/.codex/AGENTS.md"
-	"${HOME}/.codex-kiro/AGENTS.md"
 	"${HOME}/.config/opencode/AGENTS.md"
 )
 
@@ -51,7 +53,6 @@ instruction_targets=(
 skill_targets=(
 	"${HOME}/.claude/skills"
 	"${HOME}/.codex/skills"
-	"${HOME}/.codex-kiro/skills"
 	"${HOME}/.kiro/skills"
 )
 

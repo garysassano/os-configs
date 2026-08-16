@@ -8,7 +8,7 @@ description: Run the delegate → verify → review loop with other models: hand
 Drive a DeepSeek model as a worker so it does the labor, then verify its output yourself before calling anything done.
 You (the orchestrating agent) stay the gatekeeper for scope, tools, and quality; the worker executes one scoped task at a time and does not get to self-approve into the final answer.
 
-Two harnesses reach the same `opencode-go/deepseek-v4-flash` model. **Prefer Codex.** Use reasonix when you need its session/profile machinery or when Codex is unavailable.
+Two harnesses reach the same `opencode-go/deepseek-v4-pro` model at effort `max`. **Prefer Codex.** Use reasonix when you need its session/profile machinery or when Codex is unavailable.
 
 ## Division of labor
 
@@ -20,7 +20,7 @@ Two harnesses reach the same `opencode-go/deepseek-v4-flash` model. **Prefer Cod
 
 ## Harness choice
 
-**Codex is primary.** Measured on 2026-08-07 over one multi-hour workstream on the same model and tasks: Codex completed a large multi-file migration cleanly on the first real attempt. Reasonix, on the same work, produced **three** hard failures (`opencode-go: status 503 … Endpoint is unavailable` — one after 41 minutes and $0.26, two that never landed and billed nothing) plus **two** runs that did the work and committed it while reporting `is_error: true` / exit 1. Upgrading reasonix 1.20.0 → 1.21.1 fixed its resume bug but not the flakiness.
+**Codex is primary.** Measured on 2026-08-07 over one multi-hour workstream on `deepseek-v4-flash` (the worker model at the time) and the same tasks: Codex completed a large multi-file migration cleanly on the first real attempt. Reasonix, on the same work, produced **three** hard failures (`opencode-go: status 503 … Endpoint is unavailable` — one after 41 minutes and $0.26, two that never landed and billed nothing) plus **two** runs that did the work and committed it while reporting `is_error: true` / exit 1. Upgrading reasonix 1.20.0 → 1.21.1 fixed its resume bug but not the flakiness.
 
 Reasonix still earns its place for: `--profile delivery` (worker self-verification as a first layer), `-c`/`--resume` session continuation with prompt caching, and `--events-jsonl` step streaming. Reach for it when those matter, and expect to retry.
 
@@ -39,7 +39,8 @@ Reasonix still earns its place for: `--profile delivery` (worker self-verificati
    cd /path/to/repo
    S=/path/to/scratchpad
    timeout 1800 codex exec \
-     -m opencode-go/deepseek-v4-flash \
+     -m opencode-go/deepseek-v4-pro \
+     -c model_reasoning_effort=max \
      -s workspace-write \
      --skip-git-repo-check \
      "$(cat "$S/task.txt")" \
@@ -49,7 +50,7 @@ Reasonix still earns its place for: `--profile delivery` (worker self-verificati
    chmod +x "$S/run.sh"
    ```
 
-   `-s workspace-write` is enough to create, edit, and run tests in cwd; `exec` issues no approval prompts and `--dangerously-bypass-approvals-and-sandbox` is not needed. `< /dev/null` is mandatory — `codex exec` appends stdin to the prompt and blocks forever waiting for EOF under any non-tty shell.
+   `-s workspace-write` is enough to create, edit, and run tests in cwd; `exec` issues no approval prompts and `--dangerously-bypass-approvals-and-sandbox` is not needed. `-c model_reasoning_effort=max` pins the worker at `max` explicitly instead of relying on the global default. `< /dev/null` is mandatory — `codex exec` appends stdin to the prompt and blocks forever waiting for EOF under any non-tty shell.
 
 2. **Run it in the background**, redirecting to a log, and let the completion notification wake you. Do not poll on a short timer.
 
@@ -111,7 +112,7 @@ Say so explicitly in the prompt ("work in <path>, do not use <repo>"), and remov
 
 ```bash
 head -20 run.log | rg -i "^model:|reasoning effort:"
-# model: opencode-go/deepseek-v4-flash
+# model: opencode-go/deepseek-v4-pro
 # reasoning effort: max
 ```
 
@@ -131,7 +132,7 @@ Do not diagnose a failed run from these lines; check the exit code and the tail 
 
 ```bash
 reasonix run \
-  --model opencode-go/deepseek-v4-flash \
+  --model opencode-go/deepseek-v4-pro \
   --profile delivery \
   --effort max \
   --permission-mode bypassPermissions \
@@ -141,7 +142,7 @@ reasonix run \
 
 Pin every resolution-sensitive flag explicitly on each call — reasonix does not expose the *resolved* effort or profile in any machine-readable output (`session list --json`, `doctor --json`, `--events-jsonl` all omit it), so an unspecified flag cannot be audited after dispatch. The interactive TUI's profile/effort/yolo state does **not** carry into `-p`/`run`.
 
-- `--model` — `opencode-go/deepseek-v4-flash` (fast/cheap, scoped bulk work) or `opencode-go/deepseek-v4-pro` (deeper judgment).
+- `--model` — `opencode-go/deepseek-v4-pro` (primary worker, deeper judgment) or `opencode-go/deepseek-v4-flash` (fast/cheap for trivial bulk work).
 - `--profile` — `economy` | `balanced` | `delivery` (flag default `balanced`). `delivery` self-verifies but is heavy: a trivial prompt cost ~35x the latency and ~70x the tokens of `balanced` because it runs its full machinery regardless. Reserve it for substantial deliverables.
 - `--effort` — `max` is the configured provider default.
 - `--permission-mode` — `bypassPermissions` (yolo) is the user's standing preference and the only single flag that lets the worker run its own build/tests. `acceptEdits` permits edits but **NOT** bash, so under it `tsc`/`vitest`/`cargo` auto-decline and the worker fixes blind. For verification without a blank cheque use `acceptEdits` plus `--allowed-tools "Bash(pnpm:*),Bash(npx:*),Bash(cargo:*),Bash(node:*)"`. **`plan` is interactive-only and errors in `-p`/`run`.**
@@ -156,7 +157,7 @@ Check `reasonix --version` first — the contract changed in v1.21.0:
 - **v1.21.0+** — `run --resume` resolves an opaque machine session ID as well as a path ([PR #7656](https://github.com/esengine/DeepSeek-Reasonix/pull/7656)). Take it from `reasonix session list --json` (`session_<hex>`).
 - **Before v1.21.0** — path only; any ID fails instantly with `error: open <thing>: no such file or directory` because the bare string resolves as a relative path (upstream issue [#7429](https://github.com/esengine/DeepSeek-Reasonix/issues/7429)).
 
-Three identifier namespaces exist — do not assume the one you hold is the one the flag wants: the result JSON's `session_id` is a **display label** (`20260807-054214.652969512-deepseek-v4-flash`); `session list --json` reports a **machine ID** (`session_f8bd…`); the transcript **file** is `~/.reasonix/projects/<cwd-with-slashes-as-dashes>/sessions/<display label>.jsonl`. The path form works on every version. Confirm it exists first and pick the `.jsonl`, not the sibling `.ckpt`/`.events.jsonl`/`.recovery.json`.
+Three identifier namespaces exist — do not assume the one you hold is the one the flag wants: the result JSON's `session_id` is a **display label** (`20260807-054214.652969512-deepseek-v4-pro`); `session list --json` reports a **machine ID** (`session_f8bd…`); the transcript **file** is `~/.reasonix/projects/<cwd-with-slashes-as-dashes>/sessions/<display label>.jsonl`. The path form works on every version. Confirm it exists first and pick the `.jsonl`, not the sibling `.ckpt`/`.events.jsonl`/`.recovery.json`.
 
 ## When a run fails mid-flight
 
@@ -189,7 +190,7 @@ So: **derive your check from the pre-change state, not from the worker's design.
 
 ```bash
 # Worker — Codex on the routed provider (primary)
-timeout 180 codex exec -m opencode-go/deepseek-v4-flash -s read-only --skip-git-repo-check \
+timeout 180 codex exec -m opencode-go/deepseek-v4-pro -c model_reasoning_effort=max -s read-only --skip-git-repo-check \
   "Reply with exactly: ok" < /dev/null
 
 # Reviewer — native luna, no proxy involved
@@ -200,10 +201,10 @@ timeout 180 codex exec -m gpt-5.6-luna -c model_reasoning_effort=max -s read-onl
 P=$(jq -r .port ~/.opencodex/runtime-port.json)
 curl -s -X POST localhost:$P/v1/responses -H 'content-type: application/json' \
   -H 'authorization: Bearer probe' \
-  -d '{"model":"opencode-go/deepseek-v4-flash","input":"say ok","stream":false}'
+  -d '{"model":"opencode-go/deepseek-v4-pro","input":"say ok","stream":false}'
 
 # Reasonix (fallback)
-reasonix -p --model opencode-go/deepseek-v4-flash --output-format json "Reply with exactly the word: pong"
+reasonix -p --model opencode-go/deepseek-v4-pro --output-format json "Reply with exactly the word: pong"
 ```
 
 The curl probe carries a fake bearer, which the proxy forwards. That is fine for `opencode-go`, which authenticates at the proxy — but a **native** OpenAI model (`gpt-5.6-*` unprefixed) needs the caller's real credential and will answer `Could not parse your authentication token`. That is a probe artifact, not a broken route: run those through `codex exec` so Codex supplies its own auth.

@@ -2,19 +2,25 @@
 # ====================
 # AI CLIs
 # ====================
-amp = "latest"
+amp = "0.0.1785861307-g4e053f"
 claude-code = "latest"
 codex = "latest"
-kiro-cli = "2.16.0"
+dsh = { version = "latest", allow_builds = ["node-pty"] }
+kiro-cli = "2.18.0"
 opencode = "latest"
+opencode2 = { version = "next", allow_builds = ["@opencode-ai/cli"] }
 opencodex = "latest"
-pi = "latest"
-reasonix = { version = "1.21.1", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
+pi = "0.84.2"
+reasonix = { version = "1.25.2", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
 # @pierre/theme dropped provenance at 1.1.0 when publishing moved from mdo (CI)
 # to amadeusdemarzi (manual). Reviewed: no deps, empty scripts, frozen-JSON
 # themes only. Re-review if this needs widening on a future t3 release.
 # node-pty ships no linux-x64 prebuild, so it must compile via node-gyp on install.
-t3 = { version = "latest", trust_policy_excludes = ["@pierre/theme@1.1.0"], allow_builds = ["node-pty"] }
+t3 = { version = "latest", trust_policy_excludes = [
+  "@pierre/theme@1.1.0",
+], allow_builds = [
+  "node-pty",
+] }
 
 # ====================
 # Development
@@ -26,7 +32,7 @@ just = "1.56.0"
 moon = "latest"
 
 # Languages
-dotnet = "10"
+dotnet = "10.0.400"
 go = "1.25"
 python = "3.14"
 rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
@@ -101,6 +107,7 @@ wrangler = "latest"
 # ====================
 age = "latest"
 cosign = "3"
+gitleaks = "latest"
 slsa-verifier = "latest"
 sops = "latest"
 
@@ -125,8 +132,10 @@ yt-dlp = "latest"
 # Tool Aliases
 # ====================
 [tool_alias]
+dsh = "npm:@deepseek-ai/dsh"
 kraftkit = "github:unikraft/kraftkit"
 moon = "aqua:moonrepo/moon"
+opencode2 = "npm:@opencode-ai/cli"
 opencodex = "npm:@bitkyc08/opencodex"
 prettier = "npm:prettier"
 reasonix = "github:esengine/DeepSeek-Reasonix"
@@ -140,9 +149,11 @@ wrangler = "npm:wrangler"
 minimum_release_age_excludes = [
   "claude-code",
   "codex",
+  "dsh",
   "kiro-cli",
-  "opencodex",
   "opencode",
+  "opencode2",
+  "opencodex",
   "pi",
   "reasonix",
   "t3",
