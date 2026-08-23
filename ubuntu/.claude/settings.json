@@ -1,32 +1,18 @@
 {
+  "model": "opus",
+  "effortLevel": "high",
   "permissions": {
     "defaultMode": "bypassPermissions"
   },
-  "model": "opus",
-  "enabledPlugins": {
-    "aws-core@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
-  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
-  "theme": "dark",
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
   },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/home/user/.claude/hooks/block-attribution-trailers.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  }
+  "enabledPlugins": {
+    "aws-core@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
+  "theme": "auto"
 }
