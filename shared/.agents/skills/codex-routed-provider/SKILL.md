@@ -1,6 +1,6 @@
 ---
 name: codex-routed-provider
-description: Run Codex CLI non-interactively against a non-OpenAI model routed through the opencodex proxy (deepseek-v4-flash, opencode-go/Zen, GLM, Kimi, Qwen…), with write permissions and token/cache measurement. Use when asked to run codex/codex exec on DeepSeek or any routed provider, to add a provider to opencodex, or when a codex run fails with revoked-token, "unknown provider", or "model metadata not found".
+description: Run Codex CLI non-interactively against a non-OpenAI model routed through the opencodex proxy (deepseek-v4-flash, opencode-go/Zen, GLM, Kimi, Qwen…), with write permissions and token/cache measurement. Use when asked to run codex/codex exec on DeepSeek or any routed provider, to add a provider to opencodex, or when a codex run fails with revoked-token, "unknown provider", "model metadata not found", or "model is not supported when using Codex with a ChatGPT account" (the misleading symptom of Codex not being pointed at the proxy, even while `ocx status` reports the proxy healthy).
 ---
 
 # Codex on a routed (non-OpenAI) provider
@@ -72,6 +72,62 @@ curl -s -X POST localhost:$P/v1/responses -H 'content-type: application/json' \
   -H 'authorization: Bearer probe' \
   -d '{"model":"opencode-go/deepseek-v4-flash","input":"say ok","stream":false}'
 ```
+
+## The proxy can be healthy while nothing routes
+
+The most confusing failure: the proxy is up, the provider is configured, a direct `curl` to the proxy works — and every `codex exec -m <provider>/<model>` still fails with
+
+```
+The '<provider>/<model>' model is not supported when using Codex with a ChatGPT account.
+```
+
+That is not an auth or availability problem. Codex never contacted the proxy: `openai_base_url` is missing from `~/.codex/config.toml`, so the request went to the real OpenAI endpoint, which does not know the namespaced name.
+
+**`ocx status` does not detect this.** It reports the proxy and will happily print `✅ Proxy: running / Health: ok` while nothing routes. Two checks discriminate:
+
+```bash
+ocx doctor | grep -A2 'Codex restart safety'    # routing=native  ← broken; want routing=opencodex-local
+grep -c openai_base_url ~/.codex/config.toml    # 0  ← broken; want 1
+```
+
+Observed cause (2026-08-22): a mise-managed `codex` upgrade replaced the shimmed binary, destroying both the opencodex shim and its `codex.opencodex-real` backup (`ocx codex-shim status` reports "wrapper present but not an opencodex shim"), after which routing was left native while the proxy kept running. Any package-manager reinstall of `codex` can do this.
+
+Fix with `ocx restore back`, which re-points Codex at the running proxy. It rewrites the user's global config, so back it up first and report the diff:
+
+```bash
+cp -p ~/.codex/config.toml ~/.codex/config.toml.bak-$(date +%Y%m%d-%H%M%S)
+ocx restore back
+```
+
+It adds exactly two top-level lines (plus a comment) and removes nothing:
+
+```toml
+model_catalog_json = "/home/user/.codex/opencodex-catalog.json"
+# Auto-injected by opencodex
+openai_base_url = "http://127.0.0.1:<port>/v1"
+```
+
+Undo is `ocx restore`. Afterwards `ocx doctor` may still warn `AT RISK after restart (background service files are stale; run 'ocx service repair')` — that is the leftover broken shim, and routing will not survive a restart until it is repaired.
+
+### Only one of those two lines is load-bearing
+
+`openai_base_url` does the routing. `model_catalog_json` only supplies model metadata: without it a routed run still works and merely warns `Model metadata for <model> not found`. That warning is itself an artifact of the hijack — Codex believes the model belongs to the built-in `openai` provider and fails to find it in that catalog.
+
+### The scoped alternative
+
+Codex supports proper per-provider routing, so the global hijack is a choice, not a requirement (verified on codex-cli 0.149.0; passes `--strict-config`):
+
+```toml
+[model_providers.ocx]
+name = "opencodex"
+base_url = "http://127.0.0.1:10100/v1"
+wire_api = "responses"
+env_key = "OCX_PROBE_KEY"
+```
+
+Select it per call with `-c model_provider=ocx`, or once via `$CODEX_HOME/<name>.config.toml` plus `-p <name>`. The header then reads `provider: ocx`, native models are untouched, and no metadata warning appears.
+
+opencodex prefers the hijack because it makes *plain* `codex` — interactive, TUI model picker included — route everything with no flags. Tradeoffs: the hijack puts the proxy in the path for every request including native OpenAI models, while the scoped form costs a flag or profile per invocation. **Neither fixes port staleness** — both hardcode the port, which changes on every `ocx restart`; the difference is that `ocx` rewrites its own injected line and would overwrite or ignore a hand-rolled `model_providers` entry. Use the scoped form in a throwaway `CODEX_HOME`, not in a config `ocx` manages.
 
 ## When Codex's own login is revoked
 

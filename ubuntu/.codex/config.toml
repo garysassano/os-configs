@@ -26,8 +26,8 @@ status_line = [
 status_line_use_colors = true
 
 [marketplaces.agent-toolkit-for-aws]
-last_updated = "2026-08-16T11:30:16Z"
-last_revision = "957cf377ea1dffccf1f8a54ded2be8666b6db41c"
+last_updated = "2026-08-21T10:47:40Z"
+last_revision = "d6ad2e44d5e3077b85b63f322e007c84f94f3a6c"
 source_type = "git"
 source = "https://github.com/aws/agent-toolkit-for-aws.git"
 
@@ -157,6 +157,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/home/user"]
+trust_level = "trusted"
+
+[projects."/mnt/c/Users/Gary"]
 trust_level = "trusted"
 
 [plugins."aws-agents@agent-toolkit-for-aws"]

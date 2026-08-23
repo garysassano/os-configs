@@ -2,8 +2,10 @@
 Type=Application
 Name=Windows Default Browser
 GenericName=Web Browser
-Comment=Open links in the Windows default browser via WSL interop
-Exec=/mnt/c/WINDOWS/explorer.exe %u
+Comment=Open links in the Windows default browser via WSL interop (quoting-safe)
+# Previous direct call broke on OAuth URLs (explorer.exe opened Documents instead):
+# Exec=/mnt/c/WINDOWS/explorer.exe %u
+Exec=/home/user/.local/bin/wsl-open-url %u
 Terminal=false
 NoDisplay=true
 MimeType=x-scheme-handler/unknown;x-scheme-handler/about;x-scheme-handler/http;x-scheme-handler/https;text/html;

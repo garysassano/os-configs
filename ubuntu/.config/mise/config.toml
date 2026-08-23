@@ -12,15 +12,6 @@ opencode2 = { version = "next", allow_builds = ["@opencode-ai/cli"] }
 opencodex = "latest"
 pi = "0.84.2"
 reasonix = { version = "1.25.2", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
-# @pierre/theme dropped provenance at 1.1.0 when publishing moved from mdo (CI)
-# to amadeusdemarzi (manual). Reviewed: no deps, empty scripts, frozen-JSON
-# themes only. Re-review if this needs widening on a future t3 release.
-# node-pty ships no linux-x64 prebuild, so it must compile via node-gyp on install.
-t3 = { version = "latest", trust_policy_excludes = [
-  "@pierre/theme@1.1.0",
-], allow_builds = [
-  "node-pty",
-] }
 
 # ====================
 # Development
@@ -33,7 +24,7 @@ moon = "latest"
 
 # Languages
 dotnet = "10.0.400"
-go = "1.25"
+go = "1.26"
 python = "3.14"
 rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
 zig = "0.16"
@@ -84,22 +75,24 @@ github-cli = "latest"
 # Cloud
 # ====================
 # AWS
-#"github:runs-on/cli" = "latest"
 aws-cdk = "2"
 aws-cli = "2"
 aws-sam = "1"
-cli53 = "latest"
+cli53 = "0.9.0"
 granted = "latest"
+runs-on = "3.2.2"
 
 # Generic
-"npm:cdktf-cli" = "0.21"
+cdktf = { version = "0.21", trust_policy_excludes = ["detect-port@1.6.1"] }
 opentofu = "1"
 pulumi = "3"
 terraform = "1"
+terragrunt = "1"
 
 # Others
 gcloud = "577"
-kraftkit = "0.12.11"
+kraftkit = { version = "0.12.15", asset_pattern = 'kraft_*_{{ os(linux="linux", macos="darwin") }}_{{ arch(x64="amd64", arm64="arm64") }}.tar.gz' }
+unikraft-cli = { version = "0.4.2", asset_pattern = 'unikraft-cli_*_{{ os(linux="linux", macos="darwin") }}_{{ arch(x64="amd64", arm64="arm64") }}.tar.gz' }
 wrangler = "latest"
 
 # ====================
@@ -115,7 +108,6 @@ sops = "latest"
 # Utilities
 # ====================
 bat = "latest"
-dotslash = "0.5.9"
 edit = "latest"
 eza = "latest"
 fd = "latest"
@@ -126,12 +118,14 @@ oha = "latest"
 powershell = "7"
 ripgrep = "latest"
 sqlite = "3.53.3"
+upx = "latest"
 yt-dlp = "latest"
 
 # ====================
 # Tool Aliases
 # ====================
 [tool_alias]
+cdktf = "npm:cdktf-cli"
 dsh = "npm:@deepseek-ai/dsh"
 kraftkit = "github:unikraft/kraftkit"
 moon = "aqua:moonrepo/moon"
@@ -139,7 +133,8 @@ opencode2 = "npm:@opencode-ai/cli"
 opencodex = "npm:@bitkyc08/opencodex"
 prettier = "npm:prettier"
 reasonix = "github:esengine/DeepSeek-Reasonix"
-t3 = "npm:t3"
+runs-on = "github:runs-on/cli"
+unikraft-cli = "github:unikraft-cloud/cli"
 wrangler = "npm:wrangler"
 
 # ====================
@@ -156,7 +151,6 @@ minimum_release_age_excludes = [
   "opencodex",
   "pi",
   "reasonix",
-  "t3",
 ]
 
 [settings.cargo]

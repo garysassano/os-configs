@@ -47,6 +47,32 @@ fish_add_path -g $HOME/.cargo/bin
 fish_add_path -g $HOME/bin
 fish_add_path -g $HOME/.local/bin
 
+### PATH GUARD (MUST LOAD AFTER MISE)
+# `mise hook-env` runs on every prompt and before every command, and it rebuilds
+# PATH from scratch with the tool install dirs in front. That puts mise's own `gh`
+# ahead of the ~/.local/bin wrapper, so anything resolving `gh` through PATH gets
+# an unauthenticated gh - `dome` shells out to `gh auth status` and refuses to run.
+# The fish_add_path calls above run once at startup and cannot hold the position.
+# Event handlers fire in definition order, so re-asserting here, after mise's
+# __mise_env_eval_on_prompt and __mise_env_eval_2, wins on both events.
+#
+# Added after a vendor CLI that shells out to `gh auth status` refused to run, but
+# it is not specific to that tool: it protects anything resolving `gh` through
+# PATH, so it stays useful regardless of which project surfaced it.
+function __local_bin_first -d 'keep ~/.local/bin ahead of mise install dirs'
+    if test "$PATH[1]" != "$HOME/.local/bin"
+        set -gx PATH $HOME/.local/bin (string match -v -- $HOME/.local/bin $PATH)
+    end
+end
+
+function __local_bin_first_on_prompt --on-event fish_prompt -d 'see __local_bin_first'
+    __local_bin_first
+end
+
+function __local_bin_first_on_preexec --on-event fish_preexec -d 'see __local_bin_first'
+    __local_bin_first
+end
+
 ### OH MY POSH
 if status is-interactive
     oh-my-posh init fish --strict --config $HOME/.config/oh-my-posh/themes/multiverse-neon.omp.json | source

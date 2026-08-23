@@ -51,6 +51,7 @@ scan_for_secrets "${required_sources[@]}" \
 mkdir -p \
 	"${shared_dir}/.agents/skills" \
 	"${ubuntu_dir}/.claude" \
+	"${ubuntu_dir}/.claude/hooks" \
 	"${ubuntu_dir}/.codex" \
 	"${ubuntu_dir}/.config/fish" \
 	"${ubuntu_dir}/.config/git" \
@@ -70,6 +71,14 @@ cp -a "${HOME}/.agents/link.sh" "${shared_dir}/.agents/link.sh"
 # has nothing to update.
 cp -a "${HOME}/.agents/.skill-lock.json" "${shared_dir}/.agents/.skill-lock.json"
 cp -a "${HOME}/.claude/settings.json" "${ubuntu_dir}/.claude/settings.json"
+# Hook scripts referenced by settings.json. A hook is named there by absolute path,
+# so capturing the settings without the script it points at leaves a rebuilt machine
+# with a hook that silently fails. Copied as a directory because hooks are added and
+# removed as a set; executable bits are preserved by cp -a.
+if [[ -d "${HOME}/.claude/hooks" ]]; then
+	rm -rf "${ubuntu_dir}/.claude/hooks"
+	cp -a "${HOME}/.claude/hooks" "${ubuntu_dir}/.claude/hooks"
+fi
 # ~/.claude.json mixes preferences with app-managed state — oauthAccount, machineID,
 # per-project history, rotating caches — so only the preference keys are captured.
 # Settings Claude Code keeps here rather than in settings.json, autoInstallIdeExtension
@@ -124,7 +133,29 @@ cp -a "${HOME}/.config/oh-my-posh/themes/multiverse-neon.omp.json" \
 # in kiro-oidc-clients.json. That integration was removed on 2026-08-07; naming the
 # file explicitly keeps the next one from being captured by accident.
 cp -a "${HOME}/.config/opencode/opencode.jsonc" "${ubuntu_dir}/.config/opencode/opencode.jsonc"
+# ~/.gitconfig is copied, then its per-tree includeIf blocks are dropped. A
+# `gitdir:~/git-<name>/` path names a client or an account, and naming a client is
+# disclosure of who the work is for, so it must not reach a repository that may be
+# published. Stripping here rather than by hand is the point: a manual edit is
+# silently undone by the next sync, and a new tree would otherwise arrive without
+# anyone deciding to add it. The referenced ~/git-<name>/.gitconfig files are never
+# captured either, so the entries have no value for a rebuild.
 cp -a "${HOME}/.gitconfig" "${ubuntu_dir}/.gitconfig"
+stripped_trees="$(awk '
+	/^\[includeIf "gitdir:~\/git-[^"]*\/"\]$/ {
+		match($0, /git-[^"\/]*/); print substr($0, RSTART, RLENGTH); next
+	}
+' "${ubuntu_dir}/.gitconfig")"
+if [[ -n "$stripped_trees" ]]; then
+	awk '
+		/^\[includeIf "gitdir:~\/git-[^"]*\/"\]$/ { skip = 1; next }
+		/^\[/ { skip = 0 }
+		!skip
+	' "${ubuntu_dir}/.gitconfig" >"${ubuntu_dir}/.gitconfig.tmp"
+	mv "${ubuntu_dir}/.gitconfig.tmp" "${ubuntu_dir}/.gitconfig"
+	printf 'Stripped per-tree includeIf entries from the .gitconfig snapshot: %s\n' \
+		"$(printf '%s' "$stripped_trees" | tr '\n' ' ')"
+fi
 # WSL-only: granted cannot defer to $BROWSER or xdg-open, so it names the Windows
 # Firefox binary by absolute path. A macOS machine needs its own copy.
 cp -a "${HOME}/.granted/config" "${ubuntu_dir}/.granted/config"

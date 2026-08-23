@@ -8,6 +8,10 @@
 # everything else there (AGENTS.md, skills/) is a link.sh symlink.
 ubuntu/.claude/*
 !ubuntu/.claude/settings.json
+# hooks/ is real content, not a link.sh symlink: settings.json names each hook
+# script by absolute path, so the snapshot is incomplete without them.
+!ubuntu/.claude/hooks/
+!ubuntu/.claude/hooks/*
 ubuntu/.codex/*
 !ubuntu/.codex/config.toml
 ubuntu/.codex-kiro/

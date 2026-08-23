@@ -1,14 +1,14 @@
 ---
 name: delegate-and-review
-description: Run the delegate → verify → review loop with other models: hand a scoped coding or analysis task to a DeepSeek worker (Codex through the opencodex proxy, or the reasonix CLI as fallback), independently verify what comes back, then optionally have a second model review it — luna (gpt-5.6-luna), invoked natively on Codex. Use when the user asks to hand off / delegate / offload work to DeepSeek, reasonix, codex, "flash" or "pro"; when they ask for a second model to review or adversarially check work; or when they name luna as a reviewer.
+description: Run the delegate → verify → review loop with another model: hand a scoped coding or analysis task to a worker model (Codex through the opencodex proxy, or the reasonix CLI as fallback), independently verify what comes back, then optionally have a different model review it. Covers discovering which models and reasoning efforts are actually available, confirming the route works before dispatching, and proving after the fact which model served the run. Use when the user asks to hand off / delegate / offload work to another model — DeepSeek, GLM, Kimi, Qwen, Grok, MiniMax, luna, reasonix, codex, "flash" or "pro" — or when they ask for a second model to review or adversarially check work.
 ---
 
 # Delegate, verify, review
 
-Drive a DeepSeek model as a worker so it does the labor, then verify its output yourself before calling anything done.
+Drive another model as a worker so it does the labor, then verify its output yourself before calling anything done.
 You (the orchestrating agent) stay the gatekeeper for scope, tools, and quality; the worker executes one scoped task at a time and does not get to self-approve into the final answer.
 
-Two harnesses reach the same `opencode-go/deepseek-v4-pro` model at effort `max`. **Prefer Codex.** Use reasonix when you need its session/profile machinery or when Codex is unavailable.
+The default worker is `opencode-go/deepseek-v4-pro` at effort `max`, but dozens of routed models are reachable — see **Choosing a model** below rather than assuming this one. Two harnesses reach it. **Prefer Codex.** Use reasonix when you need its session/profile machinery or when Codex is unavailable.
 
 ## Division of labor
 
@@ -17,6 +17,80 @@ Two harnesses reach the same `opencode-go/deepseek-v4-pro` model at effort `max`
 - The worker executes and returns a result.
 - You independently verify (read the diff, run the tests/build, confirm it satisfies the original intent) before reporting.
 - On any disagreement between the worker's self-assessment and your verification, surface it to the user rather than silently reconciling.
+
+## Choosing a model
+
+Do not guess what exists. **`ocx models live --json` is the authority** — it queries the providers and returns every reachable route:
+
+```bash
+ocx models live --json | jq -r '
+  .[] | select(.disabled | not)
+  | "\(.namespaced // .id)\t\(if .native then "native" else "routed" end)\t[\(.reasoningEfforts // [] | join(","))]"' | column -t
+```
+
+`namespaced` is exactly the string to pass to `-m`. Rows with `native: true` are the user's ChatGPT subscription (no proxy); everything else routes through opencodex.
+
+**`ocx models list` is NOT the authority** — it prints only the static config and silently omits live models. It lists `opencode-go` as having just `deepseek-v4-flash`, while `deepseek-v4-pro` (the default worker in this skill) works fine and appears only in the live view. Reading the static list is how you conclude a working model does not exist.
+
+### Reasoning effort is per-route, not per-model-name
+
+The same model name can advertise different efforts depending on which provider serves it, and pinning an unsupported effort is silently ignored rather than rejected. Measured 2026-08-22:
+
+| Route | efforts |
+|---|---|
+| `gpt-5.6-luna` (native) | `low,medium,high,xhigh,max` (default `medium`) |
+| `opencode-go/deepseek-v4-pro` | `high,xhigh,max` |
+| `opencode-go/gpt-5.6-luna` | *(none advertised)* |
+| `opencode-go/glm-5.3` | *(none advertised)* |
+| `zai-plan/glm-5.3` | `low,high,max` (default `max`) |
+
+So `-c model_reasoning_effort=max` is load-bearing on `deepseek-v4-pro` and native `luna`, and meaningless on `opencode-go/glm-5.3`. Check the route you are about to use, and prefer the provider that actually exposes efforts when you care about depth.
+
+Read `~/.opencodex/config.json` only for structure (`jq -r '.providers | keys[]'`). **Never select a subtree of it or of `~/.opencodex/auth.json`** — see the safety section.
+
+## Preflight: confirm the route works before dispatching
+
+A routed `-m` only reaches the proxy if Codex is *pointed at* the proxy. When it is not, the failure is silent and misattributed:
+
+```
+ERROR: The 'opencode-go/deepseek-v4-pro' model is not supported when using Codex with a ChatGPT account.
+```
+
+That reads like an auth or model-availability problem. It is neither — it means Codex sent the request to the real OpenAI endpoint. The proxy can be running and healthy the whole time, and `ocx status` will still show `✅ Proxy: running / Health: ok`, because status reports the proxy, not the routing. Diagnose with the two checks that actually discriminate:
+
+```bash
+ocx doctor | grep -A2 'Codex restart safety'    # want routing=opencodex-local, not routing=native
+grep -c openai_base_url ~/.codex/config.toml    # want 1, not 0
+```
+
+opencodex routes by overwriting the **global** `openai_base_url` in `~/.codex/config.toml`, which is why `ocx stop` / `ocx restore`, or a package-manager reinstall of `codex`, break routed delegation as a side effect. The full failure mode, the exact lines involved, and the scoped `model_providers` alternative are in the **codex-routed-provider** skill.
+
+Two ways to fix, depending on whose config you may touch:
+
+- **`ocx restore back`** — re-points the user's real Codex at the running proxy. It rewrites their global config, so back it up first (`cp -p ~/.codex/config.toml ~/.codex/config.toml.bak-$(date +%Y%m%d-%H%M%S)`), report the diff, and note the undo is `ocx restore`.
+- **Throwaway `CODEX_HOME`** — non-invasive, and the right default when you only need one delegation and the config is not yours to change:
+
+```bash
+P=$(jq -r .port ~/.opencodex/runtime-port.json)
+export CODEX_HOME="$SCRATCH/codex-home"; mkdir -p "$CODEX_HOME"
+printf 'openai_base_url = "http://127.0.0.1:%s/v1"\n' "$P" > "$CODEX_HOME/config.toml"
+echo "dummy-key" | codex login --with-api-key
+```
+
+### Check the quota before a long dispatch
+
+Routed providers meter a rolling window shared by everything you send them, and exhausting it kills a run mid-flight with `429 Too Many Requests` — indistinguishable at the call site from a transient error.
+
+```bash
+ocx provider quota --json | jq -r '.reports[]? | select(.provider=="<provider>")
+  | "5h: \(.quota.fiveHourPercent)%  weekly: \(.quota.weeklyPercent)%  monthly: \(.quota.monthlyPercent)%  resets \(.quota.fiveHourResetAt/1000 | strftime("%H:%M:%SZ"))"'
+```
+
+Observed 2026-08-22: a review that fanned out to sub-agents spent 279 requests on `opencode-go` and took the five-hour window to 100%; the next dispatch died at 69k tokens having produced no findings, and a same-provider model that had worked an hour earlier failed identically. Weekly and monthly were only 50% and 62% — it was purely the short window.
+
+So: check `fiveHourPercent` before dispatching anything long, treat a 429 as quota rather than transience until the report says otherwise, and remember the reset time is per-provider — switching to a model on a *different* provider (or a native one) is the way through, not retrying the same route.
+
+Confirm with a one-token probe (`"Reply with exactly: ok"`) before dispatching real work — a 2-second probe is cheaper than discovering the route is dead after a 40-minute task.
 
 ## Harness choice
 
@@ -64,7 +138,7 @@ Routing mechanics — adding providers, the dynamic port, `ocx restart`, catalog
 
 ## Reviewing the worker's output with a second model
 
-The full loop is *delegate → verify → review*. The reviewer must be a different model from the worker, or it shares the worker's blind spots. The usual reviewer is **luna** (`gpt-5.6-luna`), run at `max`.
+The full loop is *delegate → verify → review*. The reviewer must be a different model from the worker — not merely a second instance of it, and not sub-agents the worker spawned (see above). The usual reviewer is **luna** (`gpt-5.6-luna`), run at `max`, which it supports natively (default `medium`, so pinning is worth it). Any route from **Choosing a model** works; pick one from a different family than the worker, and confirm it advertises the effort you intend to pin.
 
 **luna is a native Codex model on the user's ChatGPT subscription. Invoke it unprefixed — the opencodex proxy is only for third-party providers and has nothing to do with it.**
 
@@ -117,6 +191,30 @@ head -20 run.log | rg -i "^model:|reasoning effort:"
 ```
 
 Quote that header when reporting a run. The per-provider `modelDefaultReasoningEfforts` in `~/.opencodex/config.json` is *not* the authority for a Codex-launched run and reading it alone will give you the wrong answer.
+
+### Prove which model actually served the run
+
+The run header's `provider:` line is **not** proof. Under the `openai_base_url` hijack every routed run prints `provider: openai`, because Codex's built-in openai provider *is* the proxy; the proxy then dispatches on the `provider/model` prefix. A header reading `provider: openai` is therefore consistent with both a correctly routed run and a fallback.
+
+`~/.opencodex/usage.jsonl` settles it. Group the run's window by route:
+
+```bash
+START=$(date -d '<run start>' +%s000); END=$(date -d '<run end>' +%s000)
+jq -s --argjson s "$START" --argjson e "$END" '
+  [.[] | select(.timestamp>=$s and .timestamp<=$e)]
+  | group_by(.provider + "|" + (.model // "?"))
+  | map({route: (.[0].provider + " / " + (.[0].model // "?")),
+         requests: length,
+         non200: (map(select((.status//200) != 200)) | length)})' ~/.opencodex/usage.jsonl
+```
+
+One route in the output means no fallback occurred. Count `non200` separately — error rows carry no `usage` object, so token totals silently absorb them. Quote this when reporting whose opinion you are relaying.
+
+### Sub-agents a worker spawns are not independent reviewers
+
+A capable worker may fan out to its own sub-agents and then report that "three independent reviewers agree." They are not independent: sub-agents inherit the parent's model and effort by default, so they share its blind spots and its training. Observed 2026-08-22 — a `deepseek-v4-pro` review spawned sub-reviewers and framed their concurrence as corroboration; `usage.jsonl` showed all 225 requests on the single route `opencode-go/deepseek-v4-pro`.
+
+Do not relay that framing to the user. Agreement among instances of one model is one opinion, however many times it is sampled. Independent corroboration requires a **different model**, which is the entire reason the reviewer step exists.
 
 ### Harmless noise in Codex output
 
@@ -189,6 +287,14 @@ So: **derive your check from the pre-change state, not from the worker's design.
 ## Verify it's wired up
 
 ```bash
+# 0. Is routing even live? (see Preflight)
+ocx doctor | grep -A2 'Codex restart safety'
+grep -c openai_base_url ~/.codex/config.toml
+
+# What models exist right now, with their valid reasoning efforts
+ocx models live --json | jq -r '.[] | select(.disabled|not)
+  | "\(.namespaced // .id)\t[\(.reasoningEfforts // [] | join(","))]"'
+
 # Worker — Codex on the routed provider (primary)
 timeout 180 codex exec -m opencode-go/deepseek-v4-pro -c model_reasoning_effort=max -s read-only --skip-git-repo-check \
   "Reply with exactly: ok" < /dev/null

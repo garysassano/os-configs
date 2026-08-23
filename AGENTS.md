@@ -54,9 +54,19 @@ shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh <primary-repo> <
 
 ## Before making this repository public
 
-It is private, and two things assume that. The `includeIf` entries in
-`ubuntu/.gitconfig` name local account trees, and `windows/vs-code/settings.json`
-reflects a real working setup. Strip both before flipping visibility.
+It is private, and `windows/vs-code/settings.json` assumes that — it reflects a
+real working setup. Strip it before flipping visibility.
+
+The `~/git-<name>/` `includeIf` entries used to be the other item. They are now
+stripped by `sync-from-home.sh` on every run, because a manual edit was silently
+undone by the next sync and a new tree arrived without anyone deciding to add it.
+Keep it that way: such a path names a client or an account, and naming a client is
+disclosure of who the work is for, not merely a local detail. For the same reason,
+client-teardown notes never move into this repository — they live in the client
+tree, which nothing here syncs.
+
+Prose can leak a client too. A comment explaining why some workaround exists is the
+easy place to name one; write what broke, not who it was for.
 
 ## Checks
 
