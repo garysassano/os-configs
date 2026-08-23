@@ -23,11 +23,11 @@ The scaffold is intentionally small: CDK app code lives in `src/main.ts`, stacks
    - Prefer the newest stable package versions that satisfy pnpm 11's default 24-hour release-age policy unless the user gives a constraint.
    - For Node types, match the declared Node runtime major. Example: Node `>=24.16.0` should use latest `@types/node@24`, not latest `@types/node` if latest is for a newer runtime.
    - For CDK v2, expect `aws-cdk-lib` and `aws-cdk` CLI versions to differ; use the latest stable version for each package.
-   - For TypeScript, check the current stable release before creating a new project. Use TypeScript 7 for clean CLI-only scaffolds after validation. If the project needs the TypeScript compiler API or tooling that imports `typescript`, first check whether a stable TypeScript 7.1 or newer release has restored the needed API compatibility; otherwise stay on TypeScript 6 for that project.
+   - For TypeScript, check the current stable release before creating a new project. TypeScript 7 is what upstream `cdk init` now generates, so it is the default here too. If the project needs the TypeScript compiler API or tooling that imports `typescript`, first check whether a stable TypeScript 7.1 or newer release has restored the needed API compatibility; otherwise stay on TypeScript 6 for that project.
    - Do not add `minimumReleaseAgeExclude` entries to use packages that are still inside pnpm's quarantine window. Select the newest eligible release instead unless the user explicitly requests a temporary exception.
 
 3. Run the scaffold script.
-   - Use `node "$HOME"/.codex/skills/cdk-scaffolding/scripts/scaffold-cdk-project.mjs --target <repo> --resolve-latest`.
+   - Use `node "$HOME"/.agents/skills/cdk-scaffolding/scripts/scaffold-cdk-project.mjs --target <repo> --resolve-latest`.
    - Pass `--name`, `--stack-class`, `--stack-file`, `--stack-id`, or `--node-version` when the repo needs non-default values.
    - The script preserves an existing stack file and writes only the project shell around it.
    - Do not create `.github/`, GitHub Actions workflows, or other CI files.
@@ -43,6 +43,24 @@ The scaffold is intentionally small: CDK app code lives in `src/main.ts`, stacks
    - Run `pnpm typecheck` and `pnpm synth`.
    - Use `cdk synth --strict` for CDK validation. Do not deploy unless the user asks for deployment or the task explicitly requires AWS-side verification.
 
+## Upstream `cdk init` defaults
+
+`cdk init app --language typescript` was reworked and now generates much of what this scaffold already did. Re-read `packages/aws-cdk/lib/init-templates/app/typescript/` in `aws-cdk-cli` before assuming any of this is still current; it was confirmed against `origin/main` at 2026-08-21.
+
+What upstream now generates:
+
+- `typescript: ~7.0.2`, `tsx: ^4.23.0`, `@types/node: ^24.10.1`.
+- `module` and `moduleResolution` set to `NodeNext`, with `noEmit: true` and `isolatedModules: true`.
+- `@swc/jest` as the Jest transform, replacing `ts-jest`.
+- The app entrypoint imports from `aws-cdk-lib/core` rather than the `aws-cdk-lib` root. This scaffold now does the same, and so should hand-written code, including the specific `aws-cdk-lib/aws-<service>` subpaths for services.
+- `cdk.json` runs `"npx tsc && npx tsx bin/<name>.ts"` — a typecheck on every CDK invocation, then execution through tsx.
+
+Where this scaffold deliberately differs, and why:
+
+- The CDK app command stays `node --import tsx src/main.ts`, without the `tsc` prefix. Typechecking belongs in `pnpm typecheck` and `pnpm check`, not on the hot path of every `cdk deploy`. Adopt the upstream form only if a project wants the typecheck enforced at synth time.
+- Layout stays `src/main.ts` and `src/stacks/<stack-name>.ts` rather than `bin/` and `lib/`, matching the neighboring local `cdk-aws-*` repos.
+- Biome replaces the upstream lint/format story, `ES2025` replaces `ES2022`, and no tests or `jest.config.js` are generated.
+
 ## Project Defaults
 
 - Tool manager: mise, with generated `mise.toml`.
@@ -52,7 +70,11 @@ The scaffold is intentionally small: CDK app code lives in `src/main.ts`, stacks
 - CDK app command: `node --import tsx src/main.ts`.
 - TypeScript module mode: use `module: "NodeNext"` and `moduleResolution: "NodeNext"`. Relative imports between TypeScript source files must use `.js` specifiers so TypeScript models Node ESM semantics while `tsx` resolves them to `.ts` at runtime.
 - TypeScript: latest stable major for CLI-only CDK scaffolds. Use TypeScript 6 instead when compiler-API compatibility is required and the stable TypeScript 7 line has not restored it yet.
-- TypeScript config: keep the CLI-only config compact, use `ES2025`, and retain `strict: true` without restating strict-mode sub-options that it already enables.
+- Import from `aws-cdk-lib/core` and `aws-cdk-lib/aws-<service>`, never the `aws-cdk-lib` root. The root's `index.d.ts` re-exports ~400 service namespaces with `export *`, which is eager for the type checker: a three-line file that imports `App` from the root loads 2,636 declaration files instead of 645, and costs roughly 3x the `tsc` time and 4.5x the peak memory. Runtime cost is smaller (the compiled namespaces are lazy getters) but not zero.
+- TypeScript config: keep the CLI-only config compact, use `ES2025`, set `isolatedModules: true` to match upstream `cdk init`, and retain `strict: true` without restating strict-mode sub-options that it already enables.
+- Do not restate compiler defaults. `forceConsistentCasingInFileNames` has been on by default since TypeScript 5.0, `resolveJsonModule` is implied by `moduleResolution: NodeNext`, `declaration` is both default-false and moot under `noEmit`, and `experimentalDecorators` is legacy TypeScript that CDK does not use. TypeScript 7's own `tsc --init` emits none of them. Verify a default before adding an option back.
+- `strictPropertyInitialization: false` is the one deliberate loosening. It stays because tightening it changes the rules for user-authored construct code, which is not a scaffold's call to make.
+- Typecheck `test/` as well as `src/`, and do not set `rootDir` — it would reject a `test/` tree outside `src/`.
 - Build: no bundler by default. CDK executes `src/main.ts` directly through `tsx`.
 - Generated tests: none. Add a test framework only when the project has meaningful CDK assertions to protect.
 - Lint and format: Biome using the project config generated by this skill.

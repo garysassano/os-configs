@@ -84,6 +84,7 @@ runs-on = "3.2.2"
 
 # Generic
 cdktf = { version = "0.21", trust_policy_excludes = ["detect-port@1.6.1"] }
+cdktn = { version = "0.24", trust_policy_excludes = ["jsii@5.9.52"] }
 opentofu = "1"
 pulumi = "3"
 terraform = "1"
@@ -126,6 +127,7 @@ yt-dlp = "latest"
 # ====================
 [tool_alias]
 cdktf = "npm:cdktf-cli"
+cdktn = "npm:cdktn-cli"
 dsh = "npm:@deepseek-ai/dsh"
 kraftkit = "github:unikraft/kraftkit"
 moon = "aqua:moonrepo/moon"

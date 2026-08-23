@@ -55,7 +55,6 @@ Options:
   --stack-file <path>    Stack file path. Defaults to src/stacks/my-stack.ts.
   --stack-id <id>        CDK stack id. Defaults to <package-name>-dev.
   --node-version <ver>   Node version for mise.toml and @types/node. Defaults to ${DEFAULT_NODE_VERSION}.
-  --node-min <version>   Deprecated alias for --node-version.
   --license-owner <name> Copyright owner for LICENSE. Defaults to ${DEFAULT_LICENSE_OWNER}.
   --license-year <year>  Copyright year for LICENSE. Defaults to the current year.
   --resolve-latest       Resolve newest stable npm versions outside pnpm's 24-hour quarantine.
@@ -148,8 +147,8 @@ function importPath(fromFile, toFile) {
 }
 
 function defaultStackFileContents(stackClass) {
-  return `import type { StackProps } from "aws-cdk-lib";
-import { Stack } from "aws-cdk-lib";
+  return `import type { StackProps } from "aws-cdk-lib/core";
+import { Stack } from "aws-cdk-lib/core";
 import type { Construct } from "constructs";
 
 export class ${stackClass} extends Stack {
@@ -163,7 +162,7 @@ export class ${stackClass} extends Stack {
 function mainFileContents(stackClass, stackFile, stackId) {
   const mainFile = "src/main.ts";
   const stackImport = importPath(mainFile, stackFile);
-  return `import { App } from "aws-cdk-lib";
+  return `import { App } from "aws-cdk-lib/core";
 import { ${stackClass} } from "${stackImport}";
 
 const app = new App();
@@ -182,24 +181,20 @@ app.synth();
 function tsconfigContents() {
   return {
     compilerOptions: {
-      declaration: false,
-      experimentalDecorators: true,
-      forceConsistentCasingInFileNames: true,
+      isolatedModules: true,
       lib: ["ES2025"],
       module: "NodeNext",
       moduleResolution: "NodeNext",
       noEmit: true,
       noImplicitReturns: true,
       noUncheckedIndexedAccess: true,
-      resolveJsonModule: true,
-      rootDir: "./src",
       skipLibCheck: true,
       strict: true,
       strictPropertyInitialization: false,
       target: "ES2025",
       types: ["node"],
     },
-    include: ["src/**/*.ts"],
+    include: ["src/**/*.ts", "test/**/*.ts"],
     exclude: ["cdk.out", "coverage", "dist", "node_modules"],
   };
 }
@@ -405,12 +400,12 @@ function packageJson(existingPackage, values) {
 function resolveVersions(resolveLatest, nodeMajor) {
   if (!resolveLatest) {
     return {
-      awsCdkLib: "2.261.0",
-      awsCdk: "2.1132.0",
-      constructs: "10.7.1",
+      awsCdkLib: "2.266.0",
+      awsCdk: "2.1138.0",
+      constructs: "10.8.1",
       typescript: "7.0.2",
-      biome: "2.5.5",
-      tsx: "4.23.1",
+      biome: "2.5.10",
+      tsx: "4.23.12",
       typesNode: "24.13.3",
       zod: "4.4.3",
     };
@@ -446,7 +441,7 @@ function run() {
   const stackClass = args.stackClass ?? DEFAULT_STACK_CLASS;
   const stackFile = posixPath(args.stackFile ?? DEFAULT_STACK_FILE);
   const stackId = args.stackId ?? `${packageName}-dev`;
-  const nodeVersion = args.nodeVersion ?? args.nodeMin ?? DEFAULT_NODE_VERSION;
+  const nodeVersion = args.nodeVersion ?? DEFAULT_NODE_VERSION;
   const licenseOwner = args.licenseOwner ?? DEFAULT_LICENSE_OWNER;
   const licenseYear = args.licenseYear ?? String(new Date().getFullYear());
   const nodeMajor = majorOf(nodeVersion);

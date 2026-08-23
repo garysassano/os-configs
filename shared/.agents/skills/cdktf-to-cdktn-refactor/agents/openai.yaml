@@ -1,0 +1,4 @@
+interface:
+  display_name: "CDKTF to CDKTN Refactor"
+  short_description: "Convert Projen CDKTF apps to native CDK Terrain"
+  default_prompt: "Use $cdktf-to-cdktn-refactor to convert this Projen CDKTF app to a native mise-managed CDKTN project."

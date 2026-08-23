@@ -17,7 +17,9 @@ Tooling files are plain source-controlled config:
 - `LICENSE`
 - `README.md`
 
-Keep `tsconfig.json` compact: use `ES2025`, NodeNext module semantics, `strict: true`, and only non-default options that materially affect the CDK app. Use the versioned HTTPS Biome schema matching the installed package rather than a `node_modules` path.
+Keep `tsconfig.json` compact: use `ES2025`, NodeNext module semantics, `strict: true`, `isolatedModules: true` (matching current `cdk init` output), and only non-default options that materially affect the CDK app. Restating a compiler default is noise, not documentation — `forceConsistentCasingInFileNames`, `resolveJsonModule`, `declaration`, and `experimentalDecorators` all belong out of the file. Include `test/**/*.ts` alongside `src/**/*.ts` so tests are typechecked, and leave `rootDir` unset so a `test/` tree outside `src/` is legal. Use the versioned HTTPS Biome schema matching the installed package rather than a `node_modules` path.
+
+Import CDK from `aws-cdk-lib/core` and `aws-cdk-lib/aws-<service>`, never the `aws-cdk-lib` root.
 
 Keep `minimumReleaseAgeStrict: true` in `pnpm-workspace.yaml` so pnpm fails or prompts instead of adding temporary `minimumReleaseAgeExclude` entries. Do not commit release-age exclusions unless the user explicitly requests one.
 
