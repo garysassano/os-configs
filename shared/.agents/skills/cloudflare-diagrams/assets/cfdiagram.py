@@ -172,6 +172,10 @@ class Diagram:
             self.branch_h = self.nh * BRANCH_SCALE
             self.band_bot = max(band_bot,
                                 self.BRANCH_GAP + self.branch_h + PAD_X - PAD_BOT)
+            # The wrap decision below reads the local, so the branch band has to
+            # reach it too; otherwise the canvas is sized as though the off-path
+            # card were free and a diagram that fits in one row wraps anyway.
+            band_bot = self.band_bot
 
         # ---- gap sized to the widest label that sits in it ----------------
         inside_set = {i for i, nd in enumerate(nodes) if nd.inside}

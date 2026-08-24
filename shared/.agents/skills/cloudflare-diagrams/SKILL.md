@@ -46,6 +46,19 @@ Read the call mechanism to decide, rather than the label on the box. RPC against
 
 Getting this wrong is quiet. Nothing overlaps and no label overflows; the picture just puts a service on the wrong side.
 
+### Two sets of icons
+
+`assets/icons/` holds two sets and the split is load bearing, so a reader can tell what is Cloudflare before reading a single label:
+
+| set | for | colour | side |
+| --- | --- | --- | --- |
+| Cloudflare product icons | anything running on Cloudflare | brand orange | inside |
+| Octicons (`person`, `globe`, `github`, `access`) | everything else: a person, a web page, a third-party API | ink, via `external=True` | outside |
+
+So a caller or a third party **is** drawn, with an Octicon, rather than omitted for want of an official icon. A person at a browser is `person`; the site being driven is `globe`; GitHub is `github`. Keep them as a matched pair when they bracket a flow: removing one end and keeping the other leaves the picture looking arbitrary.
+
+Do not introduce a third set. If neither set has the thing, the answer is usually that the card is claiming more than the repo knows, and the call belongs on an entry arrow instead. That is the one case for omitting a caller: not that it is a caller, but that its identity is genuinely undetermined, as when the same entrypoint can be reached over RPC by a Worker and over HTTP by a browser.
+
 ### Geometry follows content, never the reverse
 
 Type sizes are **fixed constants**: `TITLE_PX` 15, `LABEL_PX` 12.5, `SUB_PX` 11, `LABELSUB_PX` 10.5, `ANNOT_PX` 11. Nothing is ever shrunk to fit. Instead node width, gap and box height are computed so every label fits at its standard size, which is why `Flow` objects are declared up front alongside the nodes.
@@ -193,4 +206,4 @@ Prefer the SVG for static topology and Mermaid for behaviour over time, rather t
 - Reserving entry-arrow space just because the first node sits outside the boundary. A leading actor node is outside and needs no reservation; key it on whether an entry arrow is actually drawn.
 - Badges carry one category only. `cache: on` against `cache: off` is per-entrypoint configuration; plan availability or pricing is a different kind of fact and putting it on the same device makes both read as noise. That belongs in prose.
 - A caller placed by ownership rather than by where it runs. Check how it calls in: an RPC caller is a Worker and belongs inside even when this repo does not deploy it, while a browser or a third-party service belongs outside.
-- No generic actor or user shape. Cloudflare ships no official user icon, and importing one from another set puts a foreign glyph beside official product icons. Name the action on the entry arrow instead.
+- Reaching outside the two icon sets, or dropping a caller because it is a caller. See **Two sets of icons** above: an external entity takes an Octicon in ink, it does not get left off the picture. Drop a caller card only when what it is cannot be determined, and say so on the arrow instead.
