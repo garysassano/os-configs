@@ -28,8 +28,23 @@ Encoded in `assets/cfdiagram.py`; these are the decisions behind it.
 | Light | page/surface `#FFFFFF`, ink `#262626`, muted `#6E6763`, line `#E6E1DF` |
 | Dark | page `#151414`, surface `#1E1B1A`, ink `#F0E3DE`, muted `#B5AAA4`, line `#3A3431` |
 | Type | Inter for names and labels, JetBrains Mono for identifiers. Cloudflare's own stacks, from `globals.css`. |
-| Boundary | Solid 1.2 rule in brand orange, `rx=4`, no fill, lockup inset **inside** the top left corner. |
+| Boundary | Encloses exactly what runs on Cloudflare. Solid 1.2 rule in brand orange, `rx=4`, no fill, lockup inset **inside** the top left corner. |
 | Icons | Service icons at 48, lockup at 84. The service icons carry the meaning, so they lead; the lockup is provenance and stays quieter. |
+
+### What the boundary means
+
+The boundary encloses **what runs on Cloudflare**. That is the whole test, and it is about where code executes, not about who owns it, who deployed it, or whether it is trusted.
+
+So the question is: **does this execute on Cloudflare's network?** A Worker, a queue, a bucket, a KV namespace, a Durable Object: inside. A third-party API, a user's browser, a service on another cloud, a script on someone's laptop: outside, and `external=True` too, so its icon is ink rather than brand orange.
+
+Two traps, both of which put a Cloudflare resource wrongly outside:
+
+- **Ownership is not the test.** A caller the repo does not provision can still be a Worker. If it runs on Cloudflare it is inside, in brand colour, even though `cdktn deploy` never creates it.
+- **Trust is not the test.** A gatekeeper's untrusted caller sits inside if it is a Worker; a fully trusted first-party backend sits outside if it runs elsewhere.
+
+Read the call mechanism to decide, rather than the label on the box. RPC against a `WorkerEntrypoint` (`env.SVC.method()`) only resolves over a service binding or `ctx.exports`, so **a caller making RPC calls is necessarily itself a Worker, and belongs inside**. A caller arriving over plain HTTP to a route or a `workers.dev` subdomain could be anything, and usually belongs outside.
+
+Getting this wrong is quiet. Nothing overlaps and no label overflows; the picture just puts a service on the wrong side.
 
 ### Geometry follows content, never the reverse
 
@@ -51,7 +66,7 @@ SVG units are arbitrary. What decides legibility is type size **relative to canv
 
 ### Long chains wrap
 
-A long flow in one row becomes a strip that shrinks to nothing in a narrow viewport. Past `MAX_ASPECT = 3.8`, or once node width would fall under `MIN_NW = 132`, the layout wraps onto balanced rows and uses both dimensions. Four services stay in a row; five or more wrap. `_wrap()` draws the connector across the break.
+A long flow in one row becomes a strip that shrinks to nothing in a narrow viewport. Past `MAX_ASPECT = 4.0`, or once node width would fall under `MIN_NW = 132`, the layout wraps onto balanced rows and uses both dimensions. Four services stay in a row; five or more wrap. `_wrap()` draws the connector across the break.
 
 Pin `per_row` only when the row order carries meaning that wrapping would break, such as an annotation arc spanning several nodes.
 
@@ -62,22 +77,26 @@ Paths that run above or below the row (a cache hit returning, a purge going back
 ## Using it
 
 ```python
-import sys; sys.path.insert(0, "<skill>/assets")
-from cfdiagram import Diagram, Node
+import pathlib, sys; sys.path.insert(0, "<skill>/assets")
+from cfdiagram import Diagram, Flow, Node
 
 nodes = [
     Node("src", "r2", "R2", "upload-bucket"),
     Node("q", "queues", "Queues", "event-notification-queue"),
     Node("w", "workers", "Workers", "event-notification-writer", badge="cache: on", badge_kind="ok"),
 ]
-d = Diagram(nodes, theme, boundary_note="optional note").render()
-d.arrow(None, 0, "PutObject")     # None = entering from outside the boundary
-d.arrow(0, 1, ["event", "notification"])
-d.arrow(1, 2, "consumes", "100 / 5s")
+flows = [                                    # declared up front: geometry is sized from them
+    Flow(0, 1, ["event", "notification"]),
+    Flow(1, 2, "consumes", "100 / 5s"),
+]
+d = Diagram(nodes, flows, theme, boundary_note="optional note").render()
+d.entry(0, "PutObject", "s3:ObjectCreated")  # a caller that is not drawn as a card
 pathlib.Path(out).write_text(d.finish())
 ```
 
-`Node(inside=False)` puts a node outside the boundary; `external=True` colours its icon as ink rather than brand orange, for non-Cloudflare services.
+`Flow(i, j, label, sub)` takes **node indices**, and flows go to the constructor rather than being added afterwards, because node width and gap are computed to fit the labels. `d.entry(idx, label, sub)` draws an arrow in from off canvas.
+
+`Node(inside=False)` puts a node outside the boundary; `external=True` colours its icon as ink rather than brand orange, for non-Cloudflare services. The two travel together: anything that is not a Cloudflare resource takes both.
 
 **Short titles, long identifiers underneath.** The title is the service (`R2`, `Queues`); the mono sub-line is the resource (`event-notification-queue`). Long titles force wide boxes, which starve the gaps, which makes arrow labels bleed into the boxes. Stack a long arrow label onto two lines rather than widening the gap.
 
@@ -110,9 +129,11 @@ Recurring defects, all seen in practice:
 - Arrows in one diagram a different colour from arrows in another. Semantic colour is for semantics (a hit path, an error path); everything else takes ink. Dashing already distinguishes a secondary flow, so it does not also need a dimmer colour.
 - Muted text too dark on dark. Check the small mono sub-lines specifically.
 - Node boxes with dead space at the bottom. Box height must follow content: a badge row only earns its space when a node has one.
-- An entry arrow shorter than its own arrowhead. Reserve entry space explicitly with `entry=True`; keying it off whether the first node sits outside the boundary is wrong, since every node can be inside and still take an arrow from off canvas.
+- An entry arrow shorter than its own arrowhead. Draw it with `d.entry(idx, label, sub)`, which reserves `ENTRY` from the boundary edge; keying it off whether the first node sits outside the boundary is wrong, since every node can be inside and still take an arrow from off canvas.
 - The stroke poking past the arrowhead's tip. Anchor the head by its **base** (`refX="0"`) and stop the line `markerWidth * stroke-width` short of the target. With the tip on the line end, the non-tapering stroke shows past the point where the triangle gets thinner than it.
 - Duplicate marker ids. Two of these SVGs inlined in one HTML document both defining `id="ar"` means `url(#ar)` resolves to whichever came first, so the dark diagram silently borrows the light one's black arrowhead. Hash the ids per file.
+- Arrowheads that point right no matter which way the line runs, **in the PNG preview only**. resvg does not honour `orient="auto-start-reverse"` and leaves the marker unrotated, so every horizontal arrow looks right and every vertical one lies. Browsers render it correctly, so the committed SVG is fine and only the verification step is wrong, which is worse: the check exists to catch bad arrowheads. The generator uses `orient="auto"`, identical for `marker-end` and honoured everywhere. Do not reintroduce `auto-start-reverse` unless a `marker-start` is added.
+- Wrapping a diagram that has nodes outside the boundary. The boundary is one rect spanning the full column range of the inside nodes, so on a wrapped layout it encloses whatever sits at those columns on other rows, swallowing the outside nodes. Outside nodes only work at the ends of a single row: pin `per_row` and shorten labels to control width instead.
 - A long resource name running past its card edge. `fit()` shrinks a label to stay inside, but check it, since the advance width is estimated.
 
 Then confirm no light value leaked into the dark file. Equal file sizes prove nothing, since hex codes are all the same length:
@@ -171,5 +192,5 @@ Prefer the SVG for static topology and Mermaid for behaviour over time, rather t
 - A two-line label rendering at two sizes, because `fit()` was applied per line. Size a multi-line label once, at the smallest any of its lines needs.
 - Reserving entry-arrow space just because the first node sits outside the boundary. A leading actor node is outside and needs no reservation; key it on whether an entry arrow is actually drawn.
 - Badges carry one category only. `cache: on` against `cache: off` is per-entrypoint configuration; plan availability or pricing is a different kind of fact and putting it on the same device makes both read as noise. That belongs in prose.
-- The caller belongs outside the boundary. A gatekeeper's whole point is that the calling agent is outside the trust boundary and presents a credential, so drawing it inside asserts a deployment the repo does not control.
+- A caller placed by ownership rather than by where it runs. Check how it calls in: an RPC caller is a Worker and belongs inside even when this repo does not deploy it, while a browser or a third-party service belongs outside.
 - No generic actor or user shape. Cloudflare ships no official user icon, and importing one from another set puts a foreign glyph beside official product icons. Name the action on the entry arrow instead.

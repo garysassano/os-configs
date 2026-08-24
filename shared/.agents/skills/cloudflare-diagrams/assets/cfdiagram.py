@@ -133,10 +133,13 @@ class Diagram:
 
     NW_MIN, GAP_MIN = 120, 64
 
+    BRANCH_GAP = 44   # connector from the row card down to the off-path card
+
     def __init__(self, nodes, flows=(), theme="light", boundary_note=None, per_row=None,
-                 band_top=0, band_bot=0):
+                 band_top=0, band_bot=0, branch=None):
         self.nodes, self.flows = nodes, list(flows)
         self.T, self.boundary_note = THEMES[theme], boundary_note
+        self.branch = branch
         self.band_top, self.band_bot = band_top, band_bot
         n = len(nodes)
 
@@ -159,6 +162,16 @@ class Diagram:
             bottom = self.badge_y + 19
         self.content_bottom = bottom
         self.nh = bottom + 22
+
+        # An off-path card is secondary, so it is drawn at BRANCH_SCALE of the
+        # row height. Reserving its space here, from the real geometry, is what
+        # stops every build script inventing its own number: the band must leave
+        # the branch card the same clearance from the boundary that the row
+        # cards get at the sides.
+        if branch is not None:
+            self.branch_h = self.nh * BRANCH_SCALE
+            self.band_bot = max(band_bot,
+                                self.BRANCH_GAP + self.branch_h + PAD_X - PAD_BOT)
 
         # ---- gap sized to the widest label that sits in it ----------------
         inside_set = {i for i, nd in enumerate(nodes) if nd.inside}
@@ -276,8 +289,70 @@ class Diagram:
                          f'height="19" rx="9.5" fill="{fill}" opacity="{T["BADGE_OP"]}"/>')
                 p.append(self.text(cx, ny + self.badge_y + 13.5, nd.badge, BADGE_PX, fill, "600", mono=True))
         self.parts = p
+        if self.branch is not None:
+            self._branch(*self.branch)
         for f in self.flows:
             self._flow(f)
+        return self
+
+    def _branch(self, idx, nd, label=None, both=False):
+        """An off-path card: a service the flow consults rather than passes
+        through. Drawn at BRANCH_SCALE of the row height because it is
+        secondary, with its content centred in the smaller box so it does not
+        sit high with dead space beneath it."""
+        T = self.T
+        h = self.branch_h
+        cx = self.cx[idx]
+        y0 = self.cy[idx] + self.nh + self.BRANCH_GAP
+        stroke = T["CF"] if nd.dashed else T["LINE"]
+        self._mark(cx - self.nw / 2, y0, cx + self.nw / 2, y0 + h)
+        self.parts.append(
+            f'<rect x="{cx-self.nw/2:.1f}" y="{y0:.1f}" width="{self.nw:.1f}" '
+            f'height="{h:.1f}" rx="12" fill="{T["SURFACE"]}" stroke="{stroke}" stroke-width="1.2"/>')
+
+        icon_px = ICON_PX * BRANCH_SCALE
+        block = icon_px + 12 + TITLE_PX
+        top = y0 + (h - block) / 2
+        self.parts.append(self.icon(nd.icon, cx, top + icon_px / 2, icon_px,
+                                    T["EXT"] if nd.external else T["CF"]))
+        self.parts.append(self.text(cx, top + icon_px + 12 + TITLE_PX * 0.78,
+                                    nd.title, TITLE_PX, T["INK"], "600"))
+
+        y1 = self.cy[idx] + self.nh
+        head = 7 * 1.4
+        self._mark(cx, y1, cx, y0)
+        start = f' marker-start="url(#back-{self.uid})"' if both else ""
+        self.parts.append(
+            f'<line x1="{cx:.1f}" y1="{y1+(head if both else 0):.1f}" x2="{cx:.1f}" y2="{y0-head:.1f}" '
+            f'stroke="{T["INK"]}" stroke-width="1.4" stroke-dasharray="4 4"'
+            f'{start} marker-end="url(#ar-{self.uid})"/>')
+        if label:
+            self.parts.append(self.text(cx + 10, (y1 + y0) / 2 + 4, label,
+                                        ANNOT_PX, T["MUTE"], anchor="start"))
+
+    def entry(self, idx, label, sub=None, dy=0.0):
+        """An arrow arriving from off canvas, for a caller that is not drawn.
+
+        Every node can sit inside the boundary and still take a call from
+        outside it, so entry space is reserved by calling this, never inferred
+        from whether some node happens to be outside. The label is centred on
+        the stretch clear of the boundary rule so it never prints across it.
+        """
+        T = self.T
+        y = self.cy[idx] + self.nh / 2 + dy
+        x1 = self.cx[idx] - self.nw / 2
+        edge = self.bx0 if self.bx0 is not None else x1
+        x0 = edge - ENTRY
+        head = 7 * 1.6
+        self._mark(x0, y - 1, x1, y + 1)
+        self.parts.append(
+            f'<line x1="{x0:.1f}" y1="{y:.1f}" x2="{x1-head:.1f}" y2="{y:.1f}" '
+            f'stroke="{T["INK"]}" stroke-width="1.6" marker-end="url(#ar-{self.uid})"/>')
+        cx = (x0 + edge) / 2
+        if label:
+            self.parts.append(self.text(cx, y - 9, label, LABEL_PX, T["INK"], "600"))
+        if sub:
+            self.parts.append(self.text(cx, y + 15, sub, LABELSUB_PX, T["MUTE"], mono=True))
         return self
 
     def _flow(self, f):
@@ -337,11 +412,14 @@ class Diagram:
             f'viewBox="{vx:.1f} {vy:.1f} {vw:.1f} {vh:.1f}" style="background:{T["PAGE"]}" role="img">',
             '<defs>'
             f'<marker id="ar-{self.uid}" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="7" '
-            f'markerHeight="7" orient="auto-start-reverse">'
+            f'markerHeight="7" orient="auto">'
             f'<path d="M0 0 10 5 0 10z" fill="{T["INK"]}"/></marker>'
             f'<marker id="ok-{self.uid}" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="7" '
-            f'markerHeight="7" orient="auto-start-reverse">'
-            f'<path d="M0 0 10 5 0 10z" fill="{T["OK"]}"/></marker></defs>',
+            f'markerHeight="7" orient="auto">'
+            f'<path d="M0 0 10 5 0 10z" fill="{T["OK"]}"/></marker>'
+            f'<marker id="back-{self.uid}" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" '
+            f'markerHeight="7" orient="auto">'
+            f'<path d="M10 0 0 5 10 10z" fill="{T["INK"]}"/></marker></defs>',
             f'<rect x="{vx:.1f}" y="{vy:.1f}" width="{vw:.1f}" height="{vh:.1f}" fill="{T["PAGE"]}"/>',
         ]
         return "\n".join(head + self.parts + ["</svg>"])

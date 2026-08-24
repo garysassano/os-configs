@@ -27,6 +27,8 @@ ubuntu/.ssh/
 
 # Pulled in by tooling that runs inside a synced config directory.
 node_modules/
+__pycache__/
+*.pyc
 
 # OS noise.
 .DS_Store
