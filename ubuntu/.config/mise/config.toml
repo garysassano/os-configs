@@ -59,6 +59,10 @@ cargo-binstall = "latest"
 # Shell Tools
 shellcheck = "latest"
 shfmt = "latest"
+# Backs `mise` shell completions: the generated fish script shells out to
+# `usage complete-word` on every TAB. mise auto-installs it on demand, but the
+# auto-installed copy never advances; pinning it here keeps it on `mise upgrade`.
+usage = "latest"
 
 # YAML/JSON Tools
 actionlint = "latest"
