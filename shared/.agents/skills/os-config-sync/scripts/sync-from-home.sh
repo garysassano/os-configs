@@ -109,6 +109,7 @@ awk '
 	/^model_catalog_json = / { next }
 	/^openai_base_url = / { next }
 	/^\[tui\.model_availability_nux\]/ { drop = 1; next }
+	drop && NF == 0 { drop = 0; next }
 	drop && /^\[/ { drop = 0 }
 	drop { next }
 	{ print }

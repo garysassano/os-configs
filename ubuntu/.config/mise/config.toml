@@ -9,7 +9,10 @@ dsh = { version = "latest", allow_builds = ["node-pty"] }
 kiro-cli = "2.18.0"
 opencode = "latest"
 opencode2 = { version = "next", allow_builds = ["@opencode-ai/cli"] }
-opencodex = "latest"
+# Re-bake the systemd unit after mise replaces this versioned npm install.
+# OpenCodex still embeds absolute Bun and CLI paths in the unit, and its own update repair cannot cover an external mise upgrade.
+# The guard keeps first-time installs without a service as a no-op; an installed service must repair successfully or the mise operation fails visibly.
+opencodex = { version = "latest", postinstall = 'if test -f "$HOME/.config/systemd/user/opencodex-proxy.service"; then "$MISE_TOOL_INSTALL_PATH/node_modules/.bin/ocx" service repair; fi' }
 pi = "0.84.2"
 reasonix = { version = "1.25.2", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
 

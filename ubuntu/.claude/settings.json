@@ -1,18 +1,23 @@
 {
-  "model": "opus",
-  "effortLevel": "high",
-  "permissions": {
-    "defaultMode": "bypassPermissions"
-  },
-  "skipDangerousModePermissionPrompt": true,
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
   },
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "model": "claude-ocx-native--gpt-5.6-sol",
   "enabledPlugins": {
     "aws-core@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true
   },
-  "theme": "auto"
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "modelSettings": {
+    "claude-ocx-native--gpt-5.6-sol": {
+      "effortLevel": "medium"
+    }
+  }
 }

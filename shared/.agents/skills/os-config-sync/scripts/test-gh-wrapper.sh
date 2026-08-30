@@ -166,7 +166,7 @@ report "secondary repository" "$secondary_account" "$(login_in "$secondary_repo"
 
 echo
 echo "== 2. outside a Git worktree =="
-report "refuses (exit 1)" "1" "$( (cd /tmp && exit_of timeout 120 "$gh_wrapper" api user))"
+report "refuses (exit 1)" "1" "$( (cd /tmp && exit_of timeout 120 "$gh_wrapper" api user) )"
 note "$(cd /tmp && "$gh_wrapper" api user 2>&1 | first_line)"
 
 echo
@@ -201,13 +201,13 @@ chmod +x "${repo}/impostor-helper"
 git -C "$repo" config --add credential.helper ""
 git -C "$repo" config --add credential.helper "${repo}/impostor-helper"
 report "control: plain git credential fill is hijacked" "username=impostor" \
-	"$( (cd "$repo" && printf 'protocol=https\nhost=github.com\nusername=%s\n\n' "$secondary_account" | git credential fill 2>/dev/null | rg '^username=' | first_line))"
+	"$( (cd "$repo" && printf 'protocol=https\nhost=github.com\nusername=%s\n\n' "$secondary_account" | git credential fill 2>/dev/null | rg '^username=' | first_line) )"
 report "wrapper ignores repository-local helper" "$secondary_account" "$(login_in "$repo")"
 git -C "$repo" config --unset-all credential.helper
 git -C "$repo" config --add credential.helper ""
 git -C "$repo" config --add credential.https://github.com.helper "${repo}/impostor-helper"
 report "control: URL-scoped hijack works on plain git" "username=impostor" \
-	"$( (cd "$repo" && printf 'protocol=https\nhost=github.com\nusername=%s\n\n' "$secondary_account" | git credential fill 2>/dev/null | rg '^username=' | first_line))"
+	"$( (cd "$repo" && printf 'protocol=https\nhost=github.com\nusername=%s\n\n' "$secondary_account" | git credential fill 2>/dev/null | rg '^username=' | first_line) )"
 report "wrapper ignores URL-scoped helper" "$secondary_account" "$(login_in "$repo")"
 
 echo
@@ -255,7 +255,7 @@ scratch_repo
 repo="$scratch_repo_path"
 printf '[tools]\ngithub-cli = "2.40.0"\n' >"${repo}/mise.toml"
 mise trust "${repo}/mise.toml" >/dev/null 2>&1
-note "control, cwd-local mise which gh: $( (cd "$repo" && timeout 60 mise which gh 2>&1 | first_line))"
+note "control, cwd-local mise which gh: $( (cd "$repo" && timeout 60 mise which gh 2>&1 | first_line) )"
 note "mise -C \$HOME which gh:          $(timeout 60 mise -C "$HOME" which gh 2>&1 | first_line)"
 report "wrapper unaffected" "$secondary_account" "$(login_in "$repo")"
 mise trust --untrust "${repo}/mise.toml" >/dev/null 2>&1
@@ -279,7 +279,7 @@ report "GIT_DIR cannot change identity (primary)" "$primary_account" \
 report "GIT_DIR cannot change identity (secondary)" "$secondary_account" \
 	"$(cd "$secondary_repo" && GIT_DIR="$primary_git_dir" timeout 120 "$gh_wrapper" api user --jq .login 2>&1 | first_line)"
 report "GIT_DIR cannot make /tmp a worktree (exit 1)" "1" \
-	"$( (cd /tmp && GIT_DIR="$secondary_git_dir" exit_of timeout 120 "$gh_wrapper" api user))"
+	"$( (cd /tmp && GIT_DIR="$secondary_git_dir" exit_of timeout 120 "$gh_wrapper" api user) )"
 report "GIT_WORK_TREE/GIT_COMMON_DIR cannot retarget" "$primary_account" \
 	"$(cd "$primary_repo" && GIT_DIR="$secondary_git_dir" GIT_WORK_TREE="$secondary_repo" GIT_COMMON_DIR="$secondary_git_dir" timeout 120 "$gh_wrapper" api user --jq .login 2>&1 | first_line)"
 report "GIT_CONFIG_GLOBAL cannot change the account" "$secondary_account" \

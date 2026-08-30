@@ -1,11 +1,11 @@
-approvals_reviewer = "auto_review"
 model_reasoning_effort = "max"
-personality = "pragmatic"
 plan_mode_reasoning_effort = "ultra"
-sandbox_mode = "danger-full-access"
+personality = "pragmatic"
+default_permissions = ":danger-full-access"
+approval_policy = "never"
 
 [features]
-fast_mode = true
+fast_mode = false
 goals = true
 memories = true
 
@@ -14,35 +14,119 @@ hide_full_access_warning = true
 hide_rate_limit_model_nudge = true
 
 [tui]
-status_line = [
-  "model-with-reasoning",
-  "current-dir",
-  "permissions",
-  "context-used",
-  "fast-mode",
-  "five-hour-limit",
-  "weekly-limit",
-]
+status_line = ["model-with-reasoning", "current-dir", "permissions", "context-used", "thread-id"]
 status_line_use_colors = true
 
+# ==============================================================================
+# Marketplaces
+# ==============================================================================
 [marketplaces.agent-toolkit-for-aws]
 last_updated = "2026-08-21T10:47:40Z"
 last_revision = "d6ad2e44d5e3077b85b63f322e007c84f94f3a6c"
 source_type = "git"
 source = "https://github.com/aws/agent-toolkit-for-aws.git"
 
-# ====================
-# MCP Servers
-# ====================
-[mcp_servers.context7]
-args = ["-y", "@upstash/context7-mcp@latest"]
-command = "npx"
-
-[mcp_servers.playwright]
-args = ["@playwright/mcp@latest"]
-command = "npx"
+# ==============================================================================
+# Plugins
+# ==============================================================================
+[plugins."aws-agents@agent-toolkit-for-aws"]
 enabled = false
 
+[plugins."aws-core@agent-toolkit-for-aws"]
+enabled = true
+
+# ==============================================================================
+# BEGIN DISABLED SKILLS: aws-core@agent-toolkit-for-aws
+# ==============================================================================
+# Name-based selectors remain stable across installed plugin-version upgrades.
+# Keep the AWS documentation MCP plus the authentication, CDK, networking, and security skills; suppress the rest from the initial skill catalog.
+[[skills.config]]
+name = "aws-core:amazon-bedrock"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-ai-ml"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-billing-and-cost-management"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-blocks"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-cloudformation"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-compute"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-containers"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-database"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-deployment"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-iam"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-messaging-and-streaming"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-observability"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-sdk-js-v3-usage"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-sdk-python-usage"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-sdk-swift-usage"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-secrets-manager"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-serverless"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:aws-storage"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:launch-with-aws"
+enabled = false
+
+[[skills.config]]
+name = "aws-core:signing-in-to-aws"
+enabled = false
+
+# ==============================================================================
+# END DISABLED SKILLS: aws-core@agent-toolkit-for-aws
+# ==============================================================================
+
+# ==============================================================================
+# BEGIN DISABLED MCP SERVERS: aws-agents@agent-toolkit-for-aws
+# ==============================================================================
 # Provided by the aws-agents plugin. Redundant with aws-mcp from aws-core, which
 # serves the same docs tools and no longer needs auth to do it. Disabled rather
 # than removing the plugin, which would also drop its 8 AgentCore skills.
@@ -51,9 +135,14 @@ enabled = false
 url = "https://knowledge-mcp.global.api.aws"
 enabled = false
 
-# ====================
+# ==============================================================================
+# END DISABLED MCP SERVERS: aws-agents@agent-toolkit-for-aws
+# ==============================================================================
+
+# ==============================================================================
 # Projects
-# ====================
+# ==============================================================================
+# Project trust is separate from runtime permissions and matches exact paths only.
 [projects."/home/user/.agents"]
 trust_level = "trusted"
 
@@ -63,66 +152,6 @@ trust_level = "trusted"
 [projects."/home/user/.config"]
 trust_level = "trusted"
 
-[projects."/home/user/github"]
-trust_level = "trusted"
-
-[projects."/home/user/work-pmt"]
-trust_level = "trusted"
-
-[projects."/home/user/github/opencode-kiro-auth"]
-trust_level = "trusted"
-
-[projects."/home/user/work-pmt/Ermas"]
-trust_level = "trusted"
-
-[projects."/home/user/github/lambda-cmr"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-dns-validated-certificate"]
-trust_level = "trusted"
-
-[projects."/home/user/github/shin-bucket-deployment"]
-trust_level = "trusted"
-
-[projects."/home/user/github/aws-cdk"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cargo-ci-cache-archive"]
-trust_level = "trusted"
-
-[projects."/home/user/github/rust-cache"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-ecs-managed-instance"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-ecs-managed-instances"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-lmi-function"]
-trust_level = "trusted"
-
-[projects."/home/user/github/knowledge-gha-workflows"]
-trust_level = "trusted"
-
-[projects."/home/user/github/knowledge-iac-gha-workflows"]
-trust_level = "trusted"
-
-[projects."/home/user/temp"]
-trust_level = "trusted"
-
-[projects."/home/user/github/temp"]
-trust_level = "trusted"
-
-[projects."/home/user/github/career-cv"]
-trust_level = "trusted"
-
-[projects."/home/user/github/cdk-aws-eci-services"]
-trust_level = "trusted"
-
-[projects."/home/user/github/opentelemetry-js-contrib"]
-trust_level = "trusted"
-
 [projects."/home/user/git/shin-bucket-deployment"]
 trust_level = "trusted"
 
@@ -130,9 +159,6 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/home/user/git/cdk-aws-iam-gha-oidc"]
-trust_level = "trusted"
-
-[projects."/home/user/git/archive-undiscord"]
 trust_level = "trusted"
 
 [projects."/home/user/git-mushi/opencodex"]
@@ -147,9 +173,6 @@ trust_level = "trusted"
 [projects."/home/user/git/cdk-aws-lmi-function"]
 trust_level = "trusted"
 
-[projects."/home/user/git/codex-kiro"]
-trust_level = "trusted"
-
 [projects."/home/user/git/career-cv"]
 trust_level = "trusted"
 
@@ -162,8 +185,20 @@ trust_level = "trusted"
 [projects."/mnt/c/Users/Gary"]
 trust_level = "trusted"
 
-[plugins."aws-agents@agent-toolkit-for-aws"]
-enabled = true
+[projects."/home/user/git/unikraft-timefork"]
+trust_level = "trusted"
 
-[plugins."aws-core@agent-toolkit-for-aws"]
-enabled = true
+[projects."/home/user/git/avisynth-delogo"]
+trust_level = "trusted"
+
+[projects."/home/user/git-silver"]
+trust_level = "trusted"
+
+[projects."/home/user/git-mushi"]
+trust_level = "trusted"
+
+[projects."/home/user/git-silver/avisynth-delogo"]
+trust_level = "trusted"
+
+[projects."/home/user/git-itv/cd-infra-services"]
+trust_level = "trusted"
