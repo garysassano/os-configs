@@ -19,6 +19,10 @@ Synchronize maintained configuration from the live home directory into this repo
    - `~/.profile`, which is stock Ubuntu apart from a mise shims block; see below
    - all visible directories under `~/.agents/skills/`, additively: a repository skill with no counterpart here is left in place and flagged for manual review, never deleted
 
+   Canonical skills linked into personal `~/git/` repositories are recorded by `scripts/repository-skills.py` in `references/repository-skills.json`, with their exact committed revision and skill subdirectory. Their code and assets remain in those source repositories. Linked skills from other account/client trees remain excluded. A dirty repository skill stops capture rather than recording a revision that omits local changes.
+
+   Repository skill references absent on this machine are preserved, like repository-only copied skills. Remove an obsolete reference deliberately after reviewing its removal. When a copied skill moves into its own repository, capture and verify the repository reference before removing its stale copied tree from `shared/.agents/skills/`.
+
    The canonical `~/.agents/` set — `AGENTS.md`, `link.sh`, `.skill-lock.json`, and `skills/` — lands under `shared/.agents/` because it is OS-independent; the per-OS files below land under `ubuntu/`. The harness copies link.sh fans out (`~/.codex/AGENTS.md`, `~/.codex/skills/`, `~/.claude/skills/`, …) are symlinks, gitignored, and never captured.
    - `~/.claude/settings.json`, and the preference keys of `~/.claude.json` filtered through an explicit allowlist; the rest of that file is app-managed state and stays out
    - `~/.codex/config.toml`
@@ -86,6 +90,8 @@ regenerated stock state and stays untracked.
 
 ## Harness fan-out
 
+Repository-maintained skills must be restored before fan-out on a new machine. Run `python shared/.agents/skills/os-config-sync/scripts/repository-skills.py restore --dry-run`, then repeat without `--dry-run`. The helper clones missing personal repositories, checks out each recorded revision only in a new clone, creates canonical skill links, and runs `~/.agents/link.sh`. Existing checkouts and canonical skills are preserved: a mismatched checkout or conflicting link stops restoration. Run it from a checkout with the correct mapped GitHub account; the helper invokes the account-selecting wrapper from this repository.
+
 `~/.agents/` is the single source of truth. Every harness reads its own path, and
 no cross-harness standard exists, so `~/.agents/link.sh` symlinks the canonical
 files into each one. It is idempotent — run it after installing a harness, after
@@ -120,6 +126,7 @@ infer the filename from another harness.
 - Filter portable Codex preferences out of `~/.codex/config.toml` on both OSes,
   dropping the block OpenCodex injects while it shims Codex. OpenCodex's own
   `~/.opencodex/` tree is never captured on either machine.
+- Exclude generated realtime proxy endpoints and project-trust paths in account/client trees from the Ubuntu Codex snapshot. Personal project trust remains captured; the live configuration is unchanged.
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.
 - Preserve mise as the owner of tool versions. Wrappers should resolve mise-managed executables dynamically rather than pinning mise installation paths or versions.

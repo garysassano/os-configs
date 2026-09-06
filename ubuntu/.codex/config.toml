@@ -161,9 +161,6 @@ trust_level = "trusted"
 [projects."/home/user/git/cdk-aws-iam-gha-oidc"]
 trust_level = "trusted"
 
-[projects."/home/user/git-mushi/opencodex"]
-trust_level = "trusted"
-
 [projects."/home/user/git"]
 trust_level = "trusted"
 
@@ -191,14 +188,20 @@ trust_level = "trusted"
 [projects."/home/user/git/avisynth-delogo"]
 trust_level = "trusted"
 
-[projects."/home/user/git-silver"]
+[projects."/home/user/git/aaa"]
 trust_level = "trusted"
 
-[projects."/home/user/git-mushi"]
+[projects."/home/user/git/jojo"]
 trust_level = "trusted"
 
-[projects."/home/user/git-silver/avisynth-delogo"]
+[projects."/home/user/git/aws-cdk-library"]
 trust_level = "trusted"
 
-[projects."/home/user/git-itv/cd-infra-services"]
+[projects."/home/user/git/cdktn-cloudflare-edgefall"]
+trust_level = "trusted"
+
+[projects."/home/user/git/knowledge-cargo-ci-cache"]
+trust_level = "trusted"
+
+[projects."/home/user/git/cdk-aws-cat-rekognizer"]
 trust_level = "trusted"

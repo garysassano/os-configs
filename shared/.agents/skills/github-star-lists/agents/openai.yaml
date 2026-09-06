@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Star Lists"
+  short_description: "Review, categorize and safely transfer GitHub stars"
+  default_prompt: "Use $github-star-lists to review and organize my starred repositories and verify the final Lists."

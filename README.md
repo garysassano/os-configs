@@ -141,7 +141,20 @@ The generic prefix rule supplements known-provider detection; it is not an Anthr
 gitleaks is declared in each machine's `~/.config/mise/config.toml`; without gitleaks or jq the scan refuses to run rather than passing silently.
 Full operating notes are in `shared/.agents/skills/os-config-sync/SKILL.md`.
 
+The Ubuntu sync also omits the local realtime WebSocket proxy URL and Codex project-trust entries under account/client trees. These filters affect the snapshot only; the live machine configuration stays intact.
+
 ## Restoring onto a new machine
+
+Skills maintained in personal repositories, including `aws-diagrams` and `cloudflare-diagrams`, are recorded in [the repository skill manifest](shared/.agents/skills/os-config-sync/references/repository-skills.json) with immutable Git revisions. Their source repositories carry the skills and official icon assets. The snapshot records how to recreate the canonical links and avoids keeping a second, stale skill copy. Links into account/client trees remain local and are excluded.
+
+After restoring the live-home files and GitHub credentials, restore these skills before the general harness fan-out step:
+
+```bash
+python shared/.agents/skills/os-config-sync/scripts/repository-skills.py restore --dry-run
+python shared/.agents/skills/os-config-sync/scripts/repository-skills.py restore
+```
+
+The restore command clones missing repositories and creates the canonical skill links. It leaves existing checkouts untouched and stops if their revision or skill contents differ from the recorded snapshot. A conflicting canonical skill is also preserved.
 
 Files sit at the path they occupy in the real home directory — the OS-specific
 tree (`ubuntu/`, `macos/`) and the `shared/` tree both overlay onto `~`, so

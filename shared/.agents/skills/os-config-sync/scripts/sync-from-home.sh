@@ -48,6 +48,11 @@ scan_for_secrets "${required_sources[@]}" \
 	"${HOME}/.local/bin/gh" \
 	"${script_dir}/test-gh-wrapper.sh" || exit 1
 
+# Repository-maintained canonical links are captured as immutable source
+# references rather than copied skill trees. Client/account trees stay excluded.
+python "${script_dir}/repository-skills.py" capture
+scan_for_secrets "${script_dir}/../references/repository-skills.json" || exit 1
+
 mkdir -p \
 	"${shared_dir}/.agents/skills" \
 	"${ubuntu_dir}/.claude" \
@@ -108,6 +113,9 @@ awk '
 	/^model = / { next }
 	/^model_catalog_json = / { next }
 	/^openai_base_url = / { next }
+	/^experimental_realtime_ws_base_url = / { next }
+	# Per-account/client trust paths disclose the same identities as includeIf.
+	/^\[projects\."[^"]*\/git-[^\/"]+(\/[^"]*)?"\]/ { drop = 1; next }
 	/^\[tui\.model_availability_nux\]/ { drop = 1; next }
 	drop && NF == 0 { drop = 0; next }
 	drop && /^\[/ { drop = 0 }
@@ -177,6 +185,7 @@ cp -a "${HOME}/.reasonix/config.toml" "${ubuntu_dir}/.reasonix/config.toml"
 # surfaces repository-only skills as a note rather than acting on them.
 for source in "${HOME}/.agents/skills/"*; do
 	[[ -d "$source" ]] || continue
+	# Repository links were captured above; do not snapshot their absolute paths.
 	[[ -L "$source" ]] && continue
 	cp -a "$source" "${shared_dir}/.agents/skills/"
 done

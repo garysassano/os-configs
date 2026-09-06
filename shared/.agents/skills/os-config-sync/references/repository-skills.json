@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "name": "aws-diagrams",
+      "revision": "d6473722cdfca3460864521382e1a5150cf624c4",
+      "repository": "garysassano/aws-diagrams",
+      "checkout": "git/aws-diagrams",
+      "skill_path": "skill"
+    },
+    {
+      "name": "cloudflare-diagrams",
+      "revision": "8f25829c1d3cdfa849436c81e2a8e82c7fe2af0e",
+      "repository": "garysassano/cloudflare-diagrams",
+      "checkout": "git/cloudflare-diagrams",
+      "skill_path": "skill"
+    }
+  ]
+}
