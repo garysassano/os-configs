@@ -2,32 +2,30 @@
 # ====================
 # AI CLIs
 # ====================
-amp = "0.0.1785861307-g4e053f"
+amp = "0.0.1789473652-g8f32ef"
 claude-code = "latest"
 codex = "latest"
 dsh = { version = "latest", allow_builds = ["node-pty"] }
-kiro-cli = "2.18.0"
+kiro-cli = "2.21.4"
 opencode = "latest"
 opencode2 = { version = "next", allow_builds = ["@opencode-ai/cli"] }
 opencodex = "latest"
-pi = "0.84.2"
-reasonix = { version = "1.25.2", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
+pi = "0.85.1"
+reasonix = "1.38.8"
 
 # ====================
 # Development
 # ====================
 # Build Systems
 bazel = "9.2.0"
-cmake = "4.4.2"
-just = "1.56.0"
-moon = "latest"
+cmake = "4.4.3"
+just = "1.58.0"
+moon = "2.5.4"
 
-# Languages
-dotnet = "10.0.400"
-go = "1.26"
-python = "3.14"
-rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
-zig = "0.16"
+# Git Tools
+git-filter-repo = "latest"
+git-lfs = "latest"
+github-cli = "latest"
 
 # JS Runtimes
 bun = "latest"
@@ -36,9 +34,16 @@ node = "lts"
 # JS Tools
 aube = "latest"
 biome = "2"
-pnpm = "11"
-prettier = "latest"
-yarn = "1"
+pnpm = "12"
+prettier = "3"
+yarn = "4"
+
+# Languages
+dotnet = "10.0.401"
+go = "1.27"
+python = "3.14"
+rust = { version = "stable", components = "rustfmt", targets = "aarch64-unknown-linux-gnu, wasm32-unknown-unknown" }
+zig = "0.16"
 
 # Python Tools
 ruff = "latest"
@@ -48,32 +53,24 @@ uv = "latest"
 cargo-binstall = "latest"
 "cargo:cargo-audit" = "latest"
 "cargo:cargo-deny" = "latest"
-"cargo:cargo-edit" = "0.13.11"
+"cargo:cargo-edit" = "latest"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
-"cargo:cargo-nextest" = "0.9.140"
+"cargo:cargo-nextest" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
 "cargo:trunk" = "latest"
 
 # Shell Tools
+fish = "latest"
 shellcheck = "latest"
 shfmt = "latest"
-# Backs `mise` shell completions: the generated fish script shells out to
-# `usage complete-word` on every TAB. mise auto-installs it on demand, but the
-# auto-installed copy never advances; pinning it here keeps it on `mise upgrade`.
-usage = "latest"
 
 # YAML/JSON Tools
 actionlint = "latest"
 jq = "latest"
 taplo = "latest"
 yq = "latest"
-
-# Git
-git-filter-repo = "latest"
-git-lfs = "latest"
-github-cli = "latest"
 
 # ====================
 # Cloud
@@ -84,27 +81,26 @@ aws-cli = "2"
 aws-sam = "1"
 cli53 = "0.9.0"
 granted = "latest"
-runs-on = "3.2.2"
+runs-on = "3"
 
 # Generic
-cdktf = { version = "0.21", trust_policy_excludes = ["detect-port@1.6.1"] }
 cdktn = { version = "0.24", trust_policy_excludes = ["jsii@5.9.52"] }
 opentofu = "1"
-pulumi = "3"
+pulumi = "3.262.0"
 terraform = "1"
 terragrunt = "1"
 
 # Others
-gcloud = "577"
-kraftkit = { version = "0.12.15", asset_pattern = 'kraft_*_{{ os(linux="linux", macos="darwin") }}_{{ arch(x64="amd64", arm64="arm64") }}.tar.gz' }
-unikraft-cli = { version = "0.4.2", asset_pattern = 'unikraft-cli_*_{{ os(linux="linux", macos="darwin") }}_{{ arch(x64="amd64", arm64="arm64") }}.tar.gz' }
+gcloud = "585.0.0"
+kraftkit = "0.12.16"
+unikraft-cli = "0.5.1"
 wrangler = "latest"
 
 # ====================
 # Security
 # ====================
 age = "latest"
-cosign = "3"
+cosign = "latest"
 gitleaks = "latest"
 slsa-verifier = "latest"
 sops = "latest"
@@ -120,9 +116,9 @@ ffmpeg = "latest"
 fzf = "latest"
 oh-my-posh = "latest"
 oha = "latest"
-powershell = "7"
+powershell = "latest"
 ripgrep = "latest"
-sqlite = "3.53.3"
+sqlite = "latest"
 upx = "latest"
 yt-dlp = "latest"
 
@@ -130,18 +126,16 @@ yt-dlp = "latest"
 # Tool Aliases
 # ====================
 [tool_alias]
-cdktf = "npm:cdktf-cli"
 cdktn = "npm:cdktn-cli"
 dsh = "npm:@deepseek-ai/dsh"
-kraftkit = "github:unikraft/kraftkit"
+fish = "aqua:fish-shell/fish-shell"
+kraftkit = "aqua:unikraft/kraftkit"
 moon = "aqua:moonrepo/moon"
 opencode2 = "npm:@opencode-ai/cli"
 opencodex = "npm:@bitkyc08/opencodex"
-prettier = "npm:prettier"
-reasonix = "github:esengine/DeepSeek-Reasonix"
-runs-on = "github:runs-on/cli"
-unikraft-cli = "github:unikraft-cloud/cli"
-wrangler = "npm:wrangler"
+reasonix = "aqua:esengine/DeepSeek-Reasonix"
+runs-on = "aqua:runs-on/cli"
+unikraft-cli = "aqua:unikraft-cloud/cli"
 
 # ====================
 # Tasks
@@ -219,8 +213,8 @@ minimum_release_age_excludes = [
 ]
 
 [settings.cargo]
-# Only use cargo-binstall for installation, fail if not available.
-binstall_only = true
+# Prefer cargo-binstall, but let mise build releases that do not publish a binary.
+binstall_only = false
 
 [settings.github]
 # Reuse the existing git credential helper (GCM) so mise's GitHub API calls
