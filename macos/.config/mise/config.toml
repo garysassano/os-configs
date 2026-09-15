@@ -2,9 +2,12 @@
 # ====================
 # AI CLIs
 # ====================
-claude-code = "latest"
 codex = "latest"
 opencode = "latest"
+opencode2 = { version = "next", allow_builds = ["@opencode-ai/cli"] }
+pi = "0.85.1"
+
+# Agent Infrastructure
 opencodex = "latest"
 
 # ====================
@@ -12,15 +15,14 @@ opencodex = "latest"
 # ====================
 # Build Systems
 bazel = "9.2.0"
-cmake = "4.4.2"
-just = "1.56.0"
-moon = "latest"
+cmake = "4.4.3"
+just = "1.58.0"
+moon = "2.5.4"
 
-# Languages
-go = "1.25"
-python = "3.14"
-rust = { version = "stable", components = "rustfmt", targets = "aarch64-apple-darwin, wasm32-unknown-unknown" }
-zig = "0.16"
+# Git Tools
+git-filter-repo = "latest"
+git-lfs = "latest"
+github-cli = "latest"
 
 # JS Runtimes
 bun = "latest"
@@ -29,9 +31,15 @@ node = "lts"
 # JS Tools
 aube = "latest"
 biome = "2"
-pnpm = "11"
-prettier = "latest"
-yarn = "1"
+pnpm = "12"
+prettier = "3"
+yarn = "4"
+
+# Languages
+go = "1.27"
+python = "3.14"
+rust = { version = "stable", components = "rustfmt", targets = "aarch64-apple-darwin, wasm32-unknown-unknown" }
+zig = "0.16"
 
 # Python Tools
 ruff = "latest"
@@ -44,7 +52,7 @@ cargo-binstall = "latest"
 "cargo:cargo-edit" = "0.13.11"
 "cargo:cargo-lambda" = "latest"
 "cargo:cargo-machete" = "latest"
-"cargo:cargo-nextest" = "0.9.140"
+"cargo:cargo-nextest" = "latest"
 "cargo:cargo-outdated" = "latest"
 "cargo:cargo-udeps" = "latest"
 "cargo:trunk" = "latest"
@@ -60,11 +68,6 @@ jq = "latest"
 taplo = "latest"
 yq = "latest"
 
-# Git
-git-filter-repo = "latest"
-git-lfs = "latest"
-github-cli = "latest"
-
 # ====================
 # Cloud
 # ====================
@@ -72,24 +75,24 @@ github-cli = "latest"
 aws-cdk = "2"
 aws-cli = "2"
 aws-sam = "1"
-cli53 = "latest"
-granted = "0.38.0"
+cli53 = "0.9.0"
+granted = "latest"
 runs-on = "2.12.6"
 
 # Generic
 opentofu = "1"
-packer = "latest"
-pulumi = "3"
 terraform = "1"
+terragrunt = "1"
 
 # Others
-glab = "latest"
+wrangler = "latest"
 
 # ====================
 # Security
 # ====================
 age = "latest"
-cosign = "3"
+cosign = "latest"
+gitleaks = "latest"
 op = "latest"
 slsa-verifier = "latest"
 sops = "latest"
@@ -101,12 +104,13 @@ bat = "latest"
 edit = "latest"
 eza = "latest"
 fd = "latest"
+ffmpeg = "latest"
 fzf = "latest"
 oh-my-posh = "latest"
 oha = "latest"
-powershell = "7"
+powershell = "latest"
 ripgrep = "latest"
-sqlite = "3.53.3"
+sqlite = "latest"
 
 # ====================
 # Tool Aliases
@@ -114,22 +118,75 @@ sqlite = "3.53.3"
 [tool_alias]
 fish = "aqua:fish-shell/fish-shell"
 moon = "aqua:moonrepo/moon"
+opencode2 = "npm:@opencode-ai/cli"
 opencodex = "npm:@bitkyc08/opencodex"
-prettier = "npm:prettier"
 runs-on = "github:runs-on/cli"
-sqlite = "asdf:mise-plugins/mise-sqlite"
+
+# ====================
+# Tasks
+# ====================
+[tasks."opencodex:upgrade"]
+description = "Upgrade OpenCodex, restart an outdated proxy, and verify live version parity"
+run = '''
+set -eu
+
+mise upgrade opencodex
+
+cli_version="$(ocx --version | awk 'NR == 1 { print $2 }')"
+if [ -z "$cli_version" ]; then
+  echo "Could not determine the installed OpenCodex version." >&2
+  exit 1
+fi
+
+live_version="$(
+  curl --fail --silent http://127.0.0.1:10100/healthz 2>/dev/null \
+    | jq -r '.version // empty' 2>/dev/null \
+    || true
+)"
+
+if [ "$live_version" = "$cli_version" ]; then
+  echo "OpenCodex CLI and proxy already match at $cli_version."
+  exit 0
+fi
+
+if [ -n "$live_version" ]; then
+  echo "Replacing OpenCodex proxy $live_version with $cli_version."
+  ocx restart
+else
+  echo "Starting OpenCodex proxy $cli_version."
+  ocx start
+fi
+
+attempt=0
+while [ "$attempt" -lt 50 ]; do
+  live_version="$(
+    curl --fail --silent http://127.0.0.1:10100/healthz 2>/dev/null \
+      | jq -r '.version // empty' 2>/dev/null \
+      || true
+  )"
+  if [ "$live_version" = "$cli_version" ]; then
+    echo "OpenCodex CLI and proxy are both $cli_version."
+    exit 0
+  fi
+  attempt=$((attempt + 1))
+  sleep 0.2
+done
+
+echo "OpenCodex version mismatch after restart: CLI=$cli_version proxy=${live_version:-unavailable}." >&2
+exit 1
+'''
 
 # ====================
 # Settings
 # ====================
 [settings]
 minimum_release_age_excludes = [
-  "claude-code",
   "codex",
-  "opencodex",
   "opencode",
+  "opencode2",
+  "pi",
 ]
 
 [settings.cargo]
-# Only use cargo-binstall for installation; fail if a binary is unavailable.
+# Only use cargo-binstall for installation, fail if not available.
 binstall_only = true

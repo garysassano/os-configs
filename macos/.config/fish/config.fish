@@ -1,33 +1,25 @@
 # ~/.config/fish/config.fish
 # Personal interactive shell configuration for macOS.
 
+# Silence fish's built-in greeting and use its default bindings globally.
 set -g fish_greeting
+set -g fish_key_bindings fish_default_key_bindings
 
 ### MISE (MUST LOAD FIRST)
-set -l mise_bin $HOME/.local/bin/mise
-if test -x $mise_bin
-    if status is-interactive
-        $mise_bin activate fish | source
-    else
-        $mise_bin activate fish --shims | source
-    end
+if status is-interactive
+    mise activate fish | source
+else
+    mise activate fish --shims | source
 end
 
-# `mise activate` defines its own `mise` function. Copy and wrap it so a bare
-# `mise upgrade` skips kiro-cli, whose Aqua registry metadata is incomplete.
-if functions -q mise; and not functions -q __mise_activate
-    functions --copy mise __mise_activate
-    function mise --wraps mise -d 'mise, with kiro-cli excluded from `mise upgrade`'
-        if test (count $argv) -ge 1; and test "$argv[1]" = upgrade
-            and not string match -q '*kiro-cli*' -- $argv[2..]
-            command mise upgrade --exclude kiro-cli $argv[2..]
-            return $status
-        end
-        __mise_activate $argv
-    end
+### MISE COMPLETIONS
+# mise embeds its completion engine, so sourcing it at startup follows updates.
+if status is-interactive
+    mise completion fish | source
 end
 
 ### PATH
+# fish_add_path prepends, so the last call ends up first.
 set -gx BUN_INSTALL $HOME/.bun
 fish_add_path -g $BUN_INSTALL/bin
 fish_add_path -g $HOME/.cargo/bin
@@ -41,8 +33,7 @@ end
 
 ### OH MY POSH
 if status is-interactive
-    oh-my-posh init fish --strict \
-        --config $HOME/.config/oh-my-posh/themes/multiverse-neon.omp.json | source
+    oh-my-posh init fish --strict --config $HOME/.config/oh-my-posh/themes/multiverse-neon.omp.json | source
 end
 
 ### BROWSER
@@ -50,8 +41,6 @@ set -gx BROWSER open
 
 ### KEY BINDINGS
 function fish_user_key_bindings
-    fish_default_key_bindings
-
     bind \e\[1\;3D backward-word
     bind \e\[1\;3C forward-word
     bind \eb backward-word
@@ -90,6 +79,7 @@ function cpr -d 'Check out a GitHub PR into a sibling worktree and cd into it'
     end
 
     set -l branch (gh pr view $pr_number --json headRefName -q .headRefName); or return
+    # Slashes are illegal in a sibling directory name.
     set -l worktree_dir ../(string replace -a / - -- $branch)
 
     git fetch $remote $branch; or return
@@ -99,6 +89,7 @@ function cpr -d 'Check out a GitHub PR into a sibling worktree and cd into it'
 end
 
 ### GRANTED
+# granted ships a native fish entrypoint next to the `assume` shim.
 function assume --wraps assume -d 'granted: assume an AWS role'
     source (dirname (mise which assume))/assume.fish $argv
 end

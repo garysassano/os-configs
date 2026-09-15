@@ -92,11 +92,13 @@ filtered out.
 Ubuntu also tracks a generated, validated `ubuntu/.opencodex/config.json` containing only portable model and account-pool preferences.
 It preserves enabled/disabled model policy, the featured subagent roster, model ordering and fallbacks, effort and context-cap choices, OpenAI pool mode, rotation strategy, and switching threshold.
 The raw live file is never copied because it also contains provider credentials, account identities, identity-keyed priorities, discovery history, and runtime metadata.
-Authentication, additional provider definitions, account order, usage, logs, service state, and generated catalogs therefore remain local and must be recreated; macOS still does not capture OpenCodex configuration.
+Authentication, additional provider definitions, account order, usage, logs, service state, and generated catalogs therefore remain local and must be recreated.
+macOS carries the same provider-independent UI and multi-agent settings, with GitHub Copilot and only GPT-5.5 plus GPT-5.6 Luna, Terra, and Sol.
 The filtered file can be restored before authenticating providers and accounts:
 
 ```bash
 ocx config import ~/git/os-configs/ubuntu/.opencodex/config.json --yes
+ocx config import ~/git/os-configs/macos/.opencodex/config.json --yes
 ```
 
 **Git identity.** `ubuntu/.gitconfig` contains the directory-scoped identity and
@@ -126,9 +128,9 @@ shared/.agents/skills/os-config-sync/scripts/sync-vscode.sh
 `sync-from-home.sh` captures the shell, agent, mise, git, and Codex
 configuration on Ubuntu. `sync-macos-from-home.sh` captures macOS fish, a
 shim-only `.profile` fallback for explicit `bash -lc` subprocesses, personal mise
-configuration, prompt theme, portable Codex preferences, the named OpenCode
-config, the safe Claude preference subset, and VS Code settings, keybindings, and
-extensions. It deliberately excludes the Mac's
+configuration, prompt theme, portable Codex preferences, filtered OpenCodex
+preferences, the named OpenCode config, the safe Claude preference subset, and
+VS Code settings, keybindings, and extensions. It deliberately excludes the Mac's
 work-specific `.gitconfig`. The Mac extension list must contain the Windows host
 baseline except for the WSL-only remote extension.
 `sync-vscode.sh` captures Windows settings, keybindings, snippets, and the

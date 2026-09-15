@@ -55,6 +55,9 @@ Run `scripts/sync-macos-from-home.sh` on macOS. It captures:
   state and the `AGENTS.md` symlink beside it stay out
 - the portable preference subset of `~/.codex/config.toml`; OpenCodex-injected
   model, proxy, catalog, plugin state, hooks, and project trust stay local
+- the filtered `~/.opencodex/config.json`: Ubuntu's provider-independent UI and
+  multi-agent settings, plus GitHub Copilot and GPT-5.5 and GPT-5.6 Luna, Terra,
+  and Sol; authentication stays local
 - the allowlisted preference subset of `~/.claude.json`
 - VS Code settings, keybindings, and extensions
 
@@ -126,9 +129,11 @@ infer the filename from another harness.
 - Treat `ubuntu/.claude.json` as a filtered subset rather than a copy, in both directions: capture only the allowlisted preference keys, and never restore it over an existing `~/.claude.json`, which would drop that machine's account and project history.
 - Do not copy `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries. `~/.codex/skills/` is no longer captured at all — it holds only link.sh symlinks plus the excluded `.system/` tree.
 - Filter portable Codex preferences out of `~/.codex/config.toml` on both OSes, dropping the block OpenCodex injects while it shims Codex.
-- On Ubuntu, generate one validated `~/.opencodex/config.json` snapshot from an explicit safe-key allowlist.
+- Generate one validated `.opencodex/config.json` snapshot per OS.
+  macOS shares Ubuntu's provider-independent UI and multi-agent settings, while
+  retaining only GitHub Copilot and GPT-5.5 plus GPT-5.6 Luna, Terra, and Sol.
   Never copy the raw file: it mixes the desired model and pool preferences with provider credentials, account identities, identity-keyed settings, discovery history, and runtime state.
-  The rest of `~/.opencodex/` remains excluded, and macOS does not capture OpenCodex configuration.
+  The rest of `~/.opencodex/` remains excluded.
 - Exclude generated realtime proxy endpoints and project-trust paths in account/client trees from the Ubuntu Codex snapshot. Personal project trust remains captured; the live configuration is unchanged.
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.

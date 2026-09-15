@@ -5,6 +5,7 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd -- "${script_dir}/../../../../.." && pwd)"
 macos_dir="${repo_root}/macos"
+opencodex_source="${HOME}/.opencodex/config.json"
 
 required_sources=(
 	"${HOME}/.codex/config.toml"
@@ -25,6 +26,10 @@ for source in "${required_sources[@]}"; do
 		exit 1
 	fi
 done
+if [[ ! -f "$opencodex_source" ]]; then
+	printf 'Required source is missing: %s\n' "$opencodex_source" >&2
+	exit 1
+fi
 
 # shellcheck source-path=SCRIPTDIR source=lib/scan-secrets.sh
 . "${script_dir}/lib/scan-secrets.sh"
@@ -36,9 +41,10 @@ fi
 
 claude_tmp="$(mktemp)"
 codex_tmp="$(mktemp)"
+opencodex_tmp="$(mktemp)"
 extensions_tmp="$(mktemp)"
 common_extensions_tmp="$(mktemp)"
-trap 'rm -f "$claude_tmp" "$codex_tmp" "$extensions_tmp" "$common_extensions_tmp"' EXIT
+trap 'rm -f "$claude_tmp" "$codex_tmp" "$opencodex_tmp" "$extensions_tmp" "$common_extensions_tmp"' EXIT
 
 # ~/.claude.json mixes preferences with account and app-managed state. Keep the
 # same explicit preference allowlist as the Ubuntu sync.
@@ -72,13 +78,40 @@ yq -p=toml -o=toml '
 	del(.tui.model_availability_nux)
 ' "${HOME}/.codex/config.toml" >"$codex_tmp"
 
+# Keep Ubuntu's provider-independent UI and multi-agent settings, with this
+# Mac's GitHub Copilot provider and four selected GPT models. Authentication
+# stays in OpenCodex's local state.
+jq '{
+	providers: {
+		"github-copilot": (.providers["github-copilot"] | { adapter, baseUrl, authMode, defaultModel, models, liveModels })
+	},
+	defaultProvider,
+	fastRows,
+	subagentModels,
+	subagentModelsVersion,
+	multiAgentMode,
+	multiAgentSurfaceAdvisoryVersion
+}' "$opencodex_source" >"$opencodex_tmp"
+jq -e '
+	(.providers | keys) == ["github-copilot"] and
+	.defaultProvider == "github-copilot" and
+	.providers["github-copilot"].defaultModel == "gpt-5.5" and
+	.providers["github-copilot"].models == ["gpt-5.5", "gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol"] and
+	.fastRows == true and
+	.subagentModels == ["gpt-5.5", "gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol"] and
+	.subagentModelsVersion == 1 and
+	.multiAgentMode == "v1" and
+	.multiAgentSurfaceAdvisoryVersion == 1
+' "$opencodex_tmp" >/dev/null
+
 # Scan only Claude's filtered preferences, not its account, project history, or
 # caches. Other macOS sources are named individually so nearby work content,
 # including config.devops.toml, shared_tasks/, and packages/, cannot enter.
 scan_for_secrets \
 	"${required_sources[@]}" \
 	"$claude_tmp" \
-	"$codex_tmp" || exit 1
+	"$codex_tmp" \
+	"$opencodex_tmp" || exit 1
 
 mkdir -p \
 	"${macos_dir}/.codex" \
@@ -86,10 +119,12 @@ mkdir -p \
 	"${macos_dir}/.config/mise" \
 	"${macos_dir}/.config/oh-my-posh/themes" \
 	"${macos_dir}/.config/opencode" \
+	"${macos_dir}/.opencodex" \
 	"${macos_dir}/vs-code"
 
 install -m 0644 "$claude_tmp" "${macos_dir}/.claude.json"
 install -m 0600 "$codex_tmp" "${macos_dir}/.codex/config.toml"
+install -m 0600 "$opencodex_tmp" "${macos_dir}/.opencodex/config.json"
 install -m 0644 "${HOME}/.profile" "${macos_dir}/.profile"
 
 cp -a "${HOME}/.config/fish/config.fish" "${macos_dir}/.config/fish/config.fish"

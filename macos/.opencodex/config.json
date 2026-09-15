@@ -1,0 +1,28 @@
+{
+  "providers": {
+    "github-copilot": {
+      "adapter": "openai-chat",
+      "baseUrl": "https://api.githubcopilot.com",
+      "authMode": "oauth",
+      "defaultModel": "gpt-5.5",
+      "models": [
+        "gpt-5.5",
+        "gpt-5.6-luna",
+        "gpt-5.6-terra",
+        "gpt-5.6-sol"
+      ],
+      "liveModels": true
+    }
+  },
+  "defaultProvider": "github-copilot",
+  "fastRows": true,
+  "subagentModels": [
+    "gpt-5.5",
+    "gpt-5.6-luna",
+    "gpt-5.6-terra",
+    "gpt-5.6-sol"
+  ],
+  "subagentModelsVersion": 1,
+  "multiAgentMode": "v1",
+  "multiAgentSurfaceAdvisoryVersion": 1
+}
