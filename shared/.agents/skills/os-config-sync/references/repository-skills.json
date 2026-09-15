@@ -14,6 +14,13 @@
       "repository": "garysassano/cloudflare-diagrams",
       "checkout": "git/cloudflare-diagrams",
       "skill_path": "skill"
+    },
+    {
+      "name": "google-shopping-workflows",
+      "revision": "bb8759ac42c1dbf5800ca3f26663f7c4220b6935",
+      "repository": "garysassano/shopping-scraper-lab",
+      "checkout": "git/shopping-scraper-lab",
+      "skill_path": ".agents/skills/google-shopping-workflows"
     }
   ]
 }

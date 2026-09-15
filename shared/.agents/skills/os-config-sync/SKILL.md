@@ -26,6 +26,7 @@ Synchronize maintained configuration from the live home directory into this repo
    The canonical `~/.agents/` set — `AGENTS.md`, `link.sh`, `.skill-lock.json`, and `skills/` — lands under `shared/.agents/` because it is OS-independent; the per-OS files below land under `ubuntu/`. The harness copies link.sh fans out (`~/.codex/AGENTS.md`, `~/.codex/skills/`, `~/.claude/skills/`, …) are symlinks, gitignored, and never captured.
    - `~/.claude/settings.json`, and the preference keys of `~/.claude.json` filtered through an explicit allowlist; the rest of that file is app-managed state and stays out
    - `~/.codex/config.toml`
+   - a validated `~/.opencodex/config.json` subset containing portable model visibility, subagent, effort, context-cap, and account-pool preferences; provider credentials, account identities, identity-keyed settings, discovery history, and runtime metadata stay out
    - `~/.config/mise/config.toml` and the adjacent `.taplo.toml` formatting policy
    - `~/.config/oh-my-posh/themes/multiverse-neon.omp.json`
    - `~/.config/opencode/opencode.jsonc`, named individually rather than by directory: that directory accumulates provider state beside it, and the Kiro integration removed on 2026-08-07 kept a live `clientSecret` in `kiro-oidc-clients.json`
@@ -35,6 +36,7 @@ Synchronize maintained configuration from the live home directory into this repo
    - `~/.gitconfig`, which preserves directory-scoped Git identity and credential selection rules. Referenced account-specific `~/git-<name>/.gitconfig` files remain local and are never captured
    - `~/.reasonix/config.toml`, named individually rather than by directory: the sibling `.env` holds provider API keys
    - explicitly allowlisted wrappers from `~/.local/bin/`
+
 4. Review the complete diff. Remove machine-generated state, credentials, tokens, caches, compiled binaries, transient test files, and wrappers tied to temporary build paths.
 5. Run the validations printed by the script, plus the skill validator for every new or changed skill when it is available.
 6. Confirm executable bits for scripts and wrappers, run `git diff --check`, then commit and push only when requested.
@@ -98,10 +100,10 @@ files into each one. It is idempotent — run it after installing a harness, aft
 adding or deleting a skill, and after every `npx skills` invocation, which writes
 real directories into the harnesses it was told about and silently skips the rest.
 
-| Canonical | Harness targets |
-| --- | --- |
+| Canonical             | Harness targets                                                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `~/.agents/AGENTS.md` | `~/.claude/CLAUDE.md` (Claude Code reads `CLAUDE.md` only), `~/.codex/AGENTS.md`, `~/.codex-kiro/AGENTS.md`, `~/.config/opencode/AGENTS.md` |
-| `~/.agents/skills/` | `~/.claude/skills/` (also serves opencode), `~/.codex/skills/`, `~/.codex-kiro/skills/`, `~/.kiro/skills/` |
+| `~/.agents/skills/`   | `~/.claude/skills/` (also serves opencode), `~/.codex/skills/`, `~/.codex-kiro/skills/`, `~/.kiro/skills/`                                  |
 
 Preview with `link.sh --dry-run`. The script creates only symlinks pointing into
 `~/.agents`, prunes only symlinks that point at a deleted skill, skips harnesses
@@ -123,9 +125,10 @@ infer the filename from another harness.
 - Never commit the derived harness symlinks. `link.sh` regenerates them from `~/.agents/`; snapshotting them would encode one machine's installed harnesses.
 - Treat `ubuntu/.claude.json` as a filtered subset rather than a copy, in both directions: capture only the allowlisted preference keys, and never restore it over an existing `~/.claude.json`, which would drop that machine's account and project history.
 - Do not copy `~/.codex/plugins/`, credentials, authentication databases, session history, memories, caches, logs, or binaries. `~/.codex/skills/` is no longer captured at all — it holds only link.sh symlinks plus the excluded `.system/` tree.
-- Filter portable Codex preferences out of `~/.codex/config.toml` on both OSes,
-  dropping the block OpenCodex injects while it shims Codex. OpenCodex's own
-  `~/.opencodex/` tree is never captured on either machine.
+- Filter portable Codex preferences out of `~/.codex/config.toml` on both OSes, dropping the block OpenCodex injects while it shims Codex.
+- On Ubuntu, generate one validated `~/.opencodex/config.json` snapshot from an explicit safe-key allowlist.
+  Never copy the raw file: it mixes the desired model and pool preferences with provider credentials, account identities, identity-keyed settings, discovery history, and runtime state.
+  The rest of `~/.opencodex/` remains excluded, and macOS does not capture OpenCodex configuration.
 - Exclude generated realtime proxy endpoints and project-trust paths in account/client trees from the Ubuntu Codex snapshot. Personal project trust remains captured; the live configuration is unchanged.
 - Copy Git credential-helper configuration and usernames, but never credentials returned by the helper.
 - Do not infer that every file in `~/.local/bin/` is a wrapper. Add only reviewed, portable shell wrappers to the allowlist.
@@ -148,11 +151,11 @@ It captures `settings.json`, `keybindings.json`, and `snippets/` from
 not interchangeable: UI extensions install on the Windows host, workspace
 extensions install into the WSL remote.
 
-| Snapshot | Source |
-| --- | --- |
-| `windows/vs-code/settings.json`, `keybindings.json`, `snippets/` | Windows user directory over `/mnt/c` |
-| `windows/vs-code/extensions.txt` | `cmd.exe /c "code --list-extensions"` |
-| `ubuntu/vs-code/extensions.txt` | `code --list-extensions` in the WSL remote |
+| Snapshot                                                         | Source                                     |
+| ---------------------------------------------------------------- | ------------------------------------------ |
+| `windows/vs-code/settings.json`, `keybindings.json`, `snippets/` | Windows user directory over `/mnt/c`       |
+| `windows/vs-code/extensions.txt`                                 | `cmd.exe /c "code --list-extensions"`      |
+| `ubuntu/vs-code/extensions.txt`                                  | `code --list-extensions` in the WSL remote |
 
 `code.cmd` is a batch file, so it needs `cmd.exe`; running it directly makes
 `/bin/sh` try to execute `@echo`. The remote CLI prefixes its output with a

@@ -9,10 +9,7 @@ dsh = { version = "latest", allow_builds = ["node-pty"] }
 kiro-cli = "2.18.0"
 opencode = "latest"
 opencode2 = { version = "next", allow_builds = ["@opencode-ai/cli"] }
-# Re-bake the systemd unit after mise replaces this versioned npm install.
-# OpenCodex still embeds absolute Bun and CLI paths in the unit, and its own update repair cannot cover an external mise upgrade.
-# The guard keeps first-time installs without a service as a no-op; an installed service must repair successfully or the mise operation fails visibly.
-opencodex = { version = "latest", postinstall = 'if test -f "$HOME/.config/systemd/user/opencodex-proxy.service"; then "$MISE_TOOL_INSTALL_PATH/node_modules/.bin/ocx" service repair; fi' }
+opencodex = "latest"
 pi = "0.84.2"
 reasonix = { version = "1.25.2", asset_pattern = 'reasonix-{{ os(linux="linux", macos="darwin") }}-{{ arch(x64="amd64") }}.tar.gz' }
 
@@ -145,6 +142,65 @@ reasonix = "github:esengine/DeepSeek-Reasonix"
 runs-on = "github:runs-on/cli"
 unikraft-cli = "github:unikraft-cloud/cli"
 wrangler = "npm:wrangler"
+
+# ====================
+# Tasks
+# ====================
+[tasks."opencodex:upgrade"]
+description = "Upgrade OpenCodex, restart an outdated proxy, and verify live version parity"
+run = '''
+set -eu
+
+mise upgrade opencodex
+
+cli_version="$(ocx --version | awk 'NR == 1 { print $2 }')"
+if [ -z "$cli_version" ]; then
+  echo "Could not determine the installed OpenCodex version." >&2
+  exit 1
+fi
+
+live_version="$(
+  curl --fail --silent http://127.0.0.1:10100/healthz 2>/dev/null \
+    | jq -r '.version // empty' 2>/dev/null \
+    || true
+)"
+
+if [ "$live_version" = "$cli_version" ]; then
+  echo "OpenCodex CLI and proxy already match at $cli_version."
+  exit 0
+fi
+
+if [ -n "$live_version" ]; then
+  echo "Replacing OpenCodex proxy $live_version with $cli_version."
+  ocx stop
+else
+  echo "Starting OpenCodex proxy $cli_version."
+fi
+
+if systemctl --user cat opencodex-proxy.service >/dev/null 2>&1; then
+  ocx service start
+else
+  ocx start
+fi
+
+attempt=0
+while [ "$attempt" -lt 50 ]; do
+  live_version="$(
+    curl --fail --silent http://127.0.0.1:10100/healthz 2>/dev/null \
+      | jq -r '.version // empty' 2>/dev/null \
+      || true
+  )"
+  if [ "$live_version" = "$cli_version" ]; then
+    echo "OpenCodex CLI and proxy are both $cli_version."
+    exit 0
+  fi
+  attempt=$((attempt + 1))
+  sleep 0.2
+done
+
+echo "OpenCodex version mismatch after restart: CLI=$cli_version proxy=${live_version:-unavailable}." >&2
+exit 1
+'''
 
 # ====================
 # Settings

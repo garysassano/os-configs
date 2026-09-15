@@ -1,4 +1,4 @@
-model_reasoning_effort = "max"
+model_reasoning_effort = "medium"
 plan_mode_reasoning_effort = "ultra"
 personality = "pragmatic"
 default_permissions = ":danger-full-access"
@@ -16,6 +16,7 @@ hide_rate_limit_model_nudge = true
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "permissions", "context-used", "thread-id"]
 status_line_use_colors = true
+resume_cwd = "current"
 
 # ==============================================================================
 # Marketplaces
@@ -204,4 +205,19 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/home/user/git/cdk-aws-cat-rekognizer"]
+trust_level = "trusted"
+
+[projects."/home/user/git/cdk-terrain"]
+trust_level = "trusted"
+
+[projects."/home/user/git/shopping-scraper-lab"]
+trust_level = "trusted"
+
+[projects."/home/user/git/action"]
+trust_level = "trusted"
+
+[projects."/home/user/git/pcbuild-next"]
+trust_level = "trusted"
+
+[projects."/home/user/git/os-configs"]
 trust_level = "trusted"

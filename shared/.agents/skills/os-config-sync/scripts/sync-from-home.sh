@@ -8,6 +8,7 @@ ubuntu_dir="${repo_root}/ubuntu"
 # The canonical agent configuration is OS-independent — the same AGENTS.md, skills,
 # link.sh, and skill lock on every machine — so it lives outside the per-OS trees.
 shared_dir="${repo_root}/shared"
+opencodex_config="${HOME}/.opencodex/config.json"
 
 required_sources=(
 	"${HOME}/.agents/.skill-lock.json"
@@ -38,6 +39,11 @@ for source in "${required_sources[@]}"; do
 	fi
 done
 
+if [[ ! -f "$opencodex_config" ]]; then
+	printf 'Required source is missing: %s\n' "$opencodex_config" >&2
+	exit 1
+fi
+
 # shellcheck source-path=SCRIPTDIR source=lib/scan-secrets.sh
 . "${script_dir}/lib/scan-secrets.sh"
 
@@ -58,6 +64,7 @@ mkdir -p \
 	"${ubuntu_dir}/.claude" \
 	"${ubuntu_dir}/.claude/hooks" \
 	"${ubuntu_dir}/.codex" \
+	"${ubuntu_dir}/.opencodex" \
 	"${ubuntu_dir}/.config/fish" \
 	"${ubuntu_dir}/.config/git" \
 	"${ubuntu_dir}/.config/mise" \
@@ -99,6 +106,64 @@ claude_global_keys='[
 jq --argjson keys "$claude_global_keys" \
 	'with_entries(select(.key as $k | $keys | index($k)))' \
 	"${HOME}/.claude.json" >"${ubuntu_dir}/.claude.json"
+# OpenCodex keeps durable preferences, provider credentials, account identities,
+# generated discovery state, and runtime metadata in the same config.json. A raw
+# copy is therefore neither privacy-safe nor portable. Capture only the model and
+# pool preferences that survive a rebuild without identifying an account. The
+# canonical OpenAI provider shape makes this a valid config that a fresh install
+# can load directly; every other provider and account must be authenticated again.
+opencodex_snapshot="${ubuntu_dir}/.opencodex/config.json"
+opencodex_snapshot_tmp="$(mktemp "${opencodex_snapshot}.XXXXXX")"
+trap 'rm -f -- "$opencodex_snapshot_tmp"' EXIT
+jq '{
+	providers: {
+		openai: (.providers.openai | { adapter, baseUrl, authMode, codexAccountMode })
+	},
+	defaultProvider,
+	defaultModelAliases,
+	cursorEffortRows,
+	fastRows,
+	ultraFastTier,
+	codexMainAccountHardLock,
+	subagentModels,
+	subagentModelsVersion,
+	modelPickerOrder,
+	modelPickerOrderMode,
+	subagentModelFallback,
+	subagentModelFallbackByModel,
+	subagentModelFallbackPollMs,
+	injectionModel,
+	syncCodexSubagentDefaults,
+	injectionEffort,
+	grokExcludedModels,
+	fastMode,
+	multiAgentGuidanceEnabled,
+	effortCap,
+	subagentEffortCap,
+	modelPinnedEfforts,
+	disabledModels,
+	customModels,
+	shadowCallIntercept,
+	blockedModelRedirects,
+	multiAgentMode,
+	multiAgentSurfaceAdvisoryVersion,
+	keepNativeChatGptOnV1,
+	plaintextV2AgentMessages,
+	providerContextCaps,
+	providerContextCapValues,
+	contextCapValue,
+	codexAccountPickerEnabled,
+	pool,
+	autoSwitchThreshold,
+	accountPoolStrategy: (.accountPoolStrategy // "quota"),
+	accountPoolStickyLimit,
+	upstreamFailoverThreshold
+} | with_entries(select(.value != null))' \
+	"$opencodex_config" >"$opencodex_snapshot_tmp"
+ocx config validate "$opencodex_snapshot_tmp" --json | jq -e '.ok == true' >/dev/null
+scan_for_secrets "$opencodex_snapshot_tmp" || exit 1
+mv "$opencodex_snapshot_tmp" "$opencodex_snapshot"
+trap - EXIT
 # opencodex shims Codex while it runs: it injects a routed model, its generated
 # model_catalog_json, the localhost proxy openai_base_url, and a
 # [tui.model_availability_nux] block, then strips them again when it restores the

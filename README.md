@@ -9,12 +9,12 @@ Windows host and connecting into the WSL remote.
 
 ## Layout
 
-| Path | Contents |
-| --- | --- |
-| `shared/` | OS-independent configuration used identically on every machine — the canonical `.agents/` set (AGENTS.md, skills, link.sh, skill lock) |
-| `ubuntu/` | WSL environment — shell, mise, git, Codex, Claude Code, VS Code remote extensions |
-| `windows/` | Windows host — VS Code settings and extensions, fonts, scheduled tasks |
-| `macos/` | macOS fish, mise, prompt theme, Codex, OpenCode, Claude preference, and VS Code configuration |
+| Path       | Contents                                                                                                                               |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/`  | OS-independent configuration used identically on every machine — the canonical `.agents/` set (AGENTS.md, skills, link.sh, skill lock) |
+| `ubuntu/`  | WSL environment — shell, mise, git, Codex, Claude Code, VS Code remote extensions                                                      |
+| `windows/` | Windows host — VS Code settings and extensions, fonts, scheduled tasks                                                                 |
+| `macos/`   | macOS fish, mise, prompt theme, Codex, OpenCode, Claude preference, and VS Code configuration                                          |
 
 Files sit at the path they occupy in the real home directory, so
 `ubuntu/.config/fish/config.fish` is `~/.config/fish/config.fish`.
@@ -30,7 +30,7 @@ mise build rather than `/usr/bin/rg`. Do not delete it. `~/.bashrc` and
 longer tracked.
 
 **Terminal.** VS Code's integrated terminal is the only terminal; it runs fish
-and Explorer's *Open in Terminal* opens it in place rather than an external
+and Explorer's _Open in Terminal_ opens it in place rather than an external
 window. Ghostty filled the external-window role until July 2026 and was dropped
 once the integrated terminal stopped corrupting TUI output — see the
 `gpuAcceleration` note in `windows/vs-code/settings.json`.
@@ -64,10 +64,10 @@ why it sits in `shared/` rather than a per-OS tree. No cross-harness standard
 exists for where those live, so `shared/.agents/link.sh` symlinks them into each
 one.
 
-| Canonical | Fanned out to |
-| --- | --- |
+| Canonical   | Fanned out to                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------ |
 | `AGENTS.md` | `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.codex-kiro/AGENTS.md`, `~/.config/opencode/AGENTS.md` |
-| `skills/` | `~/.claude/skills/`, `~/.codex/skills/`, `~/.codex-kiro/skills/`, `~/.kiro/skills/` |
+| `skills/`   | `~/.claude/skills/`, `~/.codex/skills/`, `~/.codex-kiro/skills/`, `~/.kiro/skills/`                    |
 
 Claude Code reads `CLAUDE.md` and never `AGENTS.md`, hence the rename in that
 one target. `~/.claude/skills/` also serves opencode, which reads Claude Code
@@ -80,22 +80,24 @@ files, so `ubuntu/.claude.json` carries the preference keys of the second one,
 filtered to an allowlist — the rest of that file is the signed-in account,
 per-project history, and caches, and stays out.
 
-`ubuntu/.codex/config.toml` is captured whole except for the block OpenCodex
-injects while it shims Codex: the routed `model`, the generated
-`model_catalog_json`, the localhost proxy `openai_base_url`, and the
-`[tui.model_availability_nux]` state. OpenCodex regenerates all of it each run —
-the proxy port and the catalog it points at are live state — and strips it again
-when it restores the shim, so it is runtime state rather than configuration. The
-sync drops it and OpenCodex reinjects it on the next machine; the MCP,
-marketplace, project-trust, and plugin sections, which the Ubuntu snapshot keeps
-by design, are preserved with their comments.
+`ubuntu/.codex/config.toml` is captured whole except for the block OpenCodex injects while it shims Codex: the routed `model`, the generated `model_catalog_json`, the localhost proxy `openai_base_url`, and the `[tui.model_availability_nux]` state.
+OpenCodex regenerates all of it each run — the proxy port and the catalog it points at are live state — and strips it again when it restores the shim, so it is runtime state rather than configuration.
+The sync drops it and OpenCodex reinjects it on the next machine; the MCP, marketplace, project-trust, and plugin sections, which the Ubuntu snapshot keeps by design, are preserved with their comments.
 
 The macOS snapshot filters Codex the same way. `macos/.codex/config.toml`
 contains only portable Codex preferences; OpenCodex's injected model, localhost
 proxy, generated catalog, plugin state, hooks, and project trust are deliberately
-filtered out. OpenCodex's own configuration is not captured on either OS —
-neither snapshot tracks a `.opencodex/` tree, so authentication, service and
-runtime state, usage, logs, and catalogs all stay local.
+filtered out.
+
+Ubuntu also tracks a generated, validated `ubuntu/.opencodex/config.json` containing only portable model and account-pool preferences.
+It preserves enabled/disabled model policy, the featured subagent roster, model ordering and fallbacks, effort and context-cap choices, OpenAI pool mode, rotation strategy, and switching threshold.
+The raw live file is never copied because it also contains provider credentials, account identities, identity-keyed priorities, discovery history, and runtime metadata.
+Authentication, additional provider definitions, account order, usage, logs, service state, and generated catalogs therefore remain local and must be recreated; macOS still does not capture OpenCodex configuration.
+The filtered file can be restored before authenticating providers and accounts:
+
+```bash
+ocx config import ~/git/os-configs/ubuntu/.opencodex/config.json --yes
+```
 
 **Git identity.** `ubuntu/.gitconfig` contains the directory-scoped identity and
 credential selection rules used by the WSL machine. Account-specific
@@ -163,10 +165,10 @@ tree (`ubuntu/`, `macos/`) and the `shared/` tree both overlay onto `~`, so
 target, though: two paths are repository-owned and have no live-home counterpart,
 so copying them into `~` is wrong:
 
-| Path | Why it is not a home file |
-| --- | --- |
+| Path                                    | Why it is not a home file                                                                                                                       |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `shared/.agents/skills/os-config-sync/` | The sync skill itself, edited here rather than under `~`. Placing it in `~/.agents/skills/` would make the skill loop copy it back over itself. |
-| `ubuntu/vs-code/` | VS Code remote artifacts, restored by the steps below rather than by path. |
+| `ubuntu/vs-code/`                       | VS Code remote artifacts, restored by the steps below rather than by path.                                                                      |
 
 Everything else under `ubuntu/` and `shared/` restores to the matching path in `~`.
 
@@ -181,7 +183,7 @@ and history with nothing.
    Credential Manager exists at the path `credential.helper` names, and
    [mise](https://mise.jdx.dev/).
 2. **Restore the live-home files**, excluding the two paths above. `~/.profile`
-   matters more than it looks — see *What is here*.
+   matters more than it looks — see _What is here_.
 3. **`mise install`** to materialise the pinned toolchain from
    `ubuntu/.config/mise/config.toml`.
 4. **Create account trees and their local Git configuration** before anything
@@ -224,7 +226,7 @@ and history with nothing.
    ```
 
    Add the **public** key at <https://github.com/settings/ssh/new> with
-   **Key type: Signing Key** — the dropdown defaults to *Authentication*, which
+   **Key type: Signing Key** — the dropdown defaults to _Authentication_, which
    signs fine locally and never shows Verified. Then replace the public key in
    `~/.config/git/allowed_signers`, which still holds the old machine's; without a
    matching entry `git log --show-signature` reports "No principal matched" for
@@ -244,10 +246,11 @@ and history with nothing.
    A lost key is regenerated and re-registered, not recovered — there is nothing
    to back up. Existing commits keep their badge from the public key already on
    GitHub.
+
 8. **Register the browser handler.** `$BROWSER` and `xdg-open` resolve to
    `wsl-explorer.desktop`, which execs `explorer.exe` so URLs open in the Windows
    browser you are already signed in to. The file restores with the tree, but being
-   the *default* is machine state:
+   the _default_ is machine state:
 
    ```bash
    update-desktop-database ~/.local/share/applications
@@ -260,16 +263,17 @@ and history with nothing.
    `explorer.exe` needs no package. Setting `$BROWSER` at all matters more than it
    looks: many CLIs check it first and silently print a URL instead of opening one
    when it is empty.
+
 9. **`shared/.agents/link.sh`** to fan the canonical agent configuration into each
    installed harness (see below).
 10. **Verify**, from the cloned repository:
 
-   ```bash
-   shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh ~/git/<repo> ~/git-<name>/<repo>
-   ```
+    ```bash
+    shared/.agents/skills/os-config-sync/scripts/test-gh-wrapper.sh ~/git/<repo> ~/git-<name>/<repo>
+    ```
 
-   It needs two repositories mapping to different accounts, and exits non-zero
-   with an explanation if either account or its credential is missing.
+    It needs two repositories mapping to different accounts, and exits non-zero
+    with an explanation if either account or its credential is missing.
 
 ## Applying to a machine
 
